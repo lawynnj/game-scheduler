@@ -1,1 +1,10 @@
-{}
+{
+  "auth": {
+    "gameschedulerapife7a84e4": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}

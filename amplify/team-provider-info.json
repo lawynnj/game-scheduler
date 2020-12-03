@@ -10,6 +10,11 @@
       "StackName": "amplify-gameschedulerapi-dev-152734",
       "StackId": "arn:aws:cloudformation:us-east-1:764317614706:stack/amplify-gameschedulerapi-dev-152734/fbaae8d0-35a5-11eb-8615-0e72707fff19",
       "AmplifyAppId": "d1qe36p76mm37c"
+    },
+    "categories": {
+      "auth": {
+        "gameschedulerapife7a84e4": {}
+      }
     }
   }
 }
