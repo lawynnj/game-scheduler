@@ -1,15 +1,18 @@
 import Amplify from "aws-amplify";
 import config from "./aws-exports";
-import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import Home from "./pages/Home";
+import { Route } from "react-router-dom";
+import Header from "./components/Header";
 
 Amplify.configure(config);
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <AmplifySignOut />
-      </header>
+      <Header />
+
+      <Route exact path="/" component={Home} />
     </div>
   );
 }
