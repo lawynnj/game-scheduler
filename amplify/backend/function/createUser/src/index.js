@@ -17,7 +17,6 @@ exports.handler = async (event, context) => {
       Item: {
         id: { S: event.request.userAttributes.sub },
         __typename: { S: "User" },
-        username: { S: event.request.userAttributes.name },
         email: { S: event.request.userAttributes.email },
         createdAt: { S: date.toISOString() },
         updatedAt: { S: date.toISOString() },
@@ -28,12 +27,12 @@ exports.handler = async (event, context) => {
     // put user item into DynamoDB
     try {
       await ddb.putItem(params).promise();
-      console.log("Success");
+      console.log("Success: User created!");
     } catch (err) {
       console.log("Error", err);
     }
 
-    console.log("Success: User created!");
+    console.log("Success: Executed correctly!");
     context.done(null, event);
   } else {
     // Nothing to do, the user's email ID is unknown
