@@ -47,6 +47,6 @@ type Game @model @key(name: "byUser", fields: ["hostId"]) {
   buyInOptions: [BuyInOptions]
   dateOptions: [DateOptions] # array of dates
   timeOptions: [TimeOptions] # array of times
-  ipAddresses: [String]
+  ipAddresses: [AWSIPAddress]
   status: GameStatus
 }
