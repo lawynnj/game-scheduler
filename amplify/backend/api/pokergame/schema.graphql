@@ -50,3 +50,7 @@ type Game @model @key(name: "byUser", fields: ["hostId"]) {
   ipAddresses: [AWSIPAddress]
   status: GameStatus
 }
+
+type Mutation {
+  updateGameStrict(gameId: ID!, limit: Int, nextToken: String): Game
+}
