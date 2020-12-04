@@ -5,4 +5,19 @@ type User @model {
   lastName: String
   email: String
   image: String
+  games: [Game] @connection(name: "UserGames")
+}
+
+type Game @model {
+  id: ID!
+  title: String!
+  type: String
+  buyIn: Int
+  eventTime: AWSDateTime # selected date and time
+  createdOn: AWSDateTime
+  cancelled: Boolean # used with EventBridge and Lambda to send email notifications
+  players: AWSJSON # array of players
+  dateOptions: AWSJSON # array of dates
+  timeOptions: AWSJSON # array of times
+  host: User @connection(name: "UserGames")
 }

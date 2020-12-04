@@ -13,6 +13,23 @@ export const createUser = /* GraphQL */ `
       lastName
       email
       image
+      games {
+        items {
+          id
+          title
+          type
+          buyIn
+          eventTime
+          createdOn
+          cancelled
+          players
+          dateOptions
+          timeOptions
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -30,6 +47,23 @@ export const updateUser = /* GraphQL */ `
       lastName
       email
       image
+      games {
+        items {
+          id
+          title
+          type
+          buyIn
+          eventTime
+          createdOn
+          cancelled
+          players
+          dateOptions
+          timeOptions
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -47,6 +81,125 @@ export const deleteUser = /* GraphQL */ `
       lastName
       email
       image
+      games {
+        items {
+          id
+          title
+          type
+          buyIn
+          eventTime
+          createdOn
+          cancelled
+          players
+          dateOptions
+          timeOptions
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createGame = /* GraphQL */ `
+  mutation CreateGame(
+    $input: CreateGameInput!
+    $condition: ModelGameConditionInput
+  ) {
+    createGame(input: $input, condition: $condition) {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      createdOn
+      cancelled
+      players
+      dateOptions
+      timeOptions
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        games {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateGame = /* GraphQL */ `
+  mutation UpdateGame(
+    $input: UpdateGameInput!
+    $condition: ModelGameConditionInput
+  ) {
+    updateGame(input: $input, condition: $condition) {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      createdOn
+      cancelled
+      players
+      dateOptions
+      timeOptions
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        games {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteGame = /* GraphQL */ `
+  mutation DeleteGame(
+    $input: DeleteGameInput!
+    $condition: ModelGameConditionInput
+  ) {
+    deleteGame(input: $input, condition: $condition) {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      createdOn
+      cancelled
+      players
+      dateOptions
+      timeOptions
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        games {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }

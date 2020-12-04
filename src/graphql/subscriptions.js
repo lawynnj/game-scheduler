@@ -10,6 +10,23 @@ export const onCreateUser = /* GraphQL */ `
       lastName
       email
       image
+      games {
+        items {
+          id
+          title
+          type
+          buyIn
+          eventTime
+          createdOn
+          cancelled
+          players
+          dateOptions
+          timeOptions
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -24,6 +41,23 @@ export const onUpdateUser = /* GraphQL */ `
       lastName
       email
       image
+      games {
+        items {
+          id
+          title
+          type
+          buyIn
+          eventTime
+          createdOn
+          cancelled
+          players
+          dateOptions
+          timeOptions
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -38,6 +72,116 @@ export const onDeleteUser = /* GraphQL */ `
       lastName
       email
       image
+      games {
+        items {
+          id
+          title
+          type
+          buyIn
+          eventTime
+          createdOn
+          cancelled
+          players
+          dateOptions
+          timeOptions
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateGame = /* GraphQL */ `
+  subscription OnCreateGame {
+    onCreateGame {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      createdOn
+      cancelled
+      players
+      dateOptions
+      timeOptions
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        games {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateGame = /* GraphQL */ `
+  subscription OnUpdateGame {
+    onUpdateGame {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      createdOn
+      cancelled
+      players
+      dateOptions
+      timeOptions
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        games {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteGame = /* GraphQL */ `
+  subscription OnDeleteGame {
+    onDeleteGame {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      createdOn
+      cancelled
+      players
+      dateOptions
+      timeOptions
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        games {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
