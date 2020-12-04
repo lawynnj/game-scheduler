@@ -1,3 +1,6 @@
+"""
+connection: https://docs.amplify.aws/cli/graphql-transformer/connection#definition
+"""
 type User @model {
   id: ID!
   username: String!
@@ -5,11 +8,12 @@ type User @model {
   lastName: String
   email: String
   image: String
-  games: [Game] @connection(name: "UserGames")
+  games: [Game] @connection(keyName: "byUser", fields: ["id"])
 }
 
-type Game @model {
+type Game @model @key(name: "byUser", fields: ["hostId"]) {
   id: ID!
+  hostId: ID!
   title: String!
   type: String
   buyIn: Int
@@ -19,5 +23,4 @@ type Game @model {
   players: AWSJSON # array of players
   dateOptions: AWSJSON # array of dates
   timeOptions: AWSJSON # array of times
-  host: User @connection(name: "UserGames")
 }

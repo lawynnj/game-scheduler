@@ -13,6 +13,7 @@ export const onCreateUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -44,6 +45,7 @@ export const onUpdateUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -75,6 +77,7 @@ export const onDeleteUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -98,6 +101,7 @@ export const onCreateGame = /* GraphQL */ `
   subscription OnCreateGame {
     onCreateGame {
       id
+      hostId
       title
       type
       buyIn
@@ -107,19 +111,6 @@ export const onCreateGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
@@ -129,6 +120,7 @@ export const onUpdateGame = /* GraphQL */ `
   subscription OnUpdateGame {
     onUpdateGame {
       id
+      hostId
       title
       type
       buyIn
@@ -138,19 +130,6 @@ export const onUpdateGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
@@ -160,6 +139,7 @@ export const onDeleteGame = /* GraphQL */ `
   subscription OnDeleteGame {
     onDeleteGame {
       id
+      hostId
       title
       type
       buyIn
@@ -169,19 +149,6 @@ export const onDeleteGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }

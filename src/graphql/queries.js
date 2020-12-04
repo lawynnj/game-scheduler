@@ -13,6 +13,7 @@ export const getUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -60,6 +61,7 @@ export const getGame = /* GraphQL */ `
   query GetGame($id: ID!) {
     getGame(id: $id) {
       id
+      hostId
       title
       type
       buyIn
@@ -69,19 +71,6 @@ export const getGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
@@ -96,6 +85,7 @@ export const listGames = /* GraphQL */ `
     listGames(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        hostId
         title
         type
         buyIn
@@ -105,16 +95,6 @@ export const listGames = /* GraphQL */ `
         players
         dateOptions
         timeOptions
-        host {
-          id
-          username
-          firstName
-          lastName
-          email
-          image
-          createdAt
-          updatedAt
-        }
         createdAt
         updatedAt
       }

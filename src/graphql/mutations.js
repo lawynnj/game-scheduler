@@ -16,6 +16,7 @@ export const createUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -50,6 +51,7 @@ export const updateUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -84,6 +86,7 @@ export const deleteUser = /* GraphQL */ `
       games {
         items {
           id
+          hostId
           title
           type
           buyIn
@@ -110,6 +113,7 @@ export const createGame = /* GraphQL */ `
   ) {
     createGame(input: $input, condition: $condition) {
       id
+      hostId
       title
       type
       buyIn
@@ -119,19 +123,6 @@ export const createGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
@@ -144,6 +135,7 @@ export const updateGame = /* GraphQL */ `
   ) {
     updateGame(input: $input, condition: $condition) {
       id
+      hostId
       title
       type
       buyIn
@@ -153,19 +145,6 @@ export const updateGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
@@ -178,6 +157,7 @@ export const deleteGame = /* GraphQL */ `
   ) {
     deleteGame(input: $input, condition: $condition) {
       id
+      hostId
       title
       type
       buyIn
@@ -187,19 +167,6 @@ export const deleteGame = /* GraphQL */ `
       players
       dateOptions
       timeOptions
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        games {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
       createdAt
       updatedAt
     }
