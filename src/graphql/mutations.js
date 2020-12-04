@@ -22,10 +22,8 @@ export const createUser = /* GraphQL */ `
           buyIn
           eventTime
           createdOn
-          cancelled
-          players
-          dateOptions
-          timeOptions
+          ipAddresses
+          status
           createdAt
           updatedAt
         }
@@ -57,10 +55,8 @@ export const updateUser = /* GraphQL */ `
           buyIn
           eventTime
           createdOn
-          cancelled
-          players
-          dateOptions
-          timeOptions
+          ipAddresses
+          status
           createdAt
           updatedAt
         }
@@ -92,10 +88,8 @@ export const deleteUser = /* GraphQL */ `
           buyIn
           eventTime
           createdOn
-          cancelled
-          players
-          dateOptions
-          timeOptions
+          ipAddresses
+          status
           createdAt
           updatedAt
         }
@@ -119,10 +113,20 @@ export const createGame = /* GraphQL */ `
       buyIn
       eventTime
       createdOn
-      cancelled
-      players
-      dateOptions
-      timeOptions
+      players {
+        name
+        email
+      }
+      dateOptions {
+        date
+        votes
+      }
+      timeOptions {
+        time
+        votes
+      }
+      ipAddresses
+      status
       createdAt
       updatedAt
     }
@@ -141,10 +145,20 @@ export const updateGame = /* GraphQL */ `
       buyIn
       eventTime
       createdOn
-      cancelled
-      players
-      dateOptions
-      timeOptions
+      players {
+        name
+        email
+      }
+      dateOptions {
+        date
+        votes
+      }
+      timeOptions {
+        time
+        votes
+      }
+      ipAddresses
+      status
       createdAt
       updatedAt
     }
@@ -163,10 +177,20 @@ export const deleteGame = /* GraphQL */ `
       buyIn
       eventTime
       createdOn
-      cancelled
-      players
-      dateOptions
-      timeOptions
+      players {
+        name
+        email
+      }
+      dateOptions {
+        date
+        votes
+      }
+      timeOptions {
+        time
+        votes
+      }
+      ipAddresses
+      status
       createdAt
       updatedAt
     }

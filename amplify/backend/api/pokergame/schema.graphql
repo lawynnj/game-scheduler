@@ -11,6 +11,27 @@ type User @model {
   games: [Game] @connection(keyName: "byUser", fields: ["id"])
 }
 
+type DateOptions {
+  date: String!
+  votes: Int!
+}
+
+type TimeOptions {
+  time: String!
+  votes: Int!
+}
+
+type Player {
+  name: String!
+  email: String
+}
+
+enum GameStatus {
+  ACTIVE
+  PENDING
+  CANCELLED
+}
+
 type Game @model @key(name: "byUser", fields: ["hostId"]) {
   id: ID!
   hostId: ID!
@@ -19,8 +40,9 @@ type Game @model @key(name: "byUser", fields: ["hostId"]) {
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
   createdOn: AWSDateTime
-  cancelled: Boolean # used with EventBridge and Lambda to send email notifications
-  players: AWSJSON # array of players
-  dateOptions: AWSJSON # array of dates
-  timeOptions: AWSJSON # array of times
+  players: [Player] # array of players
+  dateOptions: [DateOptions] # array of dates
+  timeOptions: [TimeOptions] # array of times
+  ipAddresses: [String!]
+  status: GameStatus!
 }

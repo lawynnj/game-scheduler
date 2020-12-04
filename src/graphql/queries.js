@@ -19,10 +19,8 @@ export const getUser = /* GraphQL */ `
           buyIn
           eventTime
           createdOn
-          cancelled
-          players
-          dateOptions
-          timeOptions
+          ipAddresses
+          status
           createdAt
           updatedAt
         }
@@ -67,10 +65,20 @@ export const getGame = /* GraphQL */ `
       buyIn
       eventTime
       createdOn
-      cancelled
-      players
-      dateOptions
-      timeOptions
+      players {
+        name
+        email
+      }
+      dateOptions {
+        date
+        votes
+      }
+      timeOptions {
+        time
+        votes
+      }
+      ipAddresses
+      status
       createdAt
       updatedAt
     }
@@ -91,10 +99,20 @@ export const listGames = /* GraphQL */ `
         buyIn
         eventTime
         createdOn
-        cancelled
-        players
-        dateOptions
-        timeOptions
+        players {
+          name
+          email
+        }
+        dateOptions {
+          date
+          votes
+        }
+        timeOptions {
+          time
+          votes
+        }
+        ipAddresses
+        status
         createdAt
         updatedAt
       }
