@@ -6,15 +6,38 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 
-exports.handler = async (event) => {
-    // TODO implement
-    const response = {
-        statusCode: 200,
-    //  Uncomment below to enable CORS requests
-    //  headers: {
-    //      "Access-Control-Allow-Origin": "*"
-    //  }, 
-        body: JSON.stringify('Hello from Lambda!'),
+let aws = require("aws-sdk");
+let ddb = new aws.DynamoDB();
+
+exports.handler = async (event, context) => {
+  let date = new Date();
+
+  if (event.request.userAttributes.sub) {
+    let params = {
+      Item: {
+        id: { S: event.request.userAttributes.sub },
+        __typename: { S: "User" },
+        username: { S: event.request.userAttributes.name },
+        email: { S: event.request.userAttributes.email },
+        createdAt: { S: date.toISOString() },
+        updatedAt: { S: date.toISOString() },
+      },
+      TableName: process.env.API_POKERGAME_USERTABLE_NAME,
     };
-    return response;
+
+    // put user item into DynamoDB
+    try {
+      await ddb.putItem(params).promise();
+      console.log("Success");
+    } catch (err) {
+      console.log("Error", err);
+    }
+
+    console.log("Success: User created!");
+    context.done(null, event);
+  } else {
+    // Nothing to do, the user's email ID is unknown
+    console.log("Error: Something went wrong");
+    context.done(null, event);
+  }
 };
