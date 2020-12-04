@@ -11,11 +11,15 @@
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.5.0",
     "aws-amplify": "^3.3.11",
+    "formik": "^2.2.5",
+    "formik-material-ui": "^3.0.1",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "yup": "^0.32.0"
   },
   "scripts": {
     "start": "react-scripts start",
