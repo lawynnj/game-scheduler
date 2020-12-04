@@ -41,6 +41,12 @@ function App() {
         userId={user.attributes.sub}
       />
       <Route
+        path="/edit/:gameId"
+        render={(props) => (
+          <AddEditPokerSettings {...props} userId={user.attributes.sub} />
+        )}
+      />
+      <Route
         exact
         path="/game/:gameId"
         render={() => <PokerSettings user={user} />}
