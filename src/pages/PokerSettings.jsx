@@ -36,7 +36,7 @@ export default function PokerSettings({ user }) {
   if (!settings) {
     return <CircularProgress />;
   }
-  console.log(settings);
+
   const RenderPlayers = () => (
     <ul>
       {JSON.parse(settings.players).map((player) => (
@@ -65,7 +65,7 @@ export default function PokerSettings({ user }) {
     </>
   );
 
-  const RenderDates = () => (
+  const RenderTimes = () => (
     <>
       <FormControl component="fieldset">
         <FormLabel component="legend">Date</FormLabel>
@@ -75,8 +75,8 @@ export default function PokerSettings({ user }) {
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
         >
-          {JSON.parse(settings.dateOptions).map((date) => (
-            <FormControlLabel value={date} control={<Radio />} label={date} />
+          {JSON.parse(settings.timeOptions).map((time) => (
+            <FormControlLabel value={time} control={<Radio />} label={time} />
           ))}
         </RadioGroup>
       </FormControl>
@@ -89,11 +89,16 @@ export default function PokerSettings({ user }) {
       <Typography variant="subtitle1">
         <div>Title: {settings.title}</div>
         <div>Host: {user.username}</div>
-        <div>
+
+        <Box mt={2}>
+          {settings.timeOptions ? <RenderTimes /> : "No times set up"}
+        </Box>
+        <Box mt={2}>
+          {settings.dateOptions ? <RenderDates /> : "No dates set up"}
+        </Box>
+        <Box mt={2}>
           Players options: {settings.players ? <RenderPlayers /> : "No players"}
-        </div>
-        <div>{settings.timeOptions ? <RenderTimes /> : "No times set up"}</div>
-        <div>{settings.dateOptions ? <RenderDates /> : "No dates set up"}</div>
+        </Box>
       </Typography>
 
       <Button color="primary" variant="contained">
