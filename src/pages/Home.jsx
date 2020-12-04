@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
 import { Box, CircularProgress, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-export default function Home() {
-  const [user, setUser] = useState(null);
+export default function Home({ user }) {
   const [games, setGames] = useState([]);
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await Auth.currentUserInfo();
-        setUser(res);
-      } catch (error) {}
-    };
-    if (!user) {
-      fetchUser();
-    }
-  }, [user]);
-
   if (!user) {
     return <CircularProgress />;
   }
@@ -41,3 +28,7 @@ export default function Home() {
     </Box>
   );
 }
+
+Home.propTypes = {
+  user: PropTypes.object,
+};

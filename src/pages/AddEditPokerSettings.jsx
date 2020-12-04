@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-const AddEditPokerSettings = ({ match }) => {
+const AddEditPokerSettings = ({ match, userId }) => {
   const { id } = match.params;
   const isAddMode = !id;
   const title = isAddMode
@@ -42,7 +42,7 @@ const AddEditPokerSettings = ({ match }) => {
     players: [],
     dateOptions: [],
     timeOptions: [],
-    host: "",
+    host: userId,
   });
 
   const validationSchema = Yup.object().shape({
