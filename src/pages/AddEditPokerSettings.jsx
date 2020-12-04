@@ -9,6 +9,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 import { Prompt, useHistory } from "react-router-dom";
+import * as mutations from "../graphql/mutations";
+import { API, graphqlOperation } from "aws-amplify";
 
 const useStyles = makeStyles({
   input: {
@@ -36,13 +38,12 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const [initialValues, setInitialValues] = useState({
     title: "",
     type: "",
-    buyIn: "",
+    buyIn: 0,
     eventTime: "",
     cancelled: false,
     players: [],
     dateOptions: [],
     timeOptions: [],
-    host: userId,
   });
 
   const validationSchema = Yup.object().shape({
@@ -52,6 +53,30 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
   const handleSubmit = async (values) => {
     setShowPrompt(false);
+    // sanitize form
+    const sanitizedVals = {
+      ...values,
+    };
+    Object.keys(sanitizedVals).forEach((key) => {
+      if (
+        sanitizedVals[key] === "" ||
+        (Array.isArray(sanitizedVals[key]) && sanitizedVals[key].length === 0)
+      )
+        sanitizedVals[key] = null;
+    });
+    try {
+      await API.graphql(
+        graphqlOperation(mutations.createGame, {
+          input: {
+            ...sanitizedVals,
+            hostId: userId,
+          },
+        })
+      );
+      history.push("/");
+    } catch (error) {
+      console.log("Error", error);
+    }
   };
 
   return (
