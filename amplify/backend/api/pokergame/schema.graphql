@@ -50,3 +50,42 @@ type Game @model @key(name: "byUser", fields: ["hostId"]) {
   ipAddresses: [AWSIPAddress]
   status: GameStatus
 }
+
+input DateOptionsInput {
+  date: AWSDate!
+  votes: Int!
+}
+
+input TimeOptionsInput {
+  time: AWSTime!
+  votes: Int!
+}
+
+input BuyInOptionsInput {
+  amount: Int!
+  votes: Int!
+}
+input PlayerInput {
+  name: String!
+  email: String
+}
+
+input GameInput {
+  id: ID
+  hostId: ID
+  title: String
+  type: String
+  buyIn: Int
+  eventTime: AWSDateTime # selected date and time
+  players: [PlayerInput] # array of players
+  buyInOptions: [BuyInOptionsInput]
+  dateOptions: [DateOptionsInput] # array of dates
+  timeOptions: [TimeOptionsInput] # array of times
+  ipAddresses: [AWSIPAddress]
+  status: GameStatus
+}
+
+type Mutation {
+  updateGameStrict(game: GameInput): Game
+    @function(name: "updateGameStrict-${env}")
+}
