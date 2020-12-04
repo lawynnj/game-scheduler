@@ -12,15 +12,19 @@ type User @model {
 }
 
 type DateOptions {
-  date: String!
+  date: AWSDate!
   votes: Int!
 }
 
 type TimeOptions {
-  time: String!
+  time: AWSTime!
   votes: Int!
 }
 
+type BuyInOptions {
+  amount: Int!
+  votes: Int!
+}
 type Player {
   name: String!
   email: String
@@ -39,10 +43,10 @@ type Game @model @key(name: "byUser", fields: ["hostId"]) {
   type: String
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
-  createdOn: AWSDateTime
   players: [Player] # array of players
+  buyInOptions: [BuyInOptions]
   dateOptions: [DateOptions] # array of dates
   timeOptions: [TimeOptions] # array of times
-  ipAddresses: [String!]
-  status: GameStatus!
+  ipAddresses: [String]
+  status: GameStatus
 }

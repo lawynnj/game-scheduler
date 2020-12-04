@@ -21,7 +21,6 @@ export const createUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -54,7 +53,6 @@ export const updateUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -87,7 +85,6 @@ export const deleteUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -112,10 +109,13 @@ export const createGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date
@@ -144,10 +144,13 @@ export const updateGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date
@@ -176,10 +179,13 @@ export const deleteGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date
