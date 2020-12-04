@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Amplify, { Auth } from "aws-amplify";
-import config from "./aws-exports";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { Route } from "react-router-dom";
+import config from "./aws-exports";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Home from "./pages/Home";
 import AddEditPokerSettings from "./pages/AddEditPokerSettings";
+import PokerSettings from "./pages/PokerSettings";
 import Header from "./components/Header";
 
 Amplify.configure(config);
@@ -24,15 +26,26 @@ function App() {
     }
   }, [user]);
 
+  if (!user) {
+    return <CircularProgress />;
+  }
+
   return (
     <div className="App">
       <Header />
       <Route
-        path="/poker-game-settings"
-        component={AddEditPokerSettings}
-        userId={user}
+        path="/create"
+        render={(props) => (
+          <AddEditPokerSettings {...props} userId={user.attributes.sub} />
+        )}
+        userId={user.attributes.sub}
       />
-      <Route exact path="/" component={Home} user={user} />
+      <Route
+        exact
+        path="/game/:gameId"
+        render={() => <PokerSettings user={user} />}
+      />
+      <Route exact path="/" render={() => <Home user={user} />} />
     </div>
   );
 }
