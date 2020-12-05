@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Field, Form } from "formik";
+import { Formik, Field, Form, FieldArray } from "formik";
 import { TextField } from "formik-material-ui";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
@@ -9,26 +9,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 import { Prompt, useHistory } from "react-router-dom";
-import * as mutations from "../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
+import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
-
-import List from "@material-ui/core/List";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Grid from "@material-ui/core/Grid";
-import FolderIcon from "@material-ui/icons/Folder";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { CircularProgress } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles({
   input: {
@@ -63,7 +47,24 @@ const AddEditPokerSettings = ({ match, userId }) => {
     players: [],
     dateOptions: [],
     timeOptions: [],
+    buyInOptions: [],
   });
+  const [formInitialized, setFormInitialized] = useState(false);
+
+  useEffect(() => {
+    if (settings && !isAddMode && !formInitialized) {
+      const temp = {};
+      Object.keys(initialValues).forEach((key) => {
+        if (Array.isArray(settings[key])) {
+          temp[key] = [...settings[key]];
+        } else {
+          temp[key] = settings[key];
+        }
+      });
+      setInitialValues(temp);
+      setFormInitialized(true);
+    }
+  }, [isAddMode, settings, initialValues, formInitialized]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -107,14 +108,14 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const handleEdit = async (sanitizedVals) => {
     try {
       await API.graphql(
-        graphqlOperation(mutations.updateGame, {
+        graphqlOperation(mutations.updateGameStrict, {
           input: {
             ...sanitizedVals,
             hostId: userId,
+            id: settings.id,
           },
         })
       );
-      history.push("/");
     } catch (error) {
       console.log("Error", error);
     }
@@ -141,56 +142,25 @@ const AddEditPokerSettings = ({ match, userId }) => {
     }
   };
 
-  const updateSettings = async () => {
-    try {
-      const res = await API.graphql(
-        graphqlOperation(mutations.updateGameStrict, {
-          input: {
-            id: gameId,
-            type: "no-limit",
-            title: "dunnoe",
-            timeOptions: [
-              { time: "12:30:24-07:00", votes: 0 },
-              { time: "08:30:24-07:00", votes: 0 },
-            ],
-            dateOptions: [
-              { date: "2020-12-05", votes: 0 },
-              { date: "2020-12-06", votes: 0 },
-            ],
-            buyInOptions: [
-              { amount: 5, votes: 0 },
-              { amount: 10, votes: 0 },
-            ],
-          },
-        })
-      );
-      console.log(res);
-    } catch (error) {}
-  };
-
   if (!isAddMode && !settings) {
     return <CircularProgress />;
   }
 
   return (
     <Box p={2} display="flex" flexDirection="column">
-      <Button onClick={updateSettings} color="primary" variant="contained">
-        Update test
-      </Button>
       <Prompt when={showPrompt} message="Are you sure you want to leave?" />
 
       <Box display="flex" flexDirection="column">
         <Typography variant="h6" align="center">
           {title}
         </Typography>
-        {settings.title}
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
-          {({ isSubmitting }) => {
+          {({ values, isSubmitting }) => {
             return (
               <Form>
                 <FormControl>
@@ -220,112 +190,151 @@ const AddEditPokerSettings = ({ match, userId }) => {
                     }}
                   />
 
-                  <List
-                    dense={true}
-                    subheader={
-                      <ListSubheader component="div" id="nested-list-subheader">
-                        Buy-in amounts
-                      </ListSubheader>
-                    }
+                  <Typography
+                    variant="subtitle2"
+                    style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                   >
-                    {settings.buyInOptions.map((buyIn) => {
-                      return (
-                        <ListItem key={buyIn.amount}>
-                          <ListItemText primary={buyIn.amount} />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete">
-                              <DeleteIcon />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                  <Button variant="contained" color="primary" size="small">
-                    Add Buy-in
-                  </Button>
+                    Buy ins
+                  </Typography>
+                  <FieldArray
+                    name="buyInOptions"
+                    render={(arrayHelpers) => (
+                      <div>
+                        {values.buyInOptions.map((buyIn, index) => (
+                          <Box display="flex" key={index} alignItems="center">
+                            <Field
+                              name={`buyInOptions[${index}].amount`}
+                              component={TextField}
+                              margin="dense"
+                              className={classes.input}
+                              inputProps={{
+                                onFocus: () => setShowPrompt(true),
+                              }}
+                              variant="outlined"
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                            />
+                            <div>
+                              <button
+                                style={{ marginLeft: 5 }}
+                                type="button"
+                                onClick={() => arrayHelpers.remove(index)}
+                              >
+                                -
+                              </button>
+                            </div>
+                          </Box>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({ amount: 0, votes: 0 })
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  />
 
-                  {/* <Field
-                    component={TextField}
-                    label="Buy In"
-                    name="ticklerdate"
-                    type="number"
-                    margin="dense"
-                    className={classes.input}
-                    inputProps={{
-                      onFocus: () => setShowPrompt(true),
-                    }}
-                    variant="filled"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  /> */}
-
-                  <List
-                    dense={true}
-                    subheader={
-                      <ListSubheader component="div" id="nested-list-subheader">
-                        Dates
-                      </ListSubheader>
-                    }
+                  <Typography
+                    variant="subtitle2"
+                    style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                   >
-                    {settings.dateOptions.map((date) => {
-                      return (
-                        <ListItem key={date.date}>
-                          <ListItemText primary={date.date} />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete">
-                              <DeleteIcon />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                  <Button variant="contained" color="primary" size="small">
-                    Add Date
-                  </Button>
-                  {/* 
-                  <Field
-                    component={TextField}
-                    label="Dates"
+                    Dates
+                  </Typography>
+                  <FieldArray
                     name="dateOptions"
-                    type="date"
-                    margin="dense"
-                    className={classes.input}
-                    inputProps={{
-                      onFocus: () => setShowPrompt(true),
-                    }}
-                    variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  /> */}
+                    render={(arrayHelpers) => (
+                      <div>
+                        {values.dateOptions.map((date, index) => (
+                          <Box display="flex" key={index} alignItems="center">
+                            <Field
+                              name={`dateOptions[${index}].date`}
+                              component={TextField}
+                              type="date"
+                              margin="dense"
+                              className={classes.input}
+                              inputProps={{
+                                onFocus: () => setShowPrompt(true),
+                              }}
+                              variant="outlined"
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                            />
+                            <div>
+                              <button
+                                style={{ marginLeft: 5 }}
+                                type="button"
+                                onClick={() => arrayHelpers.remove(index)}
+                              >
+                                -
+                              </button>
+                            </div>
+                          </Box>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({ date: 0, votes: 0 })
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  />
 
-                  <List
-                    dense={true}
-                    subheader={
-                      <ListSubheader component="div" id="nested-list-subheader">
-                        Times
-                      </ListSubheader>
-                    }
+                  <Typography
+                    variant="subtitle2"
+                    style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                   >
-                    {settings.timeOptions.map((time) => {
-                      return (
-                        <ListItem key={time.time}>
-                          <ListItemText primary={time.time} />
-                          <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete">
-                              <DeleteIcon />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                  <Button variant="contained" color="primary" size="small">
-                    Add Time
-                  </Button>
+                    Times
+                  </Typography>
+                  <FieldArray
+                    name="timeOptions"
+                    render={(arrayHelpers) => (
+                      <div>
+                        {values.timeOptions.map((time, index) => (
+                          <Box display="flex" key={index} alignItems="center">
+                            <Field
+                              name={`timeOptions[${index}].time`}
+                              component={TextField}
+                              margin="dense"
+                              className={classes.input}
+                              inputProps={{
+                                onFocus: () => setShowPrompt(true),
+                              }}
+                              variant="outlined"
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                            />
+                            <div>
+                              <button
+                                style={{ marginLeft: 5 }}
+                                type="button"
+                                onClick={() => arrayHelpers.remove(index)}
+                              >
+                                -
+                              </button>
+                            </div>
+                          </Box>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({ time: 0, votes: 0 })
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  />
+
                   <Box
                     display="flex"
                     justifyContent="center"
