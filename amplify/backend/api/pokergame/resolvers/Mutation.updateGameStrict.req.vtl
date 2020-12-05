@@ -78,18 +78,39 @@ $util.qr($context.args.input.put("__typename", "User"))
     #set( $discard = $expRemove.add("#$entryKeyAttributeName") )
     $util.qr($expNames.put("#$entryKeyAttributeName", "$entry.key"))
   #else
+    #set( $value = $entry.value)
     #if( $entry.key  == "dateOptions" )
-      #set( $dates = [] )
+      #set( $seenDates = [] )
+      #set( $value = [])
       #foreach ( $option in $entry.value )
-        #if( !$dates.contains($option) )
-          $util.qr($dates.add($option))
+        #if( !$seenDates.contains($option.date) )
+          $util.qr($seenDates.add($option.date))
+          $util.qr($value.add($option))
         #end
       #end
-      #set( $entry.value = $dates )
+    #elseif( $entry.key  == "timeOptions" )
+      #set( $seenTimes = [] )
+      #set( $value = [])
+      #foreach ( $option in $entry.value )
+        #if( !$seenTimes.contains($option.time) )
+          $util.qr($seenTimes.add($option.time))
+          $util.qr($value.add($option))
+        #end
+      #end
+    #elseif( $entry.key  == "buyInOptions" )
+      #set( $seenAmounts = [] )
+      #set( $value = [])
+      #foreach ( $option in $entry.value )
+        #if( !$seenAmounts.contains($option.amount) )
+          $util.qr($seenAmounts.add($option.amount))
+          $util.qr($value.add($option))
+        #end
+      #end
     #end
+
     $util.qr($expSet.put("#$entryKeyAttributeName", ":$entryKeyAttributeName"))
     $util.qr($expNames.put("#$entryKeyAttributeName", "$entry.key"))
-    $util.qr($expValues.put(":$entryKeyAttributeName", $util.dynamodb.toDynamoDB($entry.value)))
+    $util.qr($expValues.put(":$entryKeyAttributeName", $util.dynamodb.toDynamoDB($value)))
   #end
 #end
 #set( $expression = "" )
