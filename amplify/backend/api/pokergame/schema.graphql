@@ -25,6 +25,7 @@ type BuyInOptions {
   amount: Int!
   votes: Int!
 }
+
 type Player {
   name: String!
   email: String
@@ -32,8 +33,9 @@ type Player {
 
 enum GameStatus {
   ACTIVE
-  PENDING
   CANCELLED
+  COMPLETE
+  PENDING
 }
 
 type Game @model @key(name: "byUser", fields: ["hostId"]) {
@@ -71,7 +73,7 @@ input PlayerInput {
 }
 
 input GameInput {
-  id: ID
+  id: ID!
   hostId: ID
   title: String
   type: String
@@ -85,6 +87,22 @@ input GameInput {
   status: GameStatus
 }
 
+input FinalizeGameInput {
+  id: ID!
+  hostId: ID!
+  title: String!
+  type: String!
+  buyIn: Int
+  eventTime: AWSDateTime # selected date and time
+  players: [PlayerInput]! # array of players
+  buyInOptions: [BuyInOptionsInput]!
+  dateOptions: [DateOptionsInput]! # array of dates
+  timeOptions: [TimeOptionsInput]! # array of times
+  ipAddresses: [AWSIPAddress]
+  status: GameStatus!
+}
+
 type Mutation {
   updateGameStrict(input: GameInput, nextToken: String): Game
+  finalizeSettings(input: FinalizeGameInput!, nextToken: String): Game
 }
