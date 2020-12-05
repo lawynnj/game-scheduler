@@ -78,6 +78,15 @@ $util.qr($context.args.input.put("__typename", "User"))
     #set( $discard = $expRemove.add("#$entryKeyAttributeName") )
     $util.qr($expNames.put("#$entryKeyAttributeName", "$entry.key"))
   #else
+    #if( $entry.key  == "dateOptions" )
+      #set( $dates = [] )
+      #foreach ( $option in $entry.value )
+        #if( !$dates.contains($option) )
+          $util.qr($dates.add($option))
+        #end
+      #end
+      #set( $entry.value = $dates )
+    #end
     $util.qr($expSet.put("#$entryKeyAttributeName", ":$entryKeyAttributeName"))
     $util.qr($expNames.put("#$entryKeyAttributeName", "$entry.key"))
     $util.qr($expValues.put(":$entryKeyAttributeName", $util.dynamodb.toDynamoDB($entry.value)))

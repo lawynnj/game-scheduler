@@ -147,7 +147,8 @@ const AddEditPokerSettings = ({ match, userId }) => {
         graphqlOperation(mutations.updateGameStrict, {
           input: {
             id: gameId,
-            title: "im gonna cry off work :)",
+            type: "no-limit",
+            title: "dunnoe",
             timeOptions: [
               { time: "12:30:24-07:00", votes: 0 },
               { time: "08:30:24-07:00", votes: 0 },
