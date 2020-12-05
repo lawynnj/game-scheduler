@@ -2,8 +2,8 @@
 // this is an auto generated file. This will be overwritten
 
 export const updateGameStrict = /* GraphQL */ `
-  mutation UpdateGameStrict($input: GameInput) {
-    updateGameStrict(input: $input) {
+  mutation UpdateGameStrict($input: GameInput, $nextToken: String) {
+    updateGameStrict(input: $input, nextToken: $nextToken) {
       id
       hostId
       title
