@@ -86,6 +86,5 @@ input GameInput {
 }
 
 type Mutation {
-  updateGameStrict(game: GameInput): Game
-    @function(name: "updateGameStrict-${env}")
+  updateGameStrict(input: GameInput, nextToken: String): Game
 }

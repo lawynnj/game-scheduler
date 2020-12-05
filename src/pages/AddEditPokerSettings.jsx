@@ -144,9 +144,10 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const updateSettings = async () => {
     try {
       const res = await API.graphql(
-        graphqlOperation(mutations.updateGame, {
-          input: {
+        graphqlOperation(mutations.updateGameStrict, {
+          game: {
             id: gameId,
+            title: "fuck off work :)",
             timeOptions: [
               { time: "12:30:24-07:00", votes: 0 },
               { time: "08:30:24-07:00", votes: 0 },
@@ -181,6 +182,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
         <Typography variant="h6" align="center">
           {title}
         </Typography>
+        {settings.title}
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}

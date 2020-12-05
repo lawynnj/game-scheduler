@@ -1,6 +1,38 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const updateGameStrict = /* GraphQL */ `
+  mutation UpdateGameStrict($input: GameInput) {
+    updateGameStrict(input: $input) {
+      id
+      hostId
+      title
+      type
+      buyIn
+      eventTime
+      players {
+        name
+        email
+      }
+      buyInOptions {
+        amount
+        votes
+      }
+      dateOptions {
+        date
+        votes
+      }
+      timeOptions {
+        time
+        votes
+      }
+      ipAddresses
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
     $input: CreateUserInput!
