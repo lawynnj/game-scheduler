@@ -18,7 +18,6 @@ export const getUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -64,10 +63,13 @@ export const getGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date
@@ -98,10 +100,13 @@ export const listGames = /* GraphQL */ `
         type
         buyIn
         eventTime
-        createdOn
         players {
           name
           email
+        }
+        buyInOptions {
+          amount
+          votes
         }
         dateOptions {
           date

@@ -1,6 +1,38 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const updateGameStrict = /* GraphQL */ `
+  mutation UpdateGameStrict($input: GameInput, $nextToken: String) {
+    updateGameStrict(input: $input, nextToken: $nextToken) {
+      id
+      hostId
+      title
+      type
+      buyIn
+      eventTime
+      players {
+        name
+        email
+      }
+      buyInOptions {
+        amount
+        votes
+      }
+      dateOptions {
+        date
+        votes
+      }
+      timeOptions {
+        time
+        votes
+      }
+      ipAddresses
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
     $input: CreateUserInput!
@@ -21,7 +53,6 @@ export const createUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -54,7 +85,6 @@ export const updateUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -87,7 +117,6 @@ export const deleteUser = /* GraphQL */ `
           type
           buyIn
           eventTime
-          createdOn
           ipAddresses
           status
           createdAt
@@ -112,10 +141,13 @@ export const createGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date
@@ -144,10 +176,13 @@ export const updateGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date
@@ -176,10 +211,13 @@ export const deleteGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      createdOn
       players {
         name
         email
+      }
+      buyInOptions {
+        amount
+        votes
       }
       dateOptions {
         date

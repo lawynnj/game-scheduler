@@ -58,7 +58,11 @@ export default function PokerSettings({ user }) {
           onChange={(e) => setEventDate(e.target.value)}
         >
           {JSON.parse(settings.dateOptions).map((date) => (
-            <FormControlLabel value={date} control={<Radio />} label={date} />
+            <FormControlLabel
+              value={date.date}
+              control={<Radio />}
+              label={date.date}
+            />
           ))}
         </RadioGroup>
       </FormControl>
@@ -76,7 +80,11 @@ export default function PokerSettings({ user }) {
           onChange={(e) => setEventDate(e.target.value)}
         >
           {JSON.parse(settings.timeOptions).map((time) => (
-            <FormControlLabel value={time} control={<Radio />} label={time} />
+            <FormControlLabel
+              value={time.time}
+              control={<Radio />}
+              label={time.time}
+            />
           ))}
         </RadioGroup>
       </FormControl>
