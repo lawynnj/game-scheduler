@@ -18,5 +18,5 @@ exports.handler = async function (event) {
     Source: process.env.AWS_SES_POKER_APP_EMAIL,
   };
 
-  return ses.sendEmaail(params).promise();
+  return ses.sendEmail(params).promise();
 };
