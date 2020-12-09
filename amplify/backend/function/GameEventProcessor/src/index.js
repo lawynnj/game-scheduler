@@ -1,27 +1,33 @@
+/* Amplify Params - DO NOT EDIT
+	API_POKERGAME_GRAPHQLAPIIDOUTPUT
+	API_POKERGAME_USERTABLE_ARN
+	API_POKERGAME_USERTABLE_NAME
+	ENV
+	REGION
+Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
-
-const userTable = process.env.AWS_DDB_USER_TABLE;
+const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
+const USER_TABLE = process.env.AWS_DDB_USER_TABLE;
+const SUBJECT = process.env.SNS_SUBJECT || "Finalized game settings";
+const EMAIL_SUBJECT = process.env.EMAIL_SUBJECT || "Poker Game Settings";
+const EMAIL_BODY = process.env.EMAIL_BODY || "Your game has been created";
 
 AWS.config.update({ region: process.env.AWS_REGION });
 const docClient = new AWS.DynamoDB.DocumentClient();
-const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
 
 async function getUser(userId) {
   try {
     const params = {
-      TableName: userTable,
+      TableName: USER_TABLE,
       Key: {
         id: userId,
       },
     };
-    console.log("Fetchign user...");
-    console.log(params);
     const user = await docClient.get(params).promise();
-    console.log("User", user);
     return user;
-  } catch (err) {
-    console.log("Error", err);
-    return err;
+  } catch (error) {
+    console.log("Error", error);
+    return error;
   }
 }
 
@@ -42,18 +48,18 @@ exports.handler = async (event, context) => {
 
   for (const game of modifiedGames) {
     const { oldImage, newImage } = game;
+
     // Publish SNS message when game becomes "active"
     if (newImage.status === "ACTIVE" && oldImage.status !== newImage.status) {
       const user = await getUser(newImage.hostId);
-      console.log("Returned user", user);
       const params = {
         Message: JSON.stringify({
-          subject: "Poker Game Settings",
-          body: "Your game has been created",
+          subject: EMAIL_SUBJECT,
+          body: EMAIL_BODY,
           recipients: [{ email: user.email, name: user.username }],
         }),
         TopicArn: ARN,
-        Subject: "Finalized game settings",
+        Subject: SUBJECT,
       };
       snsRequests.push(sns.publish(params).promise());
     }
