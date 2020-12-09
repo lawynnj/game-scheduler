@@ -11,7 +11,7 @@ exports.handler = async function (event) {
     const recipients = message.recipients;
     const subject = message.subject ? message.subject : "No Subject";
     const body = message.body ? message.body : "";
-    const emails = recipients.map((person) => person.email);
+    const emails = recipients.map((recipient) => recipient.email);
 
     const params = {
       Destination: {

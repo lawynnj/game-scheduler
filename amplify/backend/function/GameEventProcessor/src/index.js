@@ -56,7 +56,7 @@ exports.handler = async (event, context) => {
         Message: JSON.stringify({
           subject: EMAIL_SUBJECT,
           body: EMAIL_BODY,
-          recipients: [{ email: user.email, name: user.username }],
+          recipients: [{ email: user.Item.email, name: user.Item.username }],
         }),
         TopicArn: ARN,
         Subject: SUBJECT,
