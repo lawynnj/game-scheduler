@@ -11,8 +11,6 @@ const LAMBDA_ARN = process.env.LAMBDA_ARN_POKER_GAME;
 
 async function initCloudWatchEvents(modifiedGames) {
   const cwe = new AWS.CloudWatchEvents();
-
-  // const cwRequests = [];
   for (const game of modifiedGames) {
     const { oldImage, newImage } = game;
 
@@ -21,42 +19,44 @@ async function initCloudWatchEvents(modifiedGames) {
       newImage.status === "COMPLETED" &&
       oldImage.status !== newImage.status
     ) {
-    }
+      try {
+        console.log("Creating rule...");
 
-    try {
-      console.log("Creating rule...");
+        if (!newImage.eventTime) {
+          throw new Error("Invalid value eventTime:", newImage.eventTime);
+        }
 
-      const fullDate = new Date(newImage.eventTime);
-      const min = fullDate.getMinutes();
-      const hour = fullDate.getHours();
-      const date = fullDate.getDate();
-      const month = fullDate.getMonth() + 1;
-      const year = fullDate.getFullYear();
-      const schedule = `cron(${min} ${hour} ${date} ${month} ? ${year})`;
-      const ruleParams = {
-        Name: "poker-game-" + newImage.id,
-        Description: "Email notification for game:" + newImage.id,
-        RoleArn: ARN,
-        ScheduleExpression: schedule,
-        State: "ENABLED",
-      };
+        const fullDate = new Date(newImage.eventTime);
+        const min = fullDate.getMinutes();
+        const hour = fullDate.getHours();
+        const date = fullDate.getDate();
+        const month = fullDate.getMonth() + 1;
+        const year = fullDate.getFullYear();
+        const schedule = `cron(${min} ${hour} ${date} ${month} ? ${year})`;
+        const ruleParams = {
+          Name: "poker-game-" + newImage.id,
+          Description: "Email notification for game:" + newImage.id,
+          RoleArn: ARN,
+          ScheduleExpression: schedule,
+          State: "ENABLED",
+        };
+        await cwe.putRule(ruleParams).promise();
 
-      await cwe.putRule(ruleParams).promise();
-
-      console.log("Setting targets...");
-      const targetParams = {
-        Rule: "poker-game-" + newImage.id,
-        Targets: [
-          {
-            Arn: LAMBDA_ARN,
-            Id: "1",
-            Input: JSON.stringify({ gameId: newImage.id }),
-          },
-        ],
-      };
-      await cwe.putTargets(targetParams).promise();
-    } catch (error) {
-      console.log("Error", error);
+        console.log("Setting targets...");
+        const targetParams = {
+          Rule: "poker-game-" + newImage.id,
+          Targets: [
+            {
+              Arn: LAMBDA_ARN,
+              Id: "1",
+              Input: JSON.stringify({ gameId: newImage.id }),
+            },
+          ],
+        };
+        await cwe.putTargets(targetParams).promise();
+      } catch (error) {
+        console.log("Error", error);
+      }
     }
   }
 }
@@ -65,7 +65,7 @@ exports.handler = async (event, context) => {
   console.log("EVENT\n" + JSON.stringify(event, null, 2));
 
   // map DDB objects to JSON
-  const modifiedGames = event.Records.filter(
+  const modifiedRecords = event.Records.filter(
     (record) => record.eventName === "MODIFY"
   ).map((record) => {
     return {
@@ -74,5 +74,5 @@ exports.handler = async (event, context) => {
     };
   });
 
-  await initCloudWatchEvents(modifiedGames);
+  await initCloudWatchEvents(modifiedRecords);
 };
