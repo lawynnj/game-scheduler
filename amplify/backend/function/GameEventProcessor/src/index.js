@@ -36,7 +36,9 @@ exports.handler = async (event, context) => {
   console.log("EVENT\n" + JSON.stringify(event, null, 2));
 
   // map DDB objects to JSON
-  const modifiedGames = event.Records.map((record) => {
+  const modifiedRecords = event.Records.filter(
+    (record) => record.eventName === "MODIFIED"
+  ).map((record) => {
     return {
       newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
       oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
@@ -46,7 +48,7 @@ exports.handler = async (event, context) => {
   const snsRequests = [];
   const sns = new AWS.SNS();
 
-  for (const game of modifiedGames) {
+  for (const game of modifiedRecords) {
     const { oldImage, newImage } = game;
 
     // Publish SNS message when game becomes "active"
