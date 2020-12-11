@@ -10,7 +10,6 @@ const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
 const USER_TABLE = process.env.AWS_DDB_USER_TABLE;
 const SUBJECT = process.env.SNS_SUBJECT || "Finalized game settings";
 const EMAIL_SUBJECT = process.env.EMAIL_SUBJECT || "Poker Game Settings";
-const EMAIL_BODY = process.env.EMAIL_BODY || "Your game has been created";
 
 AWS.config.update({ region: process.env.AWS_REGION });
 const docClient = new AWS.DynamoDB.DocumentClient();
@@ -26,7 +25,7 @@ function initSnsEvents(modifiedRecords) {
         const params = {
           Message: JSON.stringify({
             subject: EMAIL_SUBJECT,
-            body: EMAIL_BODY,
+            body: `Your poker game:${newImage.title} is active!`,
             recipients: [{ email: user.Item.email, name: user.Item.username }],
           }),
           TopicArn: ARN,
@@ -62,7 +61,7 @@ exports.handler = async (event) => {
 
   // map DDB objects to JSON
   const modifiedRecords = event.Records.filter(
-    (record) => record.eventName === "MODIFIED"
+    (record) => record.eventName === "MODIFY"
   ).map((record) => {
     return {
       newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
@@ -72,7 +71,7 @@ exports.handler = async (event) => {
 
   try {
     console.log("Request: Publishing messages...");
-    await Promise.all(initSnsEvents(modifiedRecords););
+    await Promise.all(initSnsEvents(modifiedRecords));
     console.log("Success: Messages published");
   } catch (error) {
     console.log("Error: Messages not published", error);
