@@ -25,7 +25,7 @@ async function initCloudWatchEvents(modifiedGames) {
         if (!newImage.eventTime) {
           throw new Error("Invalid value eventTime:", newImage.eventTime);
         }
-
+        // configure schedule to run once
         const fullDate = new Date(newImage.eventTime);
         const min = fullDate.getMinutes();
         const hour = fullDate.getHours();
@@ -40,16 +40,17 @@ async function initCloudWatchEvents(modifiedGames) {
           ScheduleExpression: schedule,
           State: "ENABLED",
         };
-        await cwe.putRule(ruleParams).promise();
+        const { RuleArn } = await cwe.putRule(ruleParams).promise();
 
+        // Set lambda fn as rule target
         console.log("Setting targets...");
         const targetParams = {
           Rule: "poker-game-" + newImage.id,
           Targets: [
             {
               Arn: LAMBDA_ARN,
-              Id: "1",
-              Input: JSON.stringify({ gameId: newImage.id }),
+              Id: "Send-emails",
+              Input: JSON.stringify({ gameId: newImage.id, ruleArn: RuleArn }),
             },
           ],
         };
@@ -60,7 +61,7 @@ async function initCloudWatchEvents(modifiedGames) {
     }
   }
 }
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
   //eslint-disable-line
   console.log("EVENT\n" + JSON.stringify(event, null, 2));
 
