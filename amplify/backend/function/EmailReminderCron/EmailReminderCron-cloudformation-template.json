@@ -169,19 +169,7 @@
               "Sid": "IAMPassRoleForCloudWatchEvents",
               "Effect": "Allow",
               "Action": "iam:PassRole",
-              "Resource": {
-                "Fn::Sub": [
-                  "arn:aws:sts::${account}:assumed-role/gameschedulerapiLambdaRole0411b8cc-dev/${lambda}",
-                  {
-                    "account": {
-                      "Ref": "AWS::AccountId"
-                    },
-                    "lambda": {
-                      "Ref": "LambdaFunction"
-                    }
-                  }
-                ]
-              }
+              "Resource": "*"
             }
           ]
         }
