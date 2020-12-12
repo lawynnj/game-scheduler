@@ -17,9 +17,6 @@
     "apipokergameGraphQLAPIEndpointOutput": {
       "Type": "String",
       "Default": "apipokergameGraphQLAPIEndpointOutput"
-    },
-    "SnsGameTopic": {
-      "Type": "String"
     }
   },
   "Conditions": {
