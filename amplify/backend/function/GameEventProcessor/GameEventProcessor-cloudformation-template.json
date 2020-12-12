@@ -106,7 +106,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/GameEventProcessor-43417656704756786158-build.zip"
+          "S3Key": "amplify-builds/GameEventProcessor-45505968573368396d32-build.zip"
         }
       }
     },
@@ -183,6 +183,25 @@
                     },
                     "lambda": {
                       "Ref": "LambdaFunction"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sns:Publish"
+              ],
+              "Resource": {
+                "Fn::Sub": [
+                  "arn:aws:sns:${region}:${account}:pokergame-game",
+                  {
+                    "region": {
+                      "Ref": "AWS::Region"
+                    },
+                    "account": {
+                      "Ref": "AWS::AccountId"
                     }
                   }
                 ]
