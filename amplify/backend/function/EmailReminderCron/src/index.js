@@ -32,14 +32,15 @@ function initCloudWatchEvents(modifiedGames) {
           const month = fullDate.getMonth() + 1;
           const year = fullDate.getFullYear();
           const schedule = `cron(${min} ${hour} ${date} ${month} ? ${year})`;
+          const ruleName = "poker-game-" + newImage.id;
           const ruleParams = {
-            Name: "poker-game-" + newImage.id,
+            Name: ruleName,
             Description: "Email notification for game:" + newImage.id,
             RoleArn: ARN,
             ScheduleExpression: schedule,
             State: "ENABLED",
           };
-          const { RuleArn } = await cwe.putRule(ruleParams).promise();
+          await cwe.putRule(ruleParams).promise();
 
           // Set lambda fn as the rule target
           console.log("Setting targets...");
@@ -51,7 +52,8 @@ function initCloudWatchEvents(modifiedGames) {
                 Id: "Send-emails",
                 Input: JSON.stringify({
                   gameId: newImage.id,
-                  ruleArn: RuleArn,
+                  ruleName,
+                  targetId: "Send-emails",
                 }),
               },
             ],
