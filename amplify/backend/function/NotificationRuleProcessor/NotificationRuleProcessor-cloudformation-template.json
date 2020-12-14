@@ -13,10 +13,6 @@
     "apipokergameGraphQLAPIIdOutput": {
       "Type": "String",
       "Default": "apipokergameGraphQLAPIIdOutput"
-    },
-    "apipokergameGraphQLAPIEndpointOutput": {
-      "Type": "String",
-      "Default": "apipokergameGraphQLAPIEndpointOutput"
     }
   },
   "Conditions": {
@@ -41,12 +37,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "EmailReminderCron",
+            "NotificationRuleProcessor",
             {
               "Fn::Join": [
                 "",
                 [
-                  "EmailReminderCron",
+                  "NotificationRuleProcessor",
                   "-",
                   {
                     "Ref": "env"
@@ -63,6 +59,35 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "API_POKERGAME_GAMETABLE_NAME": {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:Name"
+              }
+            },
+            "API_POKERGAME_GAMETABLE_ARN": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:dynamodb:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":table/",
+                  {
+                    "Fn::ImportValue": {
+                      "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:Name"
+                    }
+                  }
+                ]
+              ]
+            },
+            "API_POKERGAME_GRAPHQLAPIIDOUTPUT": {
+              "Ref": "apipokergameGraphQLAPIIdOutput"
             }
           }
         },
@@ -77,7 +102,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/EmailReminderCron-546136676a6b74515354-build.zip"
+          "S3Key": "amplify-builds/NotificationRuleProcessor-6144442b59447a725845-build.zip"
         }
       }
     },
@@ -87,12 +112,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "gameschedulerapiLambdaRole0411b8cc",
+            "gameschedulerapiLambdaRolef4e2f909",
             {
               "Fn::Join": [
                 "",
                 [
-                  "gameschedulerapiLambdaRole0411b8cc",
+                  "gameschedulerapiLambdaRolef4e2f909",
                   "-",
                   {
                     "Ref": "env"
@@ -160,28 +185,41 @@
               }
             },
             {
+              "Effect": "Allow",
+              "Action": [
+                "sns:Publish"
+              ],
+              "Resource": {
+                "Fn::Sub": [
+                  "arn:aws:sns:${region}:${account}:pokergame-game",
+                  {
+                    "region": {
+                      "Ref": "AWS::Region"
+                    },
+                    "account": {
+                      "Ref": "AWS::AccountId"
+                    }
+                  }
+                ]
+              }
+            },
+            {
               "Sid": "CloudWatchEventsFullAccess",
               "Effect": "Allow",
               "Action": "events:*",
-              "Resource": "*"
-            },
-            {
-              "Sid": "IAMPassRoleForCloudWatchEvents",
-              "Effect": "Allow",
-              "Action": "iam:PassRole",
               "Resource": "*"
             }
           ]
         }
       }
     },
-    "LambdaTriggerPolicyGame": {
+    "AmplifyResourcesPolicy": {
       "DependsOn": [
         "LambdaExecutionRole"
       ],
       "Type": "AWS::IAM::Policy",
       "Properties": {
-        "PolicyName": "amplify-lambda-execution-policy-Game",
+        "PolicyName": "amplify-lambda-execution-policy",
         "Roles": [
           {
             "Ref": "LambdaExecutionRole"
@@ -193,42 +231,97 @@
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:DescribeStream",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:ListStreams"
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query"
               ],
-              "Resource": {
-                "Fn::ImportValue": {
-                  "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:StreamArn"
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:Name"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:Name"
+                        }
+                      },
+                      "/index/*"
+                    ]
+                  ]
                 }
-              }
+              ]
             }
           ]
         }
       }
     },
-    "LambdaEventSourceMappingGame": {
-      "Type": "AWS::Lambda::EventSourceMapping",
-      "DependsOn": [
-        "LambdaTriggerPolicyGame",
-        "LambdaExecutionRole"
-      ],
+    "EventsResourceBasedPolicy": {
+      "Type": "AWS::Lambda::Permission",
       "Properties": {
-        "BatchSize": 100,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::ImportValue": {
-            "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:StreamArn"
-          }
-        },
+        "Principal": "events.amazonaws.com",
         "FunctionName": {
-          "Fn::GetAtt": [
-            "LambdaFunction",
-            "Arn"
+          "Fn::Sub": [
+            "arn:aws:lambda:${region}:${account}:function:${lambda}",
+            {
+              "region": {
+                "Ref": "AWS::Region"
+              },
+              "account": {
+                "Ref": "AWS::AccountId"
+              },
+              "lambda": {
+                "Ref": "LambdaFunction"
+              }
+            }
           ]
         },
-        "StartingPosition": "LATEST"
+        "Action": "lambda:InvokeFunction",
+        "SourceArn": {
+          "Fn::Sub": [
+            "arn:aws:events:${region}:${account}:rule/poker-game-*",
+            {
+              "region": {
+                "Ref": "AWS::Region"
+              },
+              "account": {
+                "Ref": "AWS::AccountId"
+              }
+            }
+          ]
+        }
       }
     }
   },
