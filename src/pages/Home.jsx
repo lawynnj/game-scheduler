@@ -7,6 +7,42 @@ import PropTypes from "prop-types";
 import * as queries from "../graphql/queries";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
+import { Divider } from "@material-ui/core";
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const RenderItemLink = ({ date, to, title }) => {
+  const history = useHistory();
+
+  return (
+    <ListItem button onClick={() => history.push(to)}>
+      <ListItemText
+        primary={title}
+        secondary={`Created at ${
+          monthNames[date.getMonth()]
+        } ${date.getDate()}, ${date.getFullYear()}`}
+      />
+    </ListItem>
+  );
+};
 export default function Home({ user }) {
   const [games, setGames] = useState(null);
   const history = useHistory();
@@ -30,35 +66,56 @@ export default function Home({ user }) {
 
   const Games = () => (
     <>
-      <Box p={2} component={Paper}>
-        <p>Pending Games:</p>
-        <ul>
-          {games.items
-            .filter((game) => game.status === "PENDING")
-            .map((game) => (
-              <li key={game.id}>
-                <Link to={`/edit/${game.id}`}>
-                  {game.title} | created on: {game.createdAt}
-                </Link>
-              </li>
-            ))}
-        </ul>
-      </Box>
-
-      <Box p={2} component={Paper} mt={2}>
-        <p>Active Games:</p>
-        <ul>
-          {games.items
-            .filter((game) => game.status === "ACTIVE")
-            .map((game) => (
-              <li key={game.id}>
-                <Link to={`/game/${game.id}`}>
-                  {game.title} | created on: {game.createdAt}
-                </Link>
-              </li>
-            ))}
-        </ul>
-      </Box>
+      <p>Draft Games:</p>
+      <List>
+        {games.items
+          .filter((game) => game.status === "PENDING")
+          .map((game) => {
+            const date = new Date(game.createdAt);
+            return (
+              <RenderItemLink
+                key={game.id}
+                date={date}
+                title={game.title}
+                to={`/edit/${game.id}`}
+              />
+            );
+          })}
+      </List>
+      <Divider style={{ height: 1, marginTop: 10 }} />
+      <p>Active Games:</p>
+      <List>
+        {games.items
+          .filter((game) => game.status === "ACTIVE")
+          .map((game) => {
+            const date = new Date(game.createdAt);
+            return (
+              <RenderItemLink
+                key={game.id}
+                date={date}
+                title={game.title}
+                to={`/edit/${game.id}`}
+              />
+            );
+          })}
+      </List>
+      <Divider style={{ height: 1, marginTop: 10 }} />
+      <p>Completed Games:</p>
+      <List>
+        {games.items
+          .filter((game) => game.status === "COMPLETED")
+          .map((game) => {
+            const date = new Date(game.eventDate);
+            return (
+              <RenderItemLink
+                key={game.id}
+                date={date}
+                title={game.title}
+                to={`/game/${game.id}`}
+              />
+            );
+          })}
+      </List>
     </>
   );
 

@@ -1,59 +1,20 @@
-import React, { useEffect, useState } from "react";
-import Amplify, { Auth } from "aws-amplify";
-import { withAuthenticator } from "@aws-amplify/ui-react";
-import { Route } from "react-router-dom";
+import React from "react";
+import Amplify from "aws-amplify";
+import { Route, Switch } from "react-router-dom";
 import config from "./aws-exports";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Home from "./pages/Home";
-import AddEditPokerSettings from "./pages/AddEditPokerSettings";
-import PokerSettings from "./pages/PokerSettings";
-import Header from "./components/Header";
-
+import ProtectedPages from "./pages/ProtectedPages";
+import SharedSettings from "./pages/SharedSettings";
 Amplify.configure(config);
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await Auth.currentUserInfo();
-        setUser(res);
-      } catch (error) {}
-    };
-    if (!user) {
-      fetchUser();
-    }
-  }, [user]);
-
-  if (!user) {
-    return <CircularProgress />;
-  }
-
   return (
     <div className="App">
-      <Header />
-      <Route
-        path="/create"
-        render={(props) => (
-          <AddEditPokerSettings {...props} userId={user.attributes.sub} />
-        )}
-        userId={user.attributes.sub}
-      />
-      <Route
-        path="/edit/:gameId"
-        render={(props) => (
-          <AddEditPokerSettings {...props} userId={user.attributes.sub} />
-        )}
-      />
-      <Route
-        exact
-        path="/game/:gameId"
-        render={() => <PokerSettings user={user} />}
-      />
-      <Route exact path="/" render={() => <Home user={user} />} />
+      <Switch>
+        <Route exact path="/shared/:gameId" render={() => <SharedSettings />} />
+        <Route exact component={ProtectedPages} />
+      </Switch>
     </div>
   );
 }
 
-export default withAuthenticator(App);
+export default App;

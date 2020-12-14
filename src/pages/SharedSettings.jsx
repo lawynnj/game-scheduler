@@ -11,11 +11,29 @@ import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
 import { Button, CircularProgress, Typography } from "@material-ui/core";
 
-function PokerSettings({ user }) {
+function PokerSettings() {
   const { gameId } = useParams();
   const [settings, setSettings] = useState(null);
   const [eventDate, setEventDate] = useState(null);
   const [eventTime, setEventTime] = useState(null);
+
+  // check local storage to see if the user has voted
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await API.graphql(
+          graphqlOperation(queries.getGame, {
+            id: gameId,
+          })
+        );
+        setSettings(res.data.getGame);
+      } catch (error) {
+        console.log(("error", error));
+      }
+    };
+    if (!settings) fetchSettings();
+  }, [gameId, settings]);
+
   // check local storage to see if the user has voted
   useEffect(() => {
     const fetchSettings = async () => {
@@ -90,14 +108,11 @@ function PokerSettings({ user }) {
       </FormControl>
     </>
   );
-  // times = "[\"11:30:24-07:00\",\"10:30:24-07:00\",\"09:30:24-07:00\"]"
   return (
     <Box p={2}>
       <Typography variant="h6">Settings</Typography>
       <Typography variant="subtitle1">
         <div>Title: {settings.title}</div>
-        <div>Host: {user.username}</div>
-
         <Box mt={2}>
           {settings.timeOptions ? <RenderTimes /> : "No times set up"}
         </Box>
