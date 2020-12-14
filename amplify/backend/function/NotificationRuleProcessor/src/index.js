@@ -20,7 +20,6 @@ async function getGame(gameId) {
         id: gameId,
       },
     };
-    console.log("Params", params);
     const game = await docClient.get(params).promise();
     return game;
   } catch (error) {
@@ -49,30 +48,27 @@ async function initSnsEvent({ gameId, ruleName, targetId }) {
     };
     await sns.publish(params).promise();
 
-    // get targets
     // remove targets
     console.log("Removing targets");
-    const res = await cwe
+    await cwe
       .removeTargets({
         Rule: ruleName,
         Ids: [targetId],
       })
       .promise();
 
-    console.log("Deleting rule", res);
     // delete rule
-    const res2 = await cwe
+    console.log("Deleting rule");
+    await cwe
       .deleteRule({
         Name: ruleName,
       })
       .promise();
-    console.log(res2);
   } catch (error) {
     console.log("Error", error);
   }
 }
 
 exports.handler = async (event) => {
-  // TODO implement
   await initSnsEvent(event);
 };
