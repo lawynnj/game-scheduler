@@ -17,6 +17,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import Backdrop from "@material-ui/core/Backdrop";
+import { TimePicker } from "formik-material-ui-pickers";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+import get from "lodash/get";
 
 const useStyles = makeStyles({
   input: {
@@ -56,13 +60,27 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const buttonText = isAddMode ? "Add" : "Save";
 
   useEffect(() => {
+    const arrayProps = [
+      "dateOptions",
+      "timeOptions",
+      "buyInOptions",
+      "players",
+    ];
+    const stringProps = ["type", "status", "title", "eventTime"];
     if (settings && !isAddMode && !formInitialized) {
       const temp = {};
       Object.keys(initialValues).forEach((key) => {
         if (Array.isArray(settings[key])) {
           temp[key] = [...settings[key]];
         } else {
-          temp[key] = settings[key];
+          // fix formik error when values are null
+          if (arrayProps.includes(key)) {
+            temp[key] = [];
+          } else if (!settings[key] && stringProps.includes(key)) {
+            temp[key] = "";
+          } else {
+            temp[key] = settings[key];
+          }
         }
       });
       setInitialValues(temp);
@@ -98,7 +116,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
       })
     ),
   });
-
+  console.log(initialValues);
   const handleAdd = async (sanitizedVals) => {
     try {
       await API.graphql(
@@ -156,22 +174,58 @@ const AddEditPokerSettings = ({ match, userId }) => {
     return <CircularProgress />;
   }
 
-  const RenderArrayField = ({ isSubmitting, index, arrayHelpers, name }) => {
+  const RenderArrayField = ({
+    isSubmitting,
+    index,
+    arrayHelpers,
+    name,
+    type = "text",
+    values,
+    setFieldValue,
+  }) => {
+    const value = get(values, name);
+    console.log(value);
+    let d = new Date();
+    let ds = d.toLocaleDateString();
     return (
       <Box display="flex" key={index} alignItems="center">
-        <Field
-          name={name}
-          component={TextField}
-          margin="dense"
-          className={classes.input}
-          inputProps={{
-            onFocus: () => setShowPrompt(true),
-          }}
-          variant="outlined"
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
+        {type === "time" ? (
+          <Field
+            margin="dense"
+            component={TimePicker}
+            label="Time"
+            name={name}
+            className={classes.input}
+            inputProps={{
+              onFocus: () => setShowPrompt(true),
+            }}
+            onChange={(e) => {
+              const iso = d.toISOString(e);
+              setFieldValue(name, iso.split("T")[1]);
+            }}
+            // formik set value
+            value={`${ds} ${value}`}
+            variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        ) : (
+          <Field
+            type={type}
+            name={name}
+            component={TextField}
+            margin="dense"
+            className={classes.input}
+            inputProps={{
+              onFocus: () => setShowPrompt(true),
+            }}
+            variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        )}
         <div>
           <IconButton
             style={{ marginLeft: 5 }}
@@ -208,157 +262,172 @@ const AddEditPokerSettings = ({ match, userId }) => {
         <Typography variant="h6" align="center">
           {title}
         </Typography>
+
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
-          {({ values, isSubmitting }) => {
+          {({ values, isSubmitting, setFieldValue }) => {
             return (
-              <Form>
-                <FormControl>
-                  <Field
-                    component={TextField}
-                    label="Title"
-                    name="title"
-                    margin="dense"
-                    className={classes.input}
-                    inputProps={{
-                      onFocus: () => setShowPrompt(true),
-                    }}
-                    variant="outlined"
-                  />
-                  <Field
-                    component={TextField}
-                    label="Type"
-                    name="type"
-                    margin="dense"
-                    className={classes.input}
-                    inputProps={{
-                      onFocus: () => setShowPrompt(true),
-                    }}
-                    variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Form>
+                  <FormControl>
+                    <Field
+                      component={TextField}
+                      label="Title"
+                      name="title"
+                      margin="dense"
+                      className={classes.input}
+                      inputProps={{
+                        onFocus: () => setShowPrompt(true),
+                      }}
+                      variant="outlined"
+                    />
+                    <Field
+                      component={TextField}
+                      label="Type"
+                      name="type"
+                      margin="dense"
+                      className={classes.input}
+                      inputProps={{
+                        onFocus: () => setShowPrompt(true),
+                      }}
+                      variant="outlined"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
 
-                  <Typography
-                    variant="subtitle2"
-                    style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
-                  >
-                    Buy ins
-                  </Typography>
-                  <FieldArray
-                    name="buyInOptions"
-                    render={(arrayHelpers) => (
-                      <div>
-                        {values.buyInOptions &&
-                          values.buyInOptions.map((buyIn, index) => (
-                            <RenderArrayField
-                              index={index}
-                              arrayHelpers={arrayHelpers}
-                              name={`buyInOptions[${index}].amount`}
-                            />
-                          ))}
-
-                        <AddButton
-                          disabled={isSubmitting}
-                          onClick={() =>
-                            arrayHelpers.push({ amount: 0, votes: 0 })
-                          }
-                        />
-                      </div>
-                    )}
-                  />
-
-                  <Typography
-                    variant="subtitle2"
-                    style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
-                  >
-                    Dates
-                  </Typography>
-                  <FieldArray
-                    name="dateOptions"
-                    render={(arrayHelpers) => (
-                      <div>
-                        {values.dateOptions &&
-                          values.dateOptions.map((date, index) => (
-                            <RenderArrayField
-                              index={index}
-                              arrayHelpers={arrayHelpers}
-                              name={`dateOptions[${index}].date`}
-                            />
-                          ))}
-                        <AddButton
-                          disabled={isSubmitting}
-                          onClick={() =>
-                            arrayHelpers.push({ date: 0, votes: 0 })
-                          }
-                        />
-                      </div>
-                    )}
-                  />
-
-                  <Typography
-                    variant="subtitle2"
-                    style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
-                  >
-                    Times
-                  </Typography>
-                  <FieldArray
-                    name="timeOptions"
-                    render={(arrayHelpers) => (
-                      <div>
-                        {values.timeOptions &&
-                          values.timeOptions.map((time, index) => (
-                            <RenderArrayField
-                              index={index}
-                              arrayHelpers={arrayHelpers}
-                              name={`timeOptions[${index}].time`}
-                            />
-                          ))}
-                        <AddButton
-                          disabled={isSubmitting}
-                          onClick={() =>
-                            arrayHelpers.push({ time: 0, votes: 0 })
-                          }
-                        />
-                      </div>
-                    )}
-                  />
-
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    mt={3}
-                    width="100%"
-                  >
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      style={{ marginRight: 10 }}
-                      className={classes.submitButton}
-                      type="submit"
-                      disabled={isSubmitting}
+                    <Typography
+                      variant="subtitle2"
+                      style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                     >
-                      {buttonText}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      disabled={isSubmitting}
-                      onClick={() => history.push(isAddMode ? "." : "..")}
+                      Buy ins
+                    </Typography>
+                    <FieldArray
+                      name="buyInOptions"
+                      render={(arrayHelpers) => (
+                        <div>
+                          {values.buyInOptions &&
+                            values.buyInOptions.map((buyIn, index) => (
+                              <RenderArrayField
+                                key={index}
+                                index={index}
+                                setFieldValue={setFieldValue}
+                                type="number"
+                                values={values}
+                                arrayHelpers={arrayHelpers}
+                                name={`buyInOptions[${index}].amount`}
+                              />
+                            ))}
+
+                          <AddButton
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              arrayHelpers.push({ amount: 0, votes: 0 })
+                            }
+                          />
+                        </div>
+                      )}
+                    />
+
+                    <Typography
+                      variant="subtitle2"
+                      style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                     >
-                      Cancel
-                    </Button>
-                  </Box>
-                </FormControl>
-                <Backdrop className={classes.backdrop} open={isSubmitting}>
-                  <CircularProgress color="inherit" />
-                </Backdrop>
-              </Form>
+                      Dates
+                    </Typography>
+                    <FieldArray
+                      name="dateOptions"
+                      render={(arrayHelpers) => (
+                        <div>
+                          {values.dateOptions &&
+                            values.dateOptions.map((date, index) => (
+                              <RenderArrayField
+                                key={index}
+                                index={index}
+                                setFieldValue={setFieldValue}
+                                values={values}
+                                type="date"
+                                arrayHelpers={arrayHelpers}
+                                name={`dateOptions[${index}].date`}
+                              />
+                            ))}
+                          <AddButton
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              arrayHelpers.push({ date: 0, votes: 0 })
+                            }
+                          />
+                        </div>
+                      )}
+                    />
+
+                    <Typography
+                      variant="subtitle2"
+                      style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
+                    >
+                      Times
+                    </Typography>
+                    <FieldArray
+                      name="timeOptions"
+                      render={(arrayHelpers) => (
+                        <div>
+                          {values.timeOptions &&
+                            values.timeOptions.map((time, index) => (
+                              <RenderArrayField
+                                key={index}
+                                type="time"
+                                index={index}
+                                setFieldValue={setFieldValue}
+                                values={values}
+                                arrayHelpers={arrayHelpers}
+                                name={`timeOptions[${index}].time`}
+                              />
+                            ))}
+                          <AddButton
+                            disabled={isSubmitting}
+                            onClick={() =>
+                              arrayHelpers.push({ time: "", votes: 0 })
+                            }
+                          />
+                        </div>
+                      )}
+                    />
+
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      mt={3}
+                      width="100%"
+                    >
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        style={{ marginRight: 10 }}
+                        className={classes.submitButton}
+                        type="submit"
+                        disabled={isSubmitting}
+                      >
+                        {buttonText}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        disabled={isSubmitting}
+                        onClick={() => history.push(isAddMode ? "." : "..")}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
+                  </FormControl>
+                  <Backdrop className={classes.backdrop} open={isSubmitting}>
+                    <CircularProgress color="inherit" />
+                  </Backdrop>
+                </Form>
+              </MuiPickersUtilsProvider>
             );
           }}
         </Formik>

@@ -74,6 +74,7 @@ export default function Home({ user }) {
             const date = new Date(game.createdAt);
             return (
               <RenderItemLink
+                key={game.id}
                 date={date}
                 title={game.title}
                 to={`/edit/${game.id}`}
@@ -90,6 +91,7 @@ export default function Home({ user }) {
             const date = new Date(game.createdAt);
             return (
               <RenderItemLink
+                key={game.id}
                 date={date}
                 title={game.title}
                 to={`/edit/${game.id}`}
@@ -106,6 +108,7 @@ export default function Home({ user }) {
             const date = new Date(game.eventDate);
             return (
               <RenderItemLink
+                key={game.id}
                 date={date}
                 title={game.title}
                 to={`/game/${game.id}`}
