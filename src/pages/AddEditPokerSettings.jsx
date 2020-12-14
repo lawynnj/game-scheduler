@@ -76,7 +76,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
             temp[key] = temp[key].map((obj) => {
               let d = new Date();
               let ds = d.toLocaleDateString();
-              obj["time"] = `${ds} ${obj["time"]}`;
+              obj["time"] = new Date(`${ds}T${obj.time}`);
               return obj;
             });
           }
@@ -160,8 +160,10 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const handleSubmit = async (values) => {
     setShowPrompt(false);
     // sanitize form
+    console.log(values);
     const sanitizedVals = {
       ...values,
+      timeOptions: [...values.timeOptions],
     };
     Object.keys(sanitizedVals).forEach((key) => {
       if (
@@ -170,7 +172,15 @@ const AddEditPokerSettings = ({ match, userId }) => {
       )
         sanitizedVals[key] = null;
     });
-
+    if (sanitizedVals.timeOptions) {
+      sanitizedVals.timeOptions = sanitizedVals.timeOptions.map((opt) => {
+        console.log(opt.time.toISOString().split("T")[1]);
+        return {
+          ...opt,
+          time: opt.time.toISOString().split("T")[1],
+        };
+      });
+    }
     if (isAddMode) {
       await handleAdd(sanitizedVals);
     } else {
@@ -208,12 +218,6 @@ const AddEditPokerSettings = ({ match, userId }) => {
             inputProps={{
               onFocus: () => setShowPrompt(true),
             }}
-            // onChange={(e) => {
-            //   const iso = d.toISOString(e);
-            //   setFieldValue(name, iso.split("T")[1]);
-            // }}
-            // formik set value
-            // value={`${ds} ${value}`}
             variant="outlined"
             InputLabelProps={{
               shrink: true,
@@ -399,7 +403,10 @@ const AddEditPokerSettings = ({ match, userId }) => {
                           <AddButton
                             disabled={isSubmitting}
                             onClick={() =>
-                              arrayHelpers.push({ time: "", votes: 0 })
+                              arrayHelpers.push({
+                                time: new Date(),
+                                votes: 0,
+                              })
                             }
                           />
                         </div>
