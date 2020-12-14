@@ -29,11 +29,11 @@ const monthNames = [
   "December",
 ];
 
-const RenderItemLink = ({ date, route, title }) => {
+const RenderItemLink = ({ date, to, title }) => {
   const history = useHistory();
 
   return (
-    <ListItem button onClick={() => history.push(route)}>
+    <ListItem button onClick={() => history.push(to)}>
       <ListItemText
         primary={title}
         secondary={`Created at ${

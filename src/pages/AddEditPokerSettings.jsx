@@ -13,6 +13,10 @@ import { API, graphqlOperation } from "aws-amplify";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
+import Backdrop from "@material-ui/core/Backdrop";
 
 const useStyles = makeStyles({
   input: {
@@ -30,10 +34,6 @@ const useStyles = makeStyles({
 const AddEditPokerSettings = ({ match, userId }) => {
   const { gameId } = match.params;
   const isAddMode = !gameId;
-  const title = isAddMode
-    ? "Add Poker Game Settings"
-    : "Edit Poker Game Settings";
-  const buttonText = isAddMode ? "Add" : "Save";
   const classes = useStyles();
   const history = useHistory();
   const [showPrompt, setShowPrompt] = useState(false);
@@ -50,6 +50,10 @@ const AddEditPokerSettings = ({ match, userId }) => {
     buyInOptions: [],
   });
   const [formInitialized, setFormInitialized] = useState(false);
+  const title = isAddMode
+    ? "Add Poker Game Settings"
+    : "Edit Poker Game Settings";
+  const buttonText = isAddMode ? "Add" : "Save";
 
   useEffect(() => {
     if (settings && !isAddMode && !formInitialized) {
@@ -87,6 +91,12 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
     type: Yup.string(),
+    dateOptions: Yup.array().of(
+      Yup.object().shape({
+        date: Yup.date().required(),
+        votes: Yup.number().required(),
+      })
+    ),
   });
 
   const handleAdd = async (sanitizedVals) => {
@@ -136,15 +146,59 @@ const AddEditPokerSettings = ({ match, userId }) => {
     });
 
     if (isAddMode) {
-      handleAdd(sanitizedVals);
+      await handleAdd(sanitizedVals);
     } else {
-      handleEdit(sanitizedVals);
+      await handleEdit(sanitizedVals);
     }
   };
 
   if (!isAddMode && !settings) {
     return <CircularProgress />;
   }
+
+  const RenderArrayField = ({ isSubmitting, index, arrayHelpers, name }) => {
+    return (
+      <Box display="flex" key={index} alignItems="center">
+        <Field
+          name={name}
+          component={TextField}
+          margin="dense"
+          className={classes.input}
+          inputProps={{
+            onFocus: () => setShowPrompt(true),
+          }}
+          variant="outlined"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <div>
+          <IconButton
+            style={{ marginLeft: 5 }}
+            aria-label="delete"
+            disabled={isSubmitting}
+            className={classes.margin}
+            onClick={() => arrayHelpers.remove(index)}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </div>
+      </Box>
+    );
+  };
+  const AddButton = ({ disabled, onClick }) => (
+    <Button
+      style={{ marginLeft: 5 }}
+      aria-label="add"
+      color="primary"
+      variant="contained"
+      size="small"
+      disabled={disabled}
+      onClick={onClick}
+    >
+      <AddIcon fontSize="small" />
+    </Button>
+  );
 
   return (
     <Box p={2} display="flex" flexDirection="column">
@@ -200,40 +254,21 @@ const AddEditPokerSettings = ({ match, userId }) => {
                     name="buyInOptions"
                     render={(arrayHelpers) => (
                       <div>
-                        {values.buyInOptions.map((buyIn, index) => (
-                          <Box display="flex" key={index} alignItems="center">
-                            <Field
+                        {values.buyInOptions &&
+                          values.buyInOptions.map((buyIn, index) => (
+                            <RenderArrayField
+                              index={index}
+                              arrayHelpers={arrayHelpers}
                               name={`buyInOptions[${index}].amount`}
-                              component={TextField}
-                              margin="dense"
-                              className={classes.input}
-                              inputProps={{
-                                onFocus: () => setShowPrompt(true),
-                              }}
-                              variant="outlined"
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
                             />
-                            <div>
-                              <button
-                                style={{ marginLeft: 5 }}
-                                type="button"
-                                onClick={() => arrayHelpers.remove(index)}
-                              >
-                                -
-                              </button>
-                            </div>
-                          </Box>
-                        ))}
-                        <button
-                          type="button"
+                          ))}
+
+                        <AddButton
+                          disabled={isSubmitting}
                           onClick={() =>
                             arrayHelpers.push({ amount: 0, votes: 0 })
                           }
-                        >
-                          +
-                        </button>
+                        />
                       </div>
                     )}
                   />
@@ -248,41 +283,20 @@ const AddEditPokerSettings = ({ match, userId }) => {
                     name="dateOptions"
                     render={(arrayHelpers) => (
                       <div>
-                        {values.dateOptions.map((date, index) => (
-                          <Box display="flex" key={index} alignItems="center">
-                            <Field
+                        {values.dateOptions &&
+                          values.dateOptions.map((date, index) => (
+                            <RenderArrayField
+                              index={index}
+                              arrayHelpers={arrayHelpers}
                               name={`dateOptions[${index}].date`}
-                              component={TextField}
-                              type="date"
-                              margin="dense"
-                              className={classes.input}
-                              inputProps={{
-                                onFocus: () => setShowPrompt(true),
-                              }}
-                              variant="outlined"
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
                             />
-                            <div>
-                              <button
-                                style={{ marginLeft: 5 }}
-                                type="button"
-                                onClick={() => arrayHelpers.remove(index)}
-                              >
-                                -
-                              </button>
-                            </div>
-                          </Box>
-                        ))}
-                        <button
-                          type="button"
+                          ))}
+                        <AddButton
+                          disabled={isSubmitting}
                           onClick={() =>
                             arrayHelpers.push({ date: 0, votes: 0 })
                           }
-                        >
-                          +
-                        </button>
+                        />
                       </div>
                     )}
                   />
@@ -297,40 +311,20 @@ const AddEditPokerSettings = ({ match, userId }) => {
                     name="timeOptions"
                     render={(arrayHelpers) => (
                       <div>
-                        {values.timeOptions.map((time, index) => (
-                          <Box display="flex" key={index} alignItems="center">
-                            <Field
+                        {values.timeOptions &&
+                          values.timeOptions.map((time, index) => (
+                            <RenderArrayField
+                              index={index}
+                              arrayHelpers={arrayHelpers}
                               name={`timeOptions[${index}].time`}
-                              component={TextField}
-                              margin="dense"
-                              className={classes.input}
-                              inputProps={{
-                                onFocus: () => setShowPrompt(true),
-                              }}
-                              variant="outlined"
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
                             />
-                            <div>
-                              <button
-                                style={{ marginLeft: 5 }}
-                                type="button"
-                                onClick={() => arrayHelpers.remove(index)}
-                              >
-                                -
-                              </button>
-                            </div>
-                          </Box>
-                        ))}
-                        <button
-                          type="button"
+                          ))}
+                        <AddButton
+                          disabled={isSubmitting}
                           onClick={() =>
                             arrayHelpers.push({ time: 0, votes: 0 })
                           }
-                        >
-                          +
-                        </button>
+                        />
                       </div>
                     )}
                   />
@@ -354,12 +348,16 @@ const AddEditPokerSettings = ({ match, userId }) => {
                     <Button
                       variant="contained"
                       color="secondary"
+                      disabled={isSubmitting}
                       onClick={() => history.push(isAddMode ? "." : "..")}
                     >
                       Cancel
                     </Button>
                   </Box>
                 </FormControl>
+                <Backdrop className={classes.backdrop} open={isSubmitting}>
+                  <CircularProgress color="inherit" />
+                </Backdrop>
               </Form>
             );
           }}
