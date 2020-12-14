@@ -20,7 +20,6 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { TimePicker } from "formik-material-ui-pickers";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import get from "lodash/get";
 
 const useStyles = makeStyles({
   input: {
@@ -33,6 +32,73 @@ const useStyles = makeStyles({
     width: "100%",
     marginTop: 30,
   },
+});
+
+const sanitizeInitVals = (data, initialValues) => {
+  const temp = {};
+  const arrayProps = ["dateOptions", "timeOptions", "buyInOptions", "players"];
+  const stringProps = ["type", "status", "title", "eventTime"];
+  Object.keys(initialValues).forEach((key) => {
+    if (Array.isArray(data[key])) {
+      temp[key] = [...data[key]];
+      if (key === "timeOptions") {
+        temp[key] = temp[key].map((obj) => {
+          let d = new Date();
+          let ds = d.toLocaleDateString();
+          obj["time"] = new Date(`${ds}T${obj.time}`);
+          return obj;
+        });
+      }
+    } else {
+      // Formik complains when values are null.
+      // Initialize them as empty string or array
+      if (arrayProps.includes(key)) {
+        temp[key] = [];
+      } else if (!data[key] && stringProps.includes(key)) {
+        temp[key] = "";
+      } else {
+        temp[key] = data[key];
+      }
+    }
+  });
+  return temp;
+};
+
+const sanitizeSubmitValues = (values) => {
+  const sanitizedVals = {
+    ...values,
+  };
+
+  Object.keys(sanitizedVals).forEach((key) => {
+    if (
+      sanitizedVals[key] === "" ||
+      (Array.isArray(sanitizedVals[key]) && sanitizedVals[key].length === 0)
+    )
+      sanitizedVals[key] = null;
+  });
+
+  if (sanitizedVals.timeOptions) {
+    sanitizedVals.timeOptions = sanitizedVals.timeOptions.map((opt) => {
+      const sanitizedOpt = { ...opt };
+      return {
+        ...sanitizedOpt,
+        time: sanitizedOpt.time.toISOString().split("T")[1],
+      };
+    });
+  }
+
+  return sanitizedVals;
+};
+
+const validationSchema = Yup.object().shape({
+  title: Yup.string().required("Title is required"),
+  type: Yup.string(),
+  dateOptions: Yup.array().of(
+    Yup.object().shape({
+      date: Yup.date().required(),
+      votes: Yup.number().required(),
+    })
+  ),
 });
 
 const AddEditPokerSettings = ({ match, userId }) => {
@@ -60,38 +126,8 @@ const AddEditPokerSettings = ({ match, userId }) => {
   const buttonText = isAddMode ? "Add" : "Save";
 
   useEffect(() => {
-    const arrayProps = [
-      "dateOptions",
-      "timeOptions",
-      "buyInOptions",
-      "players",
-    ];
-    const stringProps = ["type", "status", "title", "eventTime"];
     if (settings && !isAddMode && !formInitialized) {
-      const temp = {};
-      Object.keys(initialValues).forEach((key) => {
-        if (Array.isArray(settings[key])) {
-          temp[key] = [...settings[key]];
-          if (key === "timeOptions") {
-            temp[key] = temp[key].map((obj) => {
-              let d = new Date();
-              let ds = d.toLocaleDateString();
-              obj["time"] = new Date(`${ds}T${obj.time}`);
-              return obj;
-            });
-          }
-        } else {
-          // fix formik error when values are null
-          if (arrayProps.includes(key)) {
-            temp[key] = [];
-          } else if (!settings[key] && stringProps.includes(key)) {
-            temp[key] = "";
-          } else {
-            temp[key] = settings[key];
-          }
-        }
-      });
-      setInitialValues(temp);
+      setInitialValues(sanitizeInitVals(settings, initialValues));
       setFormInitialized(true);
     }
   }, [isAddMode, settings, initialValues, formInitialized]);
@@ -114,17 +150,6 @@ const AddEditPokerSettings = ({ match, userId }) => {
     }
   }, [isAddMode, settings, gameId]);
 
-  const validationSchema = Yup.object().shape({
-    title: Yup.string().required("Title is required"),
-    type: Yup.string(),
-    dateOptions: Yup.array().of(
-      Yup.object().shape({
-        date: Yup.date().required(),
-        votes: Yup.number().required(),
-      })
-    ),
-  });
-  console.log(initialValues);
   const handleAdd = async (sanitizedVals) => {
     try {
       await API.graphql(
@@ -159,28 +184,8 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
   const handleSubmit = async (values) => {
     setShowPrompt(false);
-    // sanitize form
-    console.log(values);
-    const sanitizedVals = {
-      ...values,
-      timeOptions: [...values.timeOptions],
-    };
-    Object.keys(sanitizedVals).forEach((key) => {
-      if (
-        sanitizedVals[key] === "" ||
-        (Array.isArray(sanitizedVals[key]) && sanitizedVals[key].length === 0)
-      )
-        sanitizedVals[key] = null;
-    });
-    if (sanitizedVals.timeOptions) {
-      sanitizedVals.timeOptions = sanitizedVals.timeOptions.map((opt) => {
-        console.log(opt.time.toISOString().split("T")[1]);
-        return {
-          ...opt,
-          time: opt.time.toISOString().split("T")[1],
-        };
-      });
-    }
+    const sanitizedVals = sanitizeSubmitValues(values);
+
     if (isAddMode) {
       await handleAdd(sanitizedVals);
     } else {
@@ -198,47 +203,25 @@ const AddEditPokerSettings = ({ match, userId }) => {
     arrayHelpers,
     name,
     type = "text",
-    values,
-    setFieldValue,
   }) => {
-    // const value = get(values, name);
-    // console.log(value);
-    // let d = new Date();
-    // let ds = d.toLocaleDateString();
-    // console.log(`${ds} ${value}`);
+    let _type = type === "time" ? "text" : type;
+    let component = type === "time" ? TimePicker : TextField;
     return (
       <Box display="flex" key={index} alignItems="center">
-        {type === "time" ? (
-          <Field
-            margin="dense"
-            component={TimePicker}
-            label="Time"
-            name={name}
-            className={classes.input}
-            inputProps={{
-              onFocus: () => setShowPrompt(true),
-            }}
-            variant="outlined"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        ) : (
-          <Field
-            type={type}
-            name={name}
-            component={TextField}
-            margin="dense"
-            className={classes.input}
-            inputProps={{
-              onFocus: () => setShowPrompt(true),
-            }}
-            variant="outlined"
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        )}
+        <Field
+          type={_type}
+          name={name}
+          component={component}
+          margin="dense"
+          className={classes.input}
+          inputProps={{
+            onFocus: () => setShowPrompt(true),
+          }}
+          variant="outlined"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
         <div>
           <IconButton
             style={{ marginLeft: 5 }}
@@ -282,7 +265,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
-          {({ values, isSubmitting, setFieldValue }) => {
+          {({ values, isSubmitting }) => {
             return (
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Form>
@@ -328,9 +311,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
                               <RenderArrayField
                                 key={index}
                                 index={index}
-                                setFieldValue={setFieldValue}
                                 type="number"
-                                values={values}
                                 arrayHelpers={arrayHelpers}
                                 name={`buyInOptions[${index}].amount`}
                               />
@@ -361,8 +342,6 @@ const AddEditPokerSettings = ({ match, userId }) => {
                               <RenderArrayField
                                 key={index}
                                 index={index}
-                                setFieldValue={setFieldValue}
-                                values={values}
                                 type="date"
                                 arrayHelpers={arrayHelpers}
                                 name={`dateOptions[${index}].date`}
@@ -394,8 +373,6 @@ const AddEditPokerSettings = ({ match, userId }) => {
                                 key={index}
                                 type="time"
                                 index={index}
-                                setFieldValue={setFieldValue}
-                                values={values}
                                 arrayHelpers={arrayHelpers}
                                 name={`timeOptions[${index}].time`}
                               />
