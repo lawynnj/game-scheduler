@@ -8,6 +8,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React, { useEffect, useState } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import * as queries from "../graphql/queries";
+import * as mutations from "../graphql/mutations";
 import { useParams } from "react-router-dom";
 import { Button, CircularProgress, Typography } from "@material-ui/core";
 
@@ -16,6 +17,7 @@ function PokerSettings() {
   const [settings, setSettings] = useState(null);
   const [eventDate, setEventDate] = useState(null);
   const [eventTime, setEventTime] = useState(null);
+  const [buyIn, setBuyIn] = useState(null);
 
   // check local storage to see if the user has voted
   useEffect(() => {
@@ -77,9 +79,10 @@ function PokerSettings() {
         >
           {settings.dateOptions.map((date) => (
             <FormControlLabel
+              key={date.date}
               value={date.date}
               control={<Radio />}
-              label={date.date}
+              label={`${date.date}   (${date.votes} votes)`}
             />
           ))}
         </RadioGroup>
@@ -90,42 +93,126 @@ function PokerSettings() {
   const RenderTimes = () => (
     <>
       <FormControl component="fieldset">
-        <FormLabel component="legend">Date</FormLabel>
+        <FormLabel component="legend">Time</FormLabel>
         <RadioGroup
           aria-label="gender"
           name="gender1"
-          value={eventDate}
-          onChange={(e) => setEventDate(e.target.value)}
+          value={eventTime}
+          onChange={(e) => setEventTime(e.target.value)}
         >
           {settings.timeOptions.map((time) => (
             <FormControlLabel
+              key={time.time}
               value={time.time}
               control={<Radio />}
-              label={time.time}
+              label={`${time.time}   (${time.votes} votes)`}
             />
           ))}
         </RadioGroup>
       </FormControl>
     </>
   );
+
+  const RenderBuyIn = () => (
+    <>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Buy in ($)</FormLabel>
+        <RadioGroup
+          aria-label="buyIn"
+          name="buyIn"
+          value={buyIn}
+          onChange={(e) => setBuyIn(parseInt(e.target.value))}
+        >
+          {settings.buyInOptions.map((buyIn) => (
+            <FormControlLabel
+              key={buyIn.amount}
+              value={buyIn.amount}
+              control={<Radio />}
+              label={`${buyIn.amount}   (${buyIn.votes} votes)`}
+            />
+          ))}
+        </RadioGroup>
+      </FormControl>
+    </>
+  );
+
+  const handleSubmit = async () => {
+    const eventTimes = settings.timeOptions.map((time) => {
+      if (time.time === eventTime) {
+        return {
+          ...time,
+          votes: time.votes + 1,
+        };
+      } else {
+        return time;
+      }
+    });
+
+    const eventDates = settings.dateOptions.map((date) => {
+      if (date.date === eventDate) {
+        return {
+          ...date,
+          votes: date.votes + 1,
+        };
+      } else {
+        return date;
+      }
+    });
+
+    const buyIns = settings.buyInOptions.map((_buyIn) => {
+      if (_buyIn.amount === buyIn) {
+        return {
+          ..._buyIn,
+          votes: _buyIn.votes + 1,
+        };
+      } else {
+        return _buyIn;
+      }
+    });
+    try {
+      const input = {
+        ...settings,
+        buyInOptions: buyIns,
+        dateOptions: eventDates,
+        timeOptions: eventTimes,
+      };
+
+      delete input.createdAt;
+      delete input.updatedAt;
+
+      const res = await API.graphql(
+        graphqlOperation(mutations.updateGameStrict, {
+          input,
+        })
+      );
+      setSettings(res.data.updateGameStrict);
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
   return (
-    <Box p={2}>
-      <Typography variant="h6">Settings</Typography>
+    <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center">
+      <Typography variant="h6">Vote</Typography>
       <Typography variant="subtitle1">
-        <div>Title: {settings.title}</div>
+        <div>Game: {settings.title}</div>
+
+        <Box mt={2}>
+          {settings.dateOptions ? <RenderDates /> : "No dates set up"}
+        </Box>
         <Box mt={2}>
           {settings.timeOptions ? <RenderTimes /> : "No times set up"}
         </Box>
         <Box mt={2}>
-          {settings.dateOptions ? <RenderDates /> : "No dates set up"}
+          {settings.buyInOptions ? <RenderBuyIn /> : "No dates set up"}
         </Box>
         <Box mt={2}>
           Players: {settings.players ? <RenderPlayers /> : "No players"}
         </Box>
       </Typography>
 
-      <Button color="primary" variant="contained">
-        Finalize
+      <Button color="primary" variant="contained" onClick={handleSubmit}>
+        Submit
       </Button>
     </Box>
   );

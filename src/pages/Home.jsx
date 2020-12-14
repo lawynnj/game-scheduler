@@ -94,7 +94,7 @@ export default function Home({ user }) {
                 key={game.id}
                 date={date}
                 title={game.title}
-                to={`/edit/${game.id}`}
+                to={`/shared/${game.id}`}
               />
             );
           })}

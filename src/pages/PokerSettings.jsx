@@ -110,7 +110,7 @@ function PokerSettings({ user }) {
       </Typography>
 
       <Button color="primary" variant="contained">
-        Finalize
+        Submit
       </Button>
     </Box>
   );
