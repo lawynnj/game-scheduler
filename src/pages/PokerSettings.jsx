@@ -11,7 +11,7 @@ import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
 import { Button, CircularProgress, Typography } from "@material-ui/core";
 
-export default function PokerSettings({ user }) {
+function PokerSettings({ user }) {
   const { gameId } = useParams();
   const [settings, setSettings] = useState(null);
   const [eventDate, setEventDate] = useState(null);
@@ -39,7 +39,7 @@ export default function PokerSettings({ user }) {
 
   const RenderPlayers = () => (
     <ul>
-      {JSON.parse(settings.players).map((player) => (
+      {settings.players.map((player) => (
         <li key={player.name + player.email}>
           {player.name} - {player.email}
         </li>
@@ -57,7 +57,7 @@ export default function PokerSettings({ user }) {
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
         >
-          {JSON.parse(settings.dateOptions).map((date) => (
+          {settings.dateOptions.map((date) => (
             <FormControlLabel
               value={date.date}
               control={<Radio />}
@@ -79,7 +79,7 @@ export default function PokerSettings({ user }) {
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
         >
-          {JSON.parse(settings.timeOptions).map((time) => (
+          {settings.timeOptions.map((time) => (
             <FormControlLabel
               value={time.time}
               control={<Radio />}
@@ -105,7 +105,7 @@ export default function PokerSettings({ user }) {
           {settings.dateOptions ? <RenderDates /> : "No dates set up"}
         </Box>
         <Box mt={2}>
-          Players options: {settings.players ? <RenderPlayers /> : "No players"}
+          Players: {settings.players ? <RenderPlayers /> : "No players"}
         </Box>
       </Typography>
 
@@ -115,3 +115,5 @@ export default function PokerSettings({ user }) {
     </Box>
   );
 }
+
+export default PokerSettings;
