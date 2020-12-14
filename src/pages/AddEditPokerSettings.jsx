@@ -72,6 +72,14 @@ const AddEditPokerSettings = ({ match, userId }) => {
       Object.keys(initialValues).forEach((key) => {
         if (Array.isArray(settings[key])) {
           temp[key] = [...settings[key]];
+          if (key === "timeOptions") {
+            temp[key] = temp[key].map((obj) => {
+              let d = new Date();
+              let ds = d.toLocaleDateString();
+              obj["time"] = `${ds} ${obj["time"]}`;
+              return obj;
+            });
+          }
         } else {
           // fix formik error when values are null
           if (arrayProps.includes(key)) {
@@ -183,10 +191,11 @@ const AddEditPokerSettings = ({ match, userId }) => {
     values,
     setFieldValue,
   }) => {
-    const value = get(values, name);
-    console.log(value);
-    let d = new Date();
-    let ds = d.toLocaleDateString();
+    // const value = get(values, name);
+    // console.log(value);
+    // let d = new Date();
+    // let ds = d.toLocaleDateString();
+    // console.log(`${ds} ${value}`);
     return (
       <Box display="flex" key={index} alignItems="center">
         {type === "time" ? (
@@ -199,12 +208,12 @@ const AddEditPokerSettings = ({ match, userId }) => {
             inputProps={{
               onFocus: () => setShowPrompt(true),
             }}
-            onChange={(e) => {
-              const iso = d.toISOString(e);
-              setFieldValue(name, iso.split("T")[1]);
-            }}
+            // onChange={(e) => {
+            //   const iso = d.toISOString(e);
+            //   setFieldValue(name, iso.split("T")[1]);
+            // }}
             // formik set value
-            value={`${ds} ${value}`}
+            // value={`${ds} ${value}`}
             variant="outlined"
             InputLabelProps={{
               shrink: true,
