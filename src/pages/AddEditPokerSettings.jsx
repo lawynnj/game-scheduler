@@ -99,6 +99,12 @@ const validationSchema = Yup.object().shape({
       votes: Yup.number().required(),
     })
   ),
+  buyInOptions: Yup.array().of(
+    Yup.object().shape({
+      amount: Yup.number().required().min(0),
+      votes: Yup.number().required(),
+    })
+  ),
 });
 
 const AddEditPokerSettings = ({ match, userId }) => {
