@@ -43,7 +43,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
     type: "",
     buyIn: 0,
     eventTime: "",
-    cancelled: false,
+    status: "PENDING",
     players: [],
     dateOptions: [],
     timeOptions: [],
