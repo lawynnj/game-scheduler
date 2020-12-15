@@ -79,7 +79,6 @@ export const getGame = /* GraphQL */ `
         time
         votes
       }
-      ipAddresses
       status
       createdAt
       updatedAt

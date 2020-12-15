@@ -12,30 +12,34 @@ import * as mutations from "../graphql/mutations";
 import { useParams } from "react-router-dom";
 import { Button, CircularProgress, Typography } from "@material-ui/core";
 
+const useStateWithLocalStorage = (localStorageKey) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(localStorageKey) || ""
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem(localStorageKey, value);
+  }, [value, localStorageKey]);
+
+  return [value, setValue];
+};
+
 function PokerSettings() {
   const { gameId } = useParams();
   const [settings, setSettings] = useState(null);
   const [eventDate, setEventDate] = useState(null);
   const [eventTime, setEventTime] = useState(null);
   const [buyIn, setBuyIn] = useState(null);
+  const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
 
-  // check local storage to see if the user has voted
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await API.graphql(
-          graphqlOperation(queries.getGame, {
-            id: gameId,
-          })
-        );
-        setSettings(res.data.getGame);
-      } catch (error) {
-        console.log(("error", error));
-      }
-    };
-    if (!settings) fetchSettings();
-  }, [gameId, settings]);
-
+    if (vote) {
+      const tmp = JSON.parse(vote);
+      setEventDate(tmp.eventDate);
+      setEventTime(tmp.eventTime);
+      setBuyIn(tmp.buyIn);
+    }
+  }, [vote]);
   // check local storage to see if the user has voted
   useEffect(() => {
     const fetchSettings = async () => {
@@ -79,6 +83,7 @@ function PokerSettings() {
         >
           {settings.dateOptions.map((date) => (
             <FormControlLabel
+              disabled={hasVoted}
               key={date.date}
               value={date.date}
               control={<Radio />}
@@ -102,6 +107,7 @@ function PokerSettings() {
         >
           {settings.timeOptions.map((time) => (
             <FormControlLabel
+              disabled={hasVoted}
               key={time.time}
               value={time.time}
               control={<Radio />}
@@ -125,6 +131,7 @@ function PokerSettings() {
         >
           {settings.buyInOptions.map((buyIn) => (
             <FormControlLabel
+              disabled={hasVoted}
               key={buyIn.amount}
               value={buyIn.amount}
               control={<Radio />}
@@ -185,12 +192,19 @@ function PokerSettings() {
           input,
         })
       );
+      setVote(
+        JSON.stringify({
+          buyIn,
+          eventDate,
+          eventTime,
+        })
+      );
       setSettings(res.data.updateGameStrict);
     } catch (error) {
       console.log("Error", error);
     }
   };
-
+  const hasVoted = vote !== undefined && vote !== "";
   return (
     <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h6">Vote</Typography>
@@ -211,7 +225,12 @@ function PokerSettings() {
         </Box>
       </Typography>
 
-      <Button color="primary" variant="contained" onClick={handleSubmit}>
+      <Button
+        disabled={hasVoted}
+        color="primary"
+        variant="contained"
+        onClick={handleSubmit}
+      >
         Submit
       </Button>
     </Box>
