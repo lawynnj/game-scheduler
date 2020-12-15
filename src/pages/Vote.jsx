@@ -11,12 +11,42 @@ import { API, graphqlOperation } from "aws-amplify";
 import { RadioGroup } from "formik-material-ui";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
+import PropTypes from "prop-types";
 
 const validationSchema = Yup.object().shape({
   eventTime: Yup.string().required("Title is required"),
   eventDate: Yup.string().required("Date is required"),
   buyIn: Yup.string().required("Buy in is required"),
 });
+
+const RenderOptions = ({ title, name, disabled, options, touched, errors }) => (
+  <FormControl component="fieldset">
+    <FormLabel component="legend">{title}</FormLabel>
+    <Field component={RadioGroup} name={name}>
+      {options.map((option) => (
+        <FormControlLabel
+          disabled={disabled}
+          key={option.value}
+          value={option.value}
+          control={<Radio disabled={disabled} />}
+          label={option.label}
+        />
+      ))}
+    </Field>
+    <Typography variant="subtitle2" color="error">
+      {errors[name] && touched[name] ? errors[name] : null}
+    </Typography>
+  </FormControl>
+);
+
+RenderOptions.propTypes = {
+  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
+  options: PropTypes.array.isRequired,
+  touched: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+};
 
 export default function Vote({ settings, onSubmit }) {
   const RenderPlayers = () => (
@@ -27,80 +57,6 @@ export default function Vote({ settings, onSubmit }) {
         </li>
       ))}
     </ul>
-  );
-
-  const RenderOptions = ({
-    title,
-    name,
-    disabled,
-    options,
-    touched,
-    errors,
-  }) => (
-    <FormControl component="fieldset">
-      <FormLabel component="legend">{title}</FormLabel>
-      <Field component={RadioGroup} name={name}>
-        {options.map((option) => (
-          <FormControlLabel
-            disabled={disabled}
-            key={option.value}
-            value={option.value}
-            control={<Radio disabled={disabled} />}
-            label={option.label}
-          />
-        ))}
-      </Field>
-      <Typography variant="subtitle2" color="error">
-        {errors[name] && touched[name] ? errors[name] : null}
-      </Typography>
-    </FormControl>
-  );
-
-  const RenderDates = ({ disabled, errors, touched }) => {
-    return (
-      <RenderOptions
-        title="Date"
-        aria-label="date"
-        name="eventDate"
-        disabled={disabled}
-        errors={errors}
-        touched={touched}
-        options={settings.dateOptions.map((date) => ({
-          value: date.date,
-          label: `${date.date}   (${date.votes} votes)`,
-        }))}
-      />
-    );
-  };
-
-  const RenderTimes = ({ disabled, errors, touched }) => (
-    <RenderOptions
-      title="Time"
-      aria-label="time"
-      name="eventTime"
-      disabled={disabled}
-      errors={errors}
-      touched={touched}
-      options={settings.timeOptions.map((time) => ({
-        value: time.time,
-        label: `${time.time}   (${time.votes} votes)`,
-      }))}
-    />
-  );
-
-  const RenderBuyIn = ({ disabled, errors, touched }) => (
-    <RenderOptions
-      title="Buy in ($)"
-      aria-label="buyIn"
-      name="buyIn"
-      disabled={disabled}
-      errors={errors}
-      touched={touched}
-      options={settings.buyInOptions.map((buyIn) => ({
-        value: buyIn.amount.toString(),
-        label: `${buyIn.amount}   (${buyIn.votes} votes)`,
-      }))}
-    />
   );
 
   const handleSubmit = async ({ eventTime, eventDate, buyIn }) => {
@@ -186,10 +142,18 @@ export default function Vote({ settings, onSubmit }) {
             <Form>
               <Box mt={2}>
                 {settings.dateOptions ? (
-                  <RenderDates
+                  <RenderOptions
                     disabled={isSubmitting}
                     errors={errors}
                     touched={touched}
+                    settings={settings}
+                    title="Date"
+                    aria-label="date"
+                    name="eventDate"
+                    options={settings.dateOptions.map((date) => ({
+                      value: date.date,
+                      label: `${date.date}   (${date.votes} votes)`,
+                    }))}
                   />
                 ) : (
                   "No dates set up"
@@ -197,10 +161,18 @@ export default function Vote({ settings, onSubmit }) {
               </Box>
               <Box mt={2}>
                 {settings.timeOptions ? (
-                  <RenderTimes
+                  <RenderOptions
                     disabled={isSubmitting}
                     errors={errors}
                     touched={touched}
+                    settings={settings}
+                    title="Time"
+                    aria-label="time"
+                    name="eventTime"
+                    options={settings.timeOptions.map((time) => ({
+                      value: time.time,
+                      label: `${time.time}   (${time.votes} votes)`,
+                    }))}
                   />
                 ) : (
                   "No times set up"
@@ -208,10 +180,17 @@ export default function Vote({ settings, onSubmit }) {
               </Box>
               <Box mt={2}>
                 {settings.buyInOptions ? (
-                  <RenderBuyIn
+                  <RenderOptions
                     disabled={isSubmitting}
                     errors={errors}
                     touched={touched}
+                    title="Buy in ($)"
+                    aria-label="buyIn"
+                    name="buyIn"
+                    options={settings.buyInOptions.map((buyIn) => ({
+                      value: buyIn.amount.toString(),
+                      label: `${buyIn.amount}   (${buyIn.votes} votes)`,
+                    }))}
                   />
                 ) : (
                   "No dates set up"
@@ -240,3 +219,8 @@ export default function Vote({ settings, onSubmit }) {
     </Box>
   );
 }
+
+Vote.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
+};
