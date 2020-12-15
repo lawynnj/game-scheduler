@@ -1,56 +1,97 @@
-import React, { useEffect, useState } from "react";
+import { Box, Grid, Typography } from "@material-ui/core";
+import React from "react";
+import {
+  XYPlot,
+  XAxis,
+  YAxis,
+  HorizontalGridLines,
+  VerticalBarSeries,
+  ChartLabel,
+} from "react-vis";
 
-export default function Results({ settings, vote }) {
-  const [eventDate, setEventDate] = useState(null);
-  const [eventTime, setEventTime] = useState(null);
-  const [buyIn, setBuyIn] = useState(null);
-  useEffect(() => {
-    if (vote) {
-      const tmp = JSON.parse(vote);
-      setEventDate(tmp.eventDate);
-      setEventTime(tmp.eventTime);
-      setBuyIn(tmp.buyIn);
-    }
-  }, [vote]);
-  console.log(buyIn);
-  console.log(eventDate);
-  console.log(eventTime);
+export default function Results({ settings }) {
+  const dateData = settings.dateOptions.map((date) => ({
+    x: date.date,
+    y: date.votes,
+  }));
 
-  return (
+  const d = new Date().toISOString().split("T")[0];
+  const timeData = settings.timeOptions.map((time) => ({
+    x: new Date(d + "T" + time.time).toLocaleTimeString(),
+    y: time.votes,
+  }));
+
+  const buyInData = settings.buyInOptions.map((buyIn) => ({
+    x: buyIn.amount,
+    y: buyIn.votes,
+  }));
+
+  const RenderChart = ({ title, yLabel, xLabel, data, width, height }) => (
     <div>
-      <div>
-        Date:
-        <ol>
-          {settings.dateOptions.map((date) => (
-            <li>
-              {date.date} - {date.votes}{" "}
-              {eventDate === date.date ? "(You voted)" : null}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Time:
-        <ol>
-          {settings.timeOptions.map((time) => (
-            <li>
-              {time.time} - {time.votes}{" "}
-              {eventTime === time.time ? "(You voted)" : null}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Date:
-        <ol>
-          {settings.buyInOptions.map((_buyIn) => (
-            <li>
-              {_buyIn.amount} - {_buyIn.votes}{" "}
-              {buyIn === _buyIn.amount.toString() ? "(You voted)" : null}
-            </li>
-          ))}
-        </ol>
-      </div>
+      <Typography>{title}</Typography>
+
+      <XYPlot xType="ordinal" width={width} height={height} xDistance={50}>
+        <HorizontalGridLines />
+        <XAxis />
+        <YAxis />
+        <ChartLabel
+          text={xLabel}
+          xPercent={0.4}
+          yPercent={1.33}
+          includeMargin={false}
+        />
+
+        <ChartLabel
+          text={yLabel}
+          includeMargin={false}
+          xPercent={-0.2}
+          yPercent={0.5}
+          style={{
+            transform: "rotate(-90)",
+            textAnchor: "end",
+          }}
+        />
+        <VerticalBarSeries data={data} />
+      </XYPlot>
     </div>
+  );
+
+  const graphs = [
+    {
+      data: dateData,
+      title: "Date",
+      xLabel: "Dates",
+      yLabel: "Votes",
+      width: 200,
+      height: 200,
+    },
+    {
+      data: timeData,
+      title: "Time",
+      xLabel: "Times",
+      yLabel: "Votes",
+      width: 200,
+      height: 200,
+    },
+    {
+      data: buyInData,
+      title: "Buy In",
+      xLabel: "Amounts",
+      yLabel: "Votes",
+      width: 200,
+      height: 200,
+    },
+  ];
+  return (
+    <Box padding={4}>
+      <Typography variant="h5">Result</Typography>
+      <Grid container style={{ marginTop: 10 }}>
+        {graphs.map((props) => (
+          <Grid item sm={12} md={4}>
+            <RenderChart key={props.title} {...props} />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 }
