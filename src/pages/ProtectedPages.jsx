@@ -43,11 +43,6 @@ function ProtectedPages() {
             <AddEditPokerSettings {...props} userId={user.attributes.sub} />
           )}
         />
-        <Route
-          exact
-          path="/game/:gameId"
-          render={() => <PokerSettings user={user} />}
-        />
         <Route exact path="/" render={() => <Home user={user} />} />
       </Switch>
     </div>
