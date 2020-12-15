@@ -11,7 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
-
+import { CopyToClipboard } from "react-copy-to-clipboard";
 const monthNames = [
   "January",
   "February",
@@ -41,28 +41,10 @@ const RenderItemLink = ({ date, to, title }) => {
     </ListItem>
   );
 };
-export default function Home({ user }) {
-  const [games, setGames] = useState(null);
-  const history = useHistory();
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const res = await API.graphql(
-          graphqlOperation(queries.listGames, {
-            input: {
-              hostId: user.attributes.sub,
-            },
-          })
-        );
-        setGames(res.data.listGames);
-      } catch (error) {
-        console.log(("error", error));
-      }
-    };
-    if (!games) fetchGames();
-  }, [games, user.attributes.sub]);
 
-  const Games = () => (
+const Games = ({ games }) => {
+  const handleCopy = () => {};
+  return (
     <>
       <p>Draft Games:</p>
       <List>
@@ -88,12 +70,21 @@ export default function Home({ user }) {
           .map((game) => {
             const date = new Date(game.createdAt);
             return (
-              <RenderItemLink
-                key={game.id}
-                date={date}
-                title={game.title}
-                to={`/shared/${game.id}`}
-              />
+              <Box display="flex">
+                <RenderItemLink
+                  key={game.id}
+                  date={date}
+                  title={game.title}
+                  to={`/shared/${game.id}`}
+                />
+                <CopyToClipboard
+                  text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}
+                >
+                  <Button style={{ minWidth: 100 }} size="small">
+                    Copy link
+                  </Button>
+                </CopyToClipboard>
+              </Box>
             );
           })}
       </List>
@@ -116,7 +107,28 @@ export default function Home({ user }) {
       </List>
     </>
   );
-
+};
+export default function Home({ user }) {
+  const [games, setGames] = useState(null);
+  const history = useHistory();
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const res = await API.graphql(
+          graphqlOperation(queries.listGames, {
+            input: {
+              hostId: user.attributes.sub,
+            },
+          })
+        );
+        setGames(res.data.listGames);
+      } catch (error) {
+        console.log(("error", error));
+      }
+    };
+    if (!games) fetchGames();
+  }, [games, user.attributes.sub]);
+  console.log(process.env);
   return (
     <Box p={2}>
       <Typography variant="h5">Hi {user.username},</Typography>
@@ -128,7 +140,7 @@ export default function Home({ user }) {
       >
         Create Game Settings
       </Button>
-      {games && <Games />}
+      {games && <Games games={games} />}
       {!games && <p>You do not have any games</p>}
     </Box>
   );
