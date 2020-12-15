@@ -3,8 +3,8 @@ import { API, graphqlOperation } from "aws-amplify";
 import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Vote from "./Vote";
-import Results from "./Results";
+import Vote from "../components/Vote";
+import Results from "../components/Results";
 
 const useStateWithLocalStorage = (localStorageKey) => {
   const [value, setValue] = React.useState(
