@@ -1,4 +1,6 @@
-import { Box, Grid, Typography } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 import React from "react";
 import {
   XYPlot,
@@ -8,6 +10,7 @@ import {
   VerticalBarSeries,
   ChartLabel,
 } from "react-vis";
+import PropTypes from "prop-types";
 
 export default function Results({ settings }) {
   const dateData = settings.dateOptions.map((date) => ({
@@ -27,7 +30,7 @@ export default function Results({ settings }) {
   }));
 
   const RenderChart = ({ title, yLabel, xLabel, data, width, height }) => (
-    <div>
+    <>
       <Typography>{title}</Typography>
 
       <XYPlot xType="ordinal" width={width} height={height} xDistance={50}>
@@ -53,7 +56,7 @@ export default function Results({ settings }) {
         />
         <VerticalBarSeries data={data} />
       </XYPlot>
-    </div>
+    </>
   );
 
   const graphs = [
@@ -83,11 +86,17 @@ export default function Results({ settings }) {
     },
   ];
   return (
-    <Box padding={4}>
-      <Typography variant="h5">Result</Typography>
-      <Grid container style={{ marginTop: 10 }}>
+    <Box padding={4} display="flex" flexDirection="column" alignItems="center">
+      <Typography variant="h5">Results</Typography>
+      <Grid
+        container
+        style={{ marginTop: 10 }}
+        alignItems="center"
+        justify="center"
+        spacing={2}
+      >
         {graphs.map((props) => (
-          <Grid item sm={12} md={4}>
+          <Grid item sm={12} md={3}>
             <RenderChart key={props.title} {...props} />
           </Grid>
         ))}
@@ -95,3 +104,7 @@ export default function Results({ settings }) {
     </Box>
   );
 }
+
+Results.propTypes = {
+  settings: PropTypes.object.isRequired,
+};
