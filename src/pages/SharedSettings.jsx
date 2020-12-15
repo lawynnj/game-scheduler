@@ -24,7 +24,6 @@ function PokerSettings() {
 
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
 
-  // check local storage to see if the user has voted
   useEffect(() => {
     const fetchSettings = async () => {
       try {

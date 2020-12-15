@@ -17,7 +17,7 @@ function PokerSettings({ user }) {
   const [settings, setSettings] = useState(null);
   const [eventDate, setEventDate] = useState(null);
   const [eventTime, setEventTime] = useState(null);
-  // check local storage to see if the user has voted
+
   useEffect(() => {
     const fetchSettings = async () => {
       try {
