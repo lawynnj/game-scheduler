@@ -28,7 +28,14 @@ export default function Vote({ settings, onSubmit }) {
     </ul>
   );
 
-  const RenderOptions = ({ title, name, disabled, options, errors = {} }) => (
+  const RenderOptions = ({
+    title,
+    name,
+    disabled,
+    options,
+    touched,
+    errors,
+  }) => (
     <FormControl component="fieldset">
       <FormLabel component="legend">{title}</FormLabel>
       <Field component={RadioGroup} name={name}>
@@ -43,12 +50,12 @@ export default function Vote({ settings, onSubmit }) {
         ))}
       </Field>
       <Typography variant="subtitle2" color="error">
-        {errors[name] ? errors[name] : null}
+        {errors[name] && touched[name] ? errors[name] : null}
       </Typography>
     </FormControl>
   );
 
-  const RenderDates = ({ disabled, errors }) => {
+  const RenderDates = ({ disabled, errors, touched }) => {
     return (
       <RenderOptions
         title="Date"
@@ -56,6 +63,7 @@ export default function Vote({ settings, onSubmit }) {
         name="eventDate"
         disabled={disabled}
         errors={errors}
+        touched={touched}
         options={settings.dateOptions.map((date) => ({
           value: date.date,
           label: `${date.date}   (${date.votes} votes)`,
@@ -64,13 +72,14 @@ export default function Vote({ settings, onSubmit }) {
     );
   };
 
-  const RenderTimes = ({ disabled, errors }) => (
+  const RenderTimes = ({ disabled, errors, touched }) => (
     <RenderOptions
       title="Time"
       aria-label="time"
       name="eventTime"
       disabled={disabled}
       errors={errors}
+      touched={touched}
       options={settings.timeOptions.map((time) => ({
         value: time.time,
         label: `${time.time}   (${time.votes} votes)`,
@@ -78,13 +87,14 @@ export default function Vote({ settings, onSubmit }) {
     />
   );
 
-  const RenderBuyIn = ({ disabled, errors }) => (
+  const RenderBuyIn = ({ disabled, errors, touched }) => (
     <RenderOptions
       title="Buy in ($)"
       aria-label="buyIn"
       name="buyIn"
       disabled={disabled}
       errors={errors}
+      touched={touched}
       options={settings.buyInOptions.map((buyIn) => ({
         value: buyIn.amount.toString(),
         label: `${buyIn.amount}   (${buyIn.votes} votes)`,
@@ -165,25 +175,37 @@ export default function Vote({ settings, onSubmit }) {
             await handleSubmit(values);
           }}
         >
-          {({ isSubmitting, errors }) => (
+          {({ isSubmitting, errors, touched }) => (
             <Form>
               <Box mt={2}>
                 {settings.dateOptions ? (
-                  <RenderDates disabled={isSubmitting} errors={errors} />
+                  <RenderDates
+                    disabled={isSubmitting}
+                    errors={errors}
+                    touched={touched}
+                  />
                 ) : (
                   "No dates set up"
                 )}
               </Box>
               <Box mt={2}>
                 {settings.timeOptions ? (
-                  <RenderTimes disabled={isSubmitting} errors={errors} />
+                  <RenderTimes
+                    disabled={isSubmitting}
+                    errors={errors}
+                    touched={touched}
+                  />
                 ) : (
                   "No times set up"
                 )}
               </Box>
               <Box mt={2}>
                 {settings.buyInOptions ? (
-                  <RenderBuyIn disabled={isSubmitting} errors={errors} />
+                  <RenderBuyIn
+                    disabled={isSubmitting}
+                    errors={errors}
+                    touched={touched}
+                  />
                 ) : (
                   "No dates set up"
                 )}
