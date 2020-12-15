@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
-import { CircularProgress } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Vote from "./Vote";
 import Results from "./Results";
 

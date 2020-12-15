@@ -4,12 +4,13 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
-import { Button, CircularProgress, Typography } from "@material-ui/core";
 
 function PokerSettings({ user }) {
   const { gameId } = useParams();
@@ -52,8 +53,8 @@ function PokerSettings({ user }) {
       <FormControl component="fieldset">
         <FormLabel component="legend">Date</FormLabel>
         <RadioGroup
-          aria-label="gender"
-          name="gender1"
+          aria-label="date"
+          name="date"
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
         >
@@ -72,12 +73,12 @@ function PokerSettings({ user }) {
   const RenderTimes = () => (
     <>
       <FormControl component="fieldset">
-        <FormLabel component="legend">Date</FormLabel>
+        <FormLabel component="legend">Time</FormLabel>
         <RadioGroup
-          aria-label="gender"
-          name="gender1"
-          value={eventDate}
-          onChange={(e) => setEventDate(e.target.value)}
+          aria-label="time"
+          name="time"
+          value={eventTime}
+          onChange={(e) => setEventTime(e.target.value)}
         >
           {settings.timeOptions.map((time) => (
             <FormControlLabel
@@ -90,14 +91,12 @@ function PokerSettings({ user }) {
       </FormControl>
     </>
   );
-  // times = "[\"11:30:24-07:00\",\"10:30:24-07:00\",\"09:30:24-07:00\"]"
   return (
     <Box p={2}>
       <Typography variant="h6">Settings</Typography>
       <Typography variant="subtitle1">
         <div>Title: {settings.title}</div>
         <div>Host: {user.username}</div>
-
         <Box mt={2}>
           {settings.timeOptions ? <RenderTimes /> : "No times set up"}
         </Box>
