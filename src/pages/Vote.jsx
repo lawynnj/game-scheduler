@@ -3,17 +3,21 @@ import * as mutations from "../graphql/mutations";
 import Box from "@material-ui/core/Box";
 import FormControl from "@material-ui/core/FormControl";
 import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { API, graphqlOperation } from "aws-amplify";
 import { Button, Typography } from "@material-ui/core";
+import { RadioGroup } from "formik-material-ui";
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  eventTime: Yup.string().required("Title is required"),
+  eventDate: Yup.string().required("Date is required"),
+  buyIn: Yup.string().required("Buy in is required"),
+});
 
 export default function Vote({ settings, onSubmit }) {
-  const [eventDate, setEventDate] = useState(null);
-  const [eventTime, setEventTime] = useState(null);
-  const [buyIn, setBuyIn] = useState(null);
-
   const RenderPlayers = () => (
     <ul>
       {settings.players.map((player) => (
@@ -24,36 +28,34 @@ export default function Vote({ settings, onSubmit }) {
     </ul>
   );
 
-  const RenderOptions = ({ title, value, onChange, disabled, options }) => (
+  const RenderOptions = ({ title, name, disabled, options, errors = {} }) => (
     <FormControl component="fieldset">
       <FormLabel component="legend">{title}</FormLabel>
-      <RadioGroup
-        aria-label="gender"
-        name="gender1"
-        value={value}
-        onChange={onChange}
-      >
+      <Field component={RadioGroup} name={name}>
         {options.map((option) => (
           <FormControlLabel
             disabled={disabled}
             key={option.value}
             value={option.value}
-            control={<Radio />}
+            control={<Radio disabled={disabled} />}
             label={option.label}
           />
         ))}
-      </RadioGroup>
+      </Field>
+      <Typography variant="subtitle2" color="error">
+        {errors[name] ? errors[name] : null}
+      </Typography>
     </FormControl>
   );
 
-  const RenderDates = () => {
+  const RenderDates = ({ disabled, errors }) => {
     return (
       <RenderOptions
         title="Date"
-        value={eventDate}
-        onChange={(e) => setEventDate(e.target.value)}
         aria-label="date"
-        name="date"
+        name="eventDate"
+        disabled={disabled}
+        errors={errors}
         options={settings.dateOptions.map((date) => ({
           value: date.date,
           label: `${date.date}   (${date.votes} votes)`,
@@ -62,13 +64,13 @@ export default function Vote({ settings, onSubmit }) {
     );
   };
 
-  const RenderTimes = () => (
+  const RenderTimes = ({ disabled, errors }) => (
     <RenderOptions
       title="Time"
-      value={eventTime}
-      onChange={(e) => setEventTime(e.target.value)}
       aria-label="time"
-      name="time"
+      name="eventTime"
+      disabled={disabled}
+      errors={errors}
       options={settings.timeOptions.map((time) => ({
         value: time.time,
         label: `${time.time}   (${time.votes} votes)`,
@@ -76,21 +78,22 @@ export default function Vote({ settings, onSubmit }) {
     />
   );
 
-  const RenderBuyIn = () => (
+  const RenderBuyIn = ({ disabled, errors }) => (
     <RenderOptions
       title="Buy in ($)"
-      value={buyIn}
-      onChange={(e) => setBuyIn(parseInt(e.target.value))}
       aria-label="buyIn"
       name="buyIn"
+      disabled={disabled}
+      errors={errors}
       options={settings.buyInOptions.map((buyIn) => ({
-        value: buyIn.amount,
+        value: buyIn.amount.toString(),
         label: `${buyIn.amount}   (${buyIn.votes} votes)`,
       }))}
     />
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = async ({ eventTime, eventDate, buyIn }) => {
+    console.log(eventTime, eventDate, buyIn);
     const eventTimes = settings.timeOptions.map((time) => {
       if (time.time === eventTime) {
         return {
@@ -151,24 +154,60 @@ export default function Vote({ settings, onSubmit }) {
       <Typography variant="h6">Vote</Typography>
       <Typography variant="subtitle1">
         <div>Game: {settings.title}</div>
-
-        <Box mt={2}>
-          {settings.dateOptions ? <RenderDates /> : "No dates set up"}
-        </Box>
-        <Box mt={2}>
-          {settings.timeOptions ? <RenderTimes /> : "No times set up"}
-        </Box>
-        <Box mt={2}>
-          {settings.buyInOptions ? <RenderBuyIn /> : "No dates set up"}
-        </Box>
-        <Box mt={2}>
-          Players: {settings.players ? <RenderPlayers /> : "No players"}
-        </Box>
+        <Formik
+          initialValues={{
+            buyIn: "",
+            eventTime: "",
+            eventDate: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={async (values) => {
+            await handleSubmit(values);
+          }}
+        >
+          {({ isSubmitting, errors }) => (
+            <Form>
+              <Box mt={2}>
+                {settings.dateOptions ? (
+                  <RenderDates disabled={isSubmitting} errors={errors} />
+                ) : (
+                  "No dates set up"
+                )}
+              </Box>
+              <Box mt={2}>
+                {settings.timeOptions ? (
+                  <RenderTimes disabled={isSubmitting} errors={errors} />
+                ) : (
+                  "No times set up"
+                )}
+              </Box>
+              <Box mt={2}>
+                {settings.buyInOptions ? (
+                  <RenderBuyIn disabled={isSubmitting} errors={errors} />
+                ) : (
+                  "No dates set up"
+                )}
+              </Box>
+              <Box mt={2}>
+                Players:{" "}
+                {settings.players ? (
+                  <RenderPlayers disabled={isSubmitting} />
+                ) : (
+                  "No players"
+                )}
+              </Box>
+              <Button
+                color="primary"
+                variant="contained"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </Typography>
-
-      <Button color="primary" variant="contained" onClick={handleSubmit}>
-        Submit
-      </Button>
     </Box>
   );
 }
