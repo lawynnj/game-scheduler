@@ -12,6 +12,36 @@ import {
 } from "react-vis";
 import PropTypes from "prop-types";
 
+const RenderChart = ({ title, yLabel, xLabel, data, width, height }) => (
+  <>
+    <Typography>{title}</Typography>
+
+    <XYPlot xType="ordinal" width={width} height={height} xDistance={50}>
+      <HorizontalGridLines />
+      <XAxis />
+      <YAxis />
+      <ChartLabel
+        text={xLabel}
+        xPercent={0.4}
+        yPercent={1.33}
+        includeMargin={false}
+      />
+
+      <ChartLabel
+        text={yLabel}
+        includeMargin={false}
+        xPercent={-0.2}
+        yPercent={0.5}
+        style={{
+          transform: "rotate(-90)",
+          textAnchor: "end",
+        }}
+      />
+      <VerticalBarSeries data={data} />
+    </XYPlot>
+  </>
+);
+
 export default function Results({ settings }) {
   const dateData = settings.dateOptions.map((date) => ({
     x: date.date,
@@ -28,36 +58,6 @@ export default function Results({ settings }) {
     x: buyIn.amount,
     y: buyIn.votes,
   }));
-
-  const RenderChart = ({ title, yLabel, xLabel, data, width, height }) => (
-    <>
-      <Typography>{title}</Typography>
-
-      <XYPlot xType="ordinal" width={width} height={height} xDistance={50}>
-        <HorizontalGridLines />
-        <XAxis />
-        <YAxis />
-        <ChartLabel
-          text={xLabel}
-          xPercent={0.4}
-          yPercent={1.33}
-          includeMargin={false}
-        />
-
-        <ChartLabel
-          text={yLabel}
-          includeMargin={false}
-          xPercent={-0.2}
-          yPercent={0.5}
-          style={{
-            transform: "rotate(-90)",
-            textAnchor: "end",
-          }}
-        />
-        <VerticalBarSeries data={data} />
-      </XYPlot>
-    </>
-  );
 
   const graphs = [
     {
@@ -96,7 +96,7 @@ export default function Results({ settings }) {
         spacing={2}
       >
         {graphs.map((props) => (
-          <Grid item sm={12} md={3}>
+          <Grid item sm={12} md={3} key={props.title}>
             <RenderChart key={props.title} {...props} />
           </Grid>
         ))}
