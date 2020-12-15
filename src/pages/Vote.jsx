@@ -103,7 +103,6 @@ export default function Vote({ settings, onSubmit }) {
   );
 
   const handleSubmit = async ({ eventTime, eventDate, buyIn }) => {
-    console.log(eventTime, eventDate, buyIn);
     const eventTimes = settings.timeOptions.map((time) => {
       if (time.time === eventTime) {
         return {
@@ -148,12 +147,19 @@ export default function Vote({ settings, onSubmit }) {
       delete input.createdAt;
       delete input.updatedAt;
 
-      const res = await API.graphql(
+      await API.graphql(
         graphqlOperation(mutations.updateGameStrict, {
           input,
         })
       );
-      onSubmit(res.data.updateGameStrict);
+      onSubmit({
+        settings,
+        vote: {
+          eventDate,
+          eventTime,
+          buyIn,
+        },
+      });
     } catch (error) {
       console.log("Error", error);
     }
