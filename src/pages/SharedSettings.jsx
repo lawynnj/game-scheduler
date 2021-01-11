@@ -52,12 +52,10 @@ function PokerSettings() {
         <Results
           settings={settings}
           vote={vote}
-          handleFetchData={fetchSettings}
         />
       ) : (
         <Vote
           settings={settings}
-          handleFetchData={fetchSettings}
           onSubmit={({ settings, vote }) => {
             setSettings(settings);
             setVote(
