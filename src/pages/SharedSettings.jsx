@@ -8,8 +8,6 @@ import Results from "../components/Results";
 import usePrevious from "../hooks/usePrevious";
 import useStateWithLocalStorage from "../hooks/useStateWithLocalStorage";
 
-
-
 function PokerSettings() {
   const { gameId } = useParams();
   const [settings, setSettings] = useState(null);
@@ -31,7 +29,7 @@ function PokerSettings() {
   }, [gameId]);
 
   useEffect(() => {
-    if (!settings && !vote) {
+    if (!settings) {
       fetchSettings();
     } else if (prevVote !== vote) {
       fetchSettings();
@@ -48,11 +46,8 @@ function PokerSettings() {
 
   return (
     <div>
-      {hasVoted ? (
-        <Results
-          settings={settings}
-          vote={vote}
-        />
+      {hasVoted || settings.status === "COMPLETED" ? (
+        <Results settings={settings} />
       ) : (
         <Vote
           settings={settings}
