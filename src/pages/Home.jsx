@@ -25,21 +25,7 @@ const RenderItemLink = ({ date, to, title }) => {
   );
 };
 
-const Games = ({ games }) => {
-  const handleMakeActive = async ({ id }) => {
-    try {
-      await API.graphql(
-        graphqlOperation(mutations.updateGameStrict, {
-          input: {
-            id: id,
-            status: "ACTIVE",
-          },
-        })
-      );
-    } catch (error) {
-      alert("Something went wrong!");
-    }
-  };
+const Games = ({ games, handleMakeActive }) => {
   return (
     <>
       <p>Draft Games:</p>
@@ -49,9 +35,8 @@ const Games = ({ games }) => {
           .map((game) => {
             const date = new Date(game.createdAt);
             return (
-              <Box display="flex" flexDirection="row">
+              <Box key={game.id} display="flex" flexDirection="row">
                 <RenderItemLink
-                  key={game.id}
                   date={date}
                   title={game.title}
                   to={`/edit/${game.id}`}
@@ -75,9 +60,8 @@ const Games = ({ games }) => {
           .map((game) => {
             const date = new Date(game.createdAt);
             return (
-              <Box display="flex">
+              <Box display="flex" key={game.id}>
                 <RenderItemLink
-                  key={game.id}
                   date={date}
                   title={game.title}
                   to={`/shared/${game.id}`}
@@ -114,9 +98,15 @@ const Games = ({ games }) => {
   );
 };
 
+Games.propTypes = {
+  handleMakeActive: PropTypes.func,
+  games: PropTypes.object,
+};
+
 export default function Home({ user }) {
   const [games, setGames] = useState(null);
   const history = useHistory();
+
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -135,6 +125,26 @@ export default function Home({ user }) {
     if (!games) fetchGames();
   }, [games, user.attributes.sub]);
 
+  const handleMakeActive = async ({ id }) => {
+    try {
+      const res = await API.graphql(
+        graphqlOperation(mutations.updateGameStrict, {
+          input: {
+            id: id,
+            status: "ACTIVE",
+          },
+        })
+      );
+      const filtered = games.items.filter((item) => item.id !== id);
+      setGames((val) => ({
+        ...val,
+        items: [...filtered, res.data.updateGameStrict],
+      }));
+    } catch (error) {
+      alert("Something went wrong!");
+    }
+  };
+
   return (
     <Box p={2}>
       <Typography variant="h5">Hi {user.username},</Typography>
@@ -146,7 +156,7 @@ export default function Home({ user }) {
       >
         Create Game Settings
       </Button>
-      {games && <Games games={games} />}
+      {games && <Games handleMakeActive={handleMakeActive} games={games} />}
       {!games && <p>You do not have any games</p>}
     </Box>
   );
