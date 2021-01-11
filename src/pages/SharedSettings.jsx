@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Vote from "../components/Vote";
 import Results from "../components/Results";
+import usePrevious from "../hooks/usePrevious";
+import useStateWithLocalStorage from "../hooks/useStateWithLocalStorage";
 
-const useStateWithLocalStorage = (localStorageKey) => {
-  const [value, setValue] = React.useState(
-    localStorage.getItem(localStorageKey) || ""
-  );
 
-  React.useEffect(() => {
-    localStorage.setItem(localStorageKey, value);
-  }, [value, localStorageKey]);
-
-  return [value, setValue];
-};
 
 function PokerSettings() {
   const { gameId } = useParams();
@@ -24,21 +16,29 @@ function PokerSettings() {
 
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
 
+  const prevVote = usePrevious(vote);
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await API.graphql(
+        graphqlOperation(queries.getGame, {
+          id: gameId,
+        })
+      );
+      setSettings(res.data.getGame);
+    } catch (error) {
+      alert("Something went wrong!");
+    }
+  }, [gameId]);
+
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await API.graphql(
-          graphqlOperation(queries.getGame, {
-            id: gameId,
-          })
-        );
-        setSettings(res.data.getGame);
-      } catch (error) {
-        console.log(("error", error));
-      }
-    };
-    if (!settings) fetchSettings();
-  }, [gameId, settings]);
+    if (!settings && !vote) {
+      fetchSettings();
+    } else if (prevVote !== vote) {
+      fetchSettings();
+    }
+    // prevVote holds previous value of vote state, don't include it in dep. array
+    // eslint-disable-next-line
+  }, [vote, fetchSettings, settings]);
 
   if (!settings) {
     return <CircularProgress />;
@@ -49,10 +49,15 @@ function PokerSettings() {
   return (
     <div>
       {hasVoted ? (
-        <Results settings={settings} vote={vote} />
+        <Results
+          settings={settings}
+          vote={vote}
+          handleFetchData={fetchSettings}
+        />
       ) : (
         <Vote
           settings={settings}
+          handleFetchData={fetchSettings}
           onSubmit={({ settings, vote }) => {
             setSettings(settings);
             setVote(
