@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { useHistory } from "react-router-dom";
 import { API, graphqlOperation } from "aws-amplify";
 import PropTypes from "prop-types";
@@ -12,38 +11,20 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+import format from "date-fns/format";
 
 const RenderItemLink = ({ date, to, title }) => {
   const history = useHistory();
+  const d = format(date, "EEE MMM dd yyyy 'at' h:m aaaa");
 
   return (
     <ListItem button onClick={() => history.push(to)}>
-      <ListItemText
-        primary={title}
-        secondary={`Created at ${
-          monthNames[date.getMonth()]
-        } ${date.getDate()}, ${date.getFullYear()}`}
-      />
+      <ListItemText primary={title} secondary={`Created on ${d}`} />
     </ListItem>
   );
 };
 
 const Games = ({ games }) => {
-  const handleCopy = () => {};
   return (
     <>
       <p>Draft Games:</p>
@@ -108,6 +89,7 @@ const Games = ({ games }) => {
     </>
   );
 };
+
 export default function Home({ user }) {
   const [games, setGames] = useState(null);
   const history = useHistory();
@@ -123,12 +105,12 @@ export default function Home({ user }) {
         );
         setGames(res.data.listGames);
       } catch (error) {
-        console.log(("error", error));
+        alert("Something went wrong!");
       }
     };
     if (!games) fetchGames();
   }, [games, user.attributes.sub]);
-  console.log(process.env);
+
   return (
     <Box p={2}>
       <Typography variant="h5">Hi {user.username},</Typography>
