@@ -22,6 +22,7 @@ export const onCreateUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -51,6 +52,7 @@ export const onUpdateUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -80,6 +82,7 @@ export const onDeleteUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -89,8 +92,8 @@ export const onDeleteUser = /* GraphQL */ `
   }
 `;
 export const onCreateGame = /* GraphQL */ `
-  subscription OnCreateGame {
-    onCreateGame {
+  subscription OnCreateGame($owner: String!) {
+    onCreateGame(owner: $owner) {
       id
       hostId
       title
@@ -117,12 +120,13 @@ export const onCreateGame = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onUpdateGame = /* GraphQL */ `
-  subscription OnUpdateGame {
-    onUpdateGame {
+  subscription OnUpdateGame($owner: String!) {
+    onUpdateGame(owner: $owner) {
       id
       hostId
       title
@@ -149,12 +153,13 @@ export const onUpdateGame = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;
 export const onDeleteGame = /* GraphQL */ `
-  subscription OnDeleteGame {
-    onDeleteGame {
+  subscription OnDeleteGame($owner: String!) {
+    onDeleteGame(owner: $owner) {
       id
       hostId
       title
@@ -181,6 +186,7 @@ export const onDeleteGame = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;

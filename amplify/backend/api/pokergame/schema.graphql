@@ -37,7 +37,13 @@ enum GameStatus {
   CANCELLED
 }
 
-type Game @model @key(name: "byUser", fields: ["hostId"]) {
+type Game 
+    @model 
+    @key(name: "byUser", fields: ["hostId"]) 
+    @aws_cognito_user_pools
+    @auth(rules:[
+        { allow: owner, provider: userPools},  
+    ]){
   id: ID!
   hostId: ID!
   title: String!

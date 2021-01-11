@@ -30,6 +30,7 @@ export const updateGameStrict = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -57,6 +58,7 @@ export const createUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -89,6 +91,7 @@ export const updateUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -121,6 +124,7 @@ export const deleteUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -161,6 +165,7 @@ export const createGame = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -196,6 +201,7 @@ export const updateGame = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -231,6 +237,7 @@ export const deleteGame = /* GraphQL */ `
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;

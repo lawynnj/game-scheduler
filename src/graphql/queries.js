@@ -22,6 +22,7 @@ export const getUser = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          owner
         }
         nextToken
       }
@@ -79,9 +80,11 @@ export const getGame = /* GraphQL */ `
         time
         votes
       }
+      ipAddresses
       status
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -119,6 +122,7 @@ export const listGames = /* GraphQL */ `
         status
         createdAt
         updatedAt
+        owner
       }
       nextToken
     }
