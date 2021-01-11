@@ -8,39 +8,35 @@ import {
   YAxis,
   HorizontalGridLines,
   VerticalBarSeries,
-  ChartLabel,
 } from "react-vis";
 import PropTypes from "prop-types";
 
-const RenderChart = ({ title, yLabel, xLabel, data, width, height }) => (
+const RenderChart = ({ title, data, width, height, xLabel, yLabel }) => (
   <>
     <Typography>{title}</Typography>
 
-    <XYPlot xType="ordinal" width={width} height={height} xDistance={50}>
+    <XYPlot
+      xType="ordinal"
+      width={width}
+      height={height}
+      margin={{ bottom: 80 }}
+    >
       <HorizontalGridLines />
-      <XAxis />
-      <YAxis />
-      <ChartLabel
-        text={xLabel}
-        xPercent={0.4}
-        yPercent={1.33}
-        includeMargin={false}
-      />
-
-      <ChartLabel
-        text={yLabel}
-        includeMargin={false}
-        xPercent={-0.2}
-        yPercent={0.5}
-        style={{
-          transform: "rotate(-90)",
-          textAnchor: "end",
-        }}
-      />
-      <VerticalBarSeries data={data} />
+      <XAxis tickLabelAngle={-45} title={xLabel} />
+      <YAxis title={yLabel} />
+      <VerticalBarSeries barWidth={0.3} data={data} />
     </XYPlot>
   </>
 );
+
+const getGraphData = (data, title, yLabel, xLabel) => ({
+  data,
+  title,
+  xLabel,
+  yLabel,
+  width: 300,
+  height: 200,
+});
 
 export default function Results({ settings }) {
   const dateData = settings.dateOptions.map((date) => ({
@@ -60,31 +56,11 @@ export default function Results({ settings }) {
   }));
 
   const graphs = [
-    {
-      data: dateData,
-      title: "Date",
-      xLabel: "Dates",
-      yLabel: "Votes",
-      width: 200,
-      height: 200,
-    },
-    {
-      data: timeData,
-      title: "Time",
-      xLabel: "Times",
-      yLabel: "Votes",
-      width: 200,
-      height: 200,
-    },
-    {
-      data: buyInData,
-      title: "Buy In",
-      xLabel: "Amounts",
-      yLabel: "Votes",
-      width: 200,
-      height: 200,
-    },
+    getGraphData(dateData, "Date", "Votes", "Dates"),
+    getGraphData(timeData, "Time", "Votes", "Times"),
+    getGraphData(buyInData, "Buy In", "Votes", "Amounts"),
   ];
+
   return (
     <Box padding={4} display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h5">Results</Typography>
@@ -96,7 +72,7 @@ export default function Results({ settings }) {
         spacing={2}
       >
         {graphs.map((props) => (
-          <Grid item sm={12} md={3} key={props.title}>
+          <Grid item sm={12} md={4} key={props.title}>
             <RenderChart key={props.title} {...props} />
           </Grid>
         ))}

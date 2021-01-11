@@ -118,7 +118,7 @@ export default function Vote({ settings, onSubmit }) {
         },
       });
     } catch (error) {
-      console.log("Error", error);
+      alert("Something went wrong!");
     }
   };
 
