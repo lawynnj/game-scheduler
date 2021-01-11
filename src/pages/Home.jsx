@@ -16,13 +16,22 @@ import * as mutations from "../graphql/mutations";
 
 const RenderItemLink = ({ date, to, title }) => {
   const history = useHistory();
-  const d = format(date, "EEE MMM dd yyyy 'at' h:m aaaa");
+
+  const d = date
+    ? `Created on ${format(date, "EEE MMM dd yyyy 'at' h:m aaaa")}`
+    : "";
 
   return (
     <ListItem button onClick={() => history.push(to)}>
-      <ListItemText primary={title} secondary={`Created on ${d}`} />
+      <ListItemText primary={title} secondary={d} />
     </ListItem>
   );
+};
+
+RenderItemLink.propTypes = {
+  date: PropTypes.object,
+  to: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const Games = ({ games, handleMakeActive }) => {
@@ -83,13 +92,11 @@ const Games = ({ games, handleMakeActive }) => {
         {games.items
           .filter((game) => game.status === "COMPLETED")
           .map((game) => {
-            const date = new Date(game.eventDate);
             return (
               <RenderItemLink
                 key={game.id}
-                date={date}
                 title={game.title}
-                to={`/game/${game.id}`}
+                to={`/shared/${game.id}`}
               />
             );
           })}
@@ -99,8 +106,8 @@ const Games = ({ games, handleMakeActive }) => {
 };
 
 Games.propTypes = {
-  handleMakeActive: PropTypes.func,
-  games: PropTypes.object,
+  handleMakeActive: PropTypes.func.isRequired,
+  games: PropTypes.object.isRequired,
 };
 
 export default function Home({ user }) {
