@@ -56,9 +56,9 @@ export default function Results({ settings }) {
   }));
 
   const graphs = [
-    getGraphData(dateData, "Date", "Dates", "Votes"),
-    getGraphData(timeData, "Time", "Times", "Votes"),
-    getGraphData(buyInData, "Buy In", "Amounts", "Votes"),
+    getGraphData(dateData, "Date", "Votes", "Dates"),
+    getGraphData(timeData, "Time", "Votes", "Times"),
+    getGraphData(buyInData, "Buy In", "Votes", "Amounts"),
   ];
 
   return (
