@@ -19,7 +19,6 @@ const RenderChart = ({ title, data, width, height, xLabel, yLabel }) => (
       xType="ordinal"
       width={width}
       height={height}
-      xDistance={20}
       margin={{ bottom: 80 }}
     >
       <HorizontalGridLines />
