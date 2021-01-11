@@ -1,7 +1,7 @@
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   XYPlot,
   XAxis,
@@ -38,7 +38,7 @@ const getGraphData = (data, title, yLabel, xLabel) => ({
   height: 200,
 });
 
-export default function Results({ settings, }) {
+export default function Results({ settings }) {
   const dateData = settings.dateOptions.map((date) => ({
     x: date.date,
     y: date.votes,

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Home from "./Home";
 import AddEditPokerSettings from "./AddEditPokerSettings";
-import PokerSettings from "./PokerSettings";
 import Header from "../components/Header";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import { Route, Switch } from "react-router-dom";
