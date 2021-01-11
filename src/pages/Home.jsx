@@ -12,6 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import format from "date-fns/format";
+import * as mutations from "../graphql/mutations";
 
 const RenderItemLink = ({ date, to, title }) => {
   const history = useHistory();
@@ -25,6 +26,20 @@ const RenderItemLink = ({ date, to, title }) => {
 };
 
 const Games = ({ games }) => {
+  const handleMakeActive = async ({ id }) => {
+    try {
+      await API.graphql(
+        graphqlOperation(mutations.updateGameStrict, {
+          input: {
+            id: id,
+            status: "ACTIVE",
+          },
+        })
+      );
+    } catch (error) {
+      alert("Something went wrong!");
+    }
+  };
   return (
     <>
       <p>Draft Games:</p>
@@ -34,12 +49,21 @@ const Games = ({ games }) => {
           .map((game) => {
             const date = new Date(game.createdAt);
             return (
-              <RenderItemLink
-                key={game.id}
-                date={date}
-                title={game.title}
-                to={`/edit/${game.id}`}
-              />
+              <Box display="flex" flexDirection="row">
+                <RenderItemLink
+                  key={game.id}
+                  date={date}
+                  title={game.title}
+                  to={`/edit/${game.id}`}
+                />
+                <Button
+                  style={{ width: 150 }}
+                  color="primary"
+                  onClick={() => handleMakeActive({ ...game })}
+                >
+                  Make Active
+                </Button>
+              </Box>
             );
           })}
       </List>
