@@ -83,7 +83,7 @@ export default function Vote({ settings, onSubmit }) {
     });
 
     const buyIns = settings.buyInOptions.map((_buyIn) => {
-      if (_buyIn.amount === buyIn) {
+      if (_buyIn.amount === parseInt(buyIn)) {
         return {
           ..._buyIn,
           votes: _buyIn.votes + 1,
@@ -92,7 +92,6 @@ export default function Vote({ settings, onSubmit }) {
         return _buyIn;
       }
     });
-
     try {
       const input = {
         ...settings,
