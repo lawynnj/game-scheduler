@@ -86,20 +86,17 @@ export default function Vote({ settings, onSubmit }) {
     });
     try {
       const input = {
-        ...settings,
+        id: settings.id,
         buyInOptions: buyIns,
         dateOptions: eventDates,
         timeOptions: eventTimes,
       };
 
-      delete input.createdAt;
-      delete input.updatedAt;
-
       await API.graphql({
         ...graphqlOperation(mutations.updateGame, {
           input,
         }),
-        authMode: "AMAZON_COGNITO_USER_POOLS",
+        authMode: "API_KEY",
       });
       onSubmit({
         settings,

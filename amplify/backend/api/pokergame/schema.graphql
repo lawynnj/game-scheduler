@@ -68,9 +68,13 @@ type Game
   eventTime: AWSDateTime # selected date and time
   players: [Player] # array of players
   buyInOptions: [BuyInOptions]
-  dateOptions: [DateOptions] # array of dates
-  timeOptions: [TimeOptions] # array of times
+    @auth(rules: [{ allow: public, operations: [update] }]) # array of buy ins
+  dateOptions: [DateOptions]
+    @auth(rules: [{ allow: public, operations: [update] }]) # array of dates
+  timeOptions: [TimeOptions]  # array of times
+    @auth(rules: [{ allow: public, operations: [update] }]) # array of time
   ipAddresses: [AWSIPAddress]
+
   status: GameStatus
 
   hostId: ID!
