@@ -7,13 +7,14 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { API, graphqlOperation } from "aws-amplify";
+import { graphqlOperation } from "aws-amplify";
 import { RadioGroup } from "formik-material-ui";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
+import { publicAPI } from "../utils";
 
 const validationSchema = Yup.object().shape({
   eventTime: Yup.string().required("Title is required"),
@@ -92,12 +93,12 @@ export default function Vote({ settings, onSubmit }) {
         timeOptions: eventTimes,
       };
 
-      await API.graphql({
-        ...graphqlOperation(mutations.updateGame, {
+      await publicAPI(
+        graphqlOperation(mutations.updateGame, {
           input,
-        }),
-        authMode: "API_KEY",
-      });
+        })
+      );
+
       onSubmit({
         settings,
         vote: {

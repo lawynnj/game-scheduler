@@ -23,6 +23,7 @@ function PokerSettings() {
         }),
         authMode: "API_KEY",
       });
+
       setSettings(res.data.getGame);
     } catch (error) {
       alert("Something went wrong!");
