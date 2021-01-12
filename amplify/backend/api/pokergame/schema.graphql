@@ -55,7 +55,7 @@ type Game
   @key(name: "byUser", fields: ["hostId"])
   @auth(
     rules: [
-      { allow: owner, operations: [create, update, delete] }
+      { allow: owner }
       { allow: groups, groups: ["admin"], operations: [create, update, delete] }
       { allow: private, operations: [read] }
       { allow: public, operations: [read] }
