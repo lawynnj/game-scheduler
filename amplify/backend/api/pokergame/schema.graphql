@@ -1,14 +1,26 @@
 """
 connection: https://docs.amplify.aws/cli/graphql-transformer/connection#definition
+owner should be able to access profile -
 """
-type User @model {
+type User
+  @model
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, read, update, delete] }
+      {
+        allow: groups
+        groups: ["admin"]
+        operations: [read, create, update, delete]
+      }
+    ]
+  ) {
   id: ID!
-  username: String!
+  username: String
   firstName: String
   lastName: String
   email: String
   image: String
-  games: [Game] @connection(keyName: "byUser", fields: ["id"])
+  games: [Game] @connection(name: "UserGames", keyField: "hostId")
 }
 
 type DateOptions {
@@ -37,15 +49,18 @@ enum GameStatus {
   CANCELLED
 }
 
-type Game 
-    @model 
-    @key(name: "byUser", fields: ["hostId"]) 
-    @auth(rules:[
-        { allow: public, provider: iam, operations: [read]}
-    ])
-    {
+type Game
+  @model
+  @key(name: "byUser", fields: ["hostId"])
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: groups, groups: ["admin"], operations: [create, update, delete] }
+      { allow: private, operations: [read] }
+      { allow: public, operations: [read] }
+    ]
+  ) {
   id: ID!
-  hostId: ID!
   title: String!
   type: String
   buyIn: Int
@@ -56,6 +71,9 @@ type Game
   timeOptions: [TimeOptions] # array of times
   ipAddresses: [AWSIPAddress]
   status: GameStatus
+
+  hostId: ID!
+  host: User! @connection(name: "UserGames", keyField: "hostId")
 }
 
 input DateOptionsInput {

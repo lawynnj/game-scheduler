@@ -117,20 +117,22 @@ export default function Home({ user }) {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await API.graphql(
-          graphqlOperation(queries.listGames, {
+        const res = await API.graphql({
+          ...graphqlOperation(queries.listGames, {
             input: {
               hostId: user.attributes.sub,
             },
-          })
-        );
+          }),
+          authMode: user ? "AMAZON_COGNITO_USER_POOLS" : "API_KEY",
+        });
         setGames(res.data.listGames);
       } catch (error) {
+        console.log(error);
         alert("Something went wrong!");
       }
     };
     if (!games) fetchGames();
-  }, [games, user.attributes.sub]);
+  }, [user, games, user.attributes.sub]);
 
   const handleMakeActive = async ({ id }) => {
     try {

@@ -2,100 +2,102 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser {
-    onCreateUser {
+  subscription OnCreateUser($owner: String) {
+    onCreateUser(owner: $owner) {
       id
       username
       firstName
       lastName
       email
       image
+      createdAt
+      updatedAt
+      owner
       games {
         items {
           id
-          hostId
           title
           type
           buyIn
           eventTime
           ipAddresses
           status
+          hostId
           createdAt
           updatedAt
           owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
 export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser {
-    onUpdateUser {
+  subscription OnUpdateUser($owner: String) {
+    onUpdateUser(owner: $owner) {
       id
       username
       firstName
       lastName
       email
       image
+      createdAt
+      updatedAt
+      owner
       games {
         items {
           id
-          hostId
           title
           type
           buyIn
           eventTime
           ipAddresses
           status
+          hostId
           createdAt
           updatedAt
           owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
 export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser {
-    onDeleteUser {
+  subscription OnDeleteUser($owner: String) {
+    onDeleteUser(owner: $owner) {
       id
       username
       firstName
       lastName
       email
       image
+      createdAt
+      updatedAt
+      owner
       games {
         items {
           id
-          hostId
           title
           type
           buyIn
           eventTime
           ipAddresses
           status
+          hostId
           createdAt
           updatedAt
           owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
 export const onCreateGame = /* GraphQL */ `
-  subscription OnCreateGame($owner: String!) {
-    onCreateGame(owner: $owner) {
+  subscription OnCreateGame {
+    onCreateGame {
       id
-      hostId
       title
       type
       buyIn
@@ -118,17 +120,31 @@ export const onCreateGame = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }
 `;
 export const onUpdateGame = /* GraphQL */ `
-  subscription OnUpdateGame($owner: String!) {
-    onUpdateGame(owner: $owner) {
+  subscription OnUpdateGame {
+    onUpdateGame {
       id
-      hostId
       title
       type
       buyIn
@@ -151,17 +167,31 @@ export const onUpdateGame = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }
 `;
 export const onDeleteGame = /* GraphQL */ `
-  subscription OnDeleteGame($owner: String!) {
-    onDeleteGame(owner: $owner) {
+  subscription OnDeleteGame {
+    onDeleteGame {
       id
-      hostId
       title
       type
       buyIn
@@ -184,8 +214,23 @@ export const onDeleteGame = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }

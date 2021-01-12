@@ -5,7 +5,6 @@ export const updateGameStrict = /* GraphQL */ `
   mutation UpdateGameStrict($input: GameInput, $nextToken: String) {
     updateGameStrict(input: $input, nextToken: $nextToken) {
       id
-      hostId
       title
       type
       buyIn
@@ -28,8 +27,23 @@ export const updateGameStrict = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }
@@ -46,24 +60,25 @@ export const createUser = /* GraphQL */ `
       lastName
       email
       image
+      createdAt
+      updatedAt
+      owner
       games {
         items {
           id
-          hostId
           title
           type
           buyIn
           eventTime
           ipAddresses
           status
+          hostId
           createdAt
           updatedAt
           owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -79,24 +94,25 @@ export const updateUser = /* GraphQL */ `
       lastName
       email
       image
+      createdAt
+      updatedAt
+      owner
       games {
         items {
           id
-          hostId
           title
           type
           buyIn
           eventTime
           ipAddresses
           status
+          hostId
           createdAt
           updatedAt
           owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -112,24 +128,25 @@ export const deleteUser = /* GraphQL */ `
       lastName
       email
       image
+      createdAt
+      updatedAt
+      owner
       games {
         items {
           id
-          hostId
           title
           type
           buyIn
           eventTime
           ipAddresses
           status
+          hostId
           createdAt
           updatedAt
           owner
         }
         nextToken
       }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -140,7 +157,6 @@ export const createGame = /* GraphQL */ `
   ) {
     createGame(input: $input, condition: $condition) {
       id
-      hostId
       title
       type
       buyIn
@@ -163,8 +179,23 @@ export const createGame = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }
@@ -176,7 +207,6 @@ export const updateGame = /* GraphQL */ `
   ) {
     updateGame(input: $input, condition: $condition) {
       id
-      hostId
       title
       type
       buyIn
@@ -199,8 +229,23 @@ export const updateGame = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }
@@ -212,7 +257,6 @@ export const deleteGame = /* GraphQL */ `
   ) {
     deleteGame(input: $input, condition: $condition) {
       id
-      hostId
       title
       type
       buyIn
@@ -235,8 +279,23 @@ export const deleteGame = /* GraphQL */ `
       }
       ipAddresses
       status
+      hostId
       createdAt
       updatedAt
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+        games {
+          nextToken
+        }
+      }
       owner
     }
   }
