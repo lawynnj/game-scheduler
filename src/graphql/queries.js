@@ -86,20 +86,6 @@ export const getGame = /* GraphQL */ `
       hostId
       createdAt
       updatedAt
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        createdAt
-        updatedAt
-        owner
-        games {
-          nextToken
-        }
-      }
       owner
     }
   }
@@ -138,17 +124,6 @@ export const listGames = /* GraphQL */ `
         hostId
         createdAt
         updatedAt
-        host {
-          id
-          username
-          firstName
-          lastName
-          email
-          image
-          createdAt
-          updatedAt
-          owner
-        }
         owner
       }
       nextToken
