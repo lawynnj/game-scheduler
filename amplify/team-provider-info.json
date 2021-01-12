@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "gameschedulerapife7a84e4": {}
+        "gameschedulerapife7a84e4": {},
+        "userPoolGroups": {}
       }
     }
   }

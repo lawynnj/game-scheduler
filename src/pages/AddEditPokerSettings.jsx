@@ -141,13 +141,11 @@ const AddEditPokerSettings = ({ match, userId }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        console.log(userId ? "AMAZON_COGNITO_USER_POOLS" : "API_KEY");
-        debugger;
         const res = await API.graphql({
           ...graphqlOperation(queries.getGame, {
             id: gameId,
           }),
-          authMode: userId ? "AMAZON_COGNITO_USER_POOLS" : "API_KEY",
+          authMode: "AMAZON_COGNITO_USER_POOLS",
         });
         setSettings(res.data.getGame);
       } catch (error) {
@@ -161,14 +159,15 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
   const handleAdd = async (sanitizedVals) => {
     try {
-      await API.graphql(
-        graphqlOperation(mutations.createGame, {
+      await API.graphql({
+        ...graphqlOperation(mutations.createGame, {
           input: {
             ...sanitizedVals,
             hostId: userId,
           },
-        })
-      );
+        }),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
       history.push("/");
     } catch (error) {
       console.log("Error", error);
