@@ -50,8 +50,6 @@ VoteOption.propTypes = {
   errors: PropTypes.object.isRequired,
 };
 
-window.format = format;
-window.parse = parse;
 export default function Vote({ settings, onSubmit }) {
   const handleSubmit = async ({ eventTime, eventDate, buyIn }) => {
     const eventTimes = settings.timeOptions.map((time) => {
