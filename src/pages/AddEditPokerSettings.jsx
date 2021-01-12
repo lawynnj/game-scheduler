@@ -141,11 +141,12 @@ const AddEditPokerSettings = ({ match, userId }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await API.graphql(
-          graphqlOperation(queries.getGame, {
+        const res = await API.graphql({
+          ...graphqlOperation(queries.getGame, {
             id: gameId,
-          })
-        );
+          }),
+          authMode: "AMAZON_COGNITO_USER_POOLS",
+        });
         setSettings(res.data.getGame);
       } catch (error) {
         console.log(("error", error));
@@ -158,14 +159,15 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
   const handleAdd = async (sanitizedVals) => {
     try {
-      await API.graphql(
-        graphqlOperation(mutations.createGame, {
+      await API.graphql({
+        ...graphqlOperation(mutations.createGame, {
           input: {
             ...sanitizedVals,
             hostId: userId,
           },
-        })
-      );
+        }),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
       history.push("/");
     } catch (error) {
       console.log("Error", error);
@@ -174,15 +176,16 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
   const handleEdit = async (sanitizedVals) => {
     try {
-      await API.graphql(
-        graphqlOperation(mutations.updateGameStrict, {
+      await API.graphql({
+        ...graphqlOperation(mutations.updateGame, {
           input: {
             ...sanitizedVals,
             hostId: userId,
             id: settings.id,
           },
-        })
-      );
+        }),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
     } catch (error) {
       console.log("Error", error);
     }

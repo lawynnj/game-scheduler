@@ -1,14 +1,26 @@
 """
 connection: https://docs.amplify.aws/cli/graphql-transformer/connection#definition
 """
-type User @model {
+type User
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      {
+        allow: groups
+        groups: ["admin"]
+        operations: [read, create, update, delete]
+      }
+    ]
+  )
+  @aws_cognito_user_pools {
   id: ID!
-  username: String!
+  username: String
   firstName: String
   lastName: String
   email: String
   image: String
-  games: [Game] @connection(keyName: "byUser", fields: ["id"])
+  games: [Game] @connection(name: "UserGames", keyField: "hostId")
 }
 
 type DateOptions {
@@ -37,19 +49,36 @@ enum GameStatus {
   CANCELLED
 }
 
-type Game @model @key(name: "byUser", fields: ["hostId"]) {
+type Game
+  @model
+  @key(name: "byUser", fields: ["hostId"])
+  @auth(
+    rules: [
+      { allow: owner }
+      { allow: groups, groups: ["admin"], operations: [create, update, delete] }
+      { allow: private, operations: [read] }
+      { allow: public, operations: [read] }
+    ]
+  )
+  @aws_cognito_user_pools {
   id: ID!
-  hostId: ID!
   title: String!
   type: String
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
   players: [Player] # array of players
   buyInOptions: [BuyInOptions]
-  dateOptions: [DateOptions] # array of dates
-  timeOptions: [TimeOptions] # array of times
+    @auth(rules: [{ allow: public, operations: [update] }]) # array of buy ins
+  dateOptions: [DateOptions]
+    @auth(rules: [{ allow: public, operations: [update] }]) # array of dates
+  timeOptions: [TimeOptions]  # array of times
+    @auth(rules: [{ allow: public, operations: [update] }]) # array of time
   ipAddresses: [AWSIPAddress]
+
   status: GameStatus
+
+  hostId: ID!
+  host: User! @connection(name: "UserGames", keyField: "hostId")
 }
 
 input DateOptionsInput {
