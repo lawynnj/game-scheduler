@@ -6,14 +6,15 @@ type User
   @model
   @auth(
     rules: [
-      { allow: owner, operations: [create, read, update, delete] }
+      { allow: owner }
       {
         allow: groups
         groups: ["admin"]
         operations: [read, create, update, delete]
       }
     ]
-  ) {
+  )
+  @aws_cognito_user_pools {
   id: ID!
   username: String
   firstName: String
