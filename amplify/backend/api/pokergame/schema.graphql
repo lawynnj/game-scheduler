@@ -40,10 +40,10 @@ enum GameStatus {
 type Game 
     @model 
     @key(name: "byUser", fields: ["hostId"]) 
-    @aws_cognito_user_pools
     @auth(rules:[
-        { allow: owner, provider: userPools},  
-    ]){
+        { allow: public, provider: iam, operations: [read]}
+    ])
+    {
   id: ID!
   hostId: ID!
   title: String!
