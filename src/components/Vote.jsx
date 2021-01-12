@@ -112,11 +112,12 @@ export default function Vote({ settings, onSubmit }) {
   };
 
   const formatTime = (time) => {
-    let tmp = time.split(".");
-    let tmptime = tmp[0] + tmp[1][tmp[1].length - 1];
+    const tmp = time.split(".");
+    const tmptime = tmp[0] + tmp[1][tmp[1].length - 1];
     const d = parse(tmptime, "hh:mm:ssX", new Date());
     return format(d, "hh:mm a");
   };
+
   return (
     <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h6">Vote</Typography>
