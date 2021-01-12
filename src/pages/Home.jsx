@@ -137,14 +137,15 @@ export default function Home({ user }) {
 
   const handleMakeActive = async ({ id }) => {
     try {
-      const res = await API.graphql(
-        graphqlOperation(mutations.updateGame, {
+      const res = await API.graphql({
+        ...graphqlOperation(mutations.updateGame, {
           input: {
             id: id,
             status: "ACTIVE",
           },
-        })
-      );
+        }),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
       const filtered = games.items.filter((item) => item.id !== id);
       setGames((val) => ({
         ...val,

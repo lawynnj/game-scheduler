@@ -95,11 +95,12 @@ export default function Vote({ settings, onSubmit }) {
       delete input.createdAt;
       delete input.updatedAt;
 
-      await API.graphql(
-        graphqlOperation(mutations.updateGame, {
+      await API.graphql({
+        ...graphqlOperation(mutations.updateGame, {
           input,
-        })
-      );
+        }),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
       onSubmit({
         settings,
         vote: {

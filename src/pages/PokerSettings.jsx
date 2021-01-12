@@ -21,11 +21,12 @@ function PokerSettings({ user }) {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await API.graphql(
-          graphqlOperation(queries.getGame, {
+        const res = await API.graphql({
+          ...graphqlOperation(queries.getGame, {
             id: gameId,
-          })
-        );
+          }),
+          authMode: "AMAZON_COGNITO_USER_POOLS",
+        });
         setSettings(res.data.getGame);
       } catch (error) {
         console.log(("error", error));
