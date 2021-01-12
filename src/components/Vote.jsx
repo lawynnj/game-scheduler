@@ -104,7 +104,7 @@ export default function Vote({ settings, onSubmit }) {
       delete input.updatedAt;
 
       await API.graphql(
-        graphqlOperation(mutations.updateGameStrict, {
+        graphqlOperation(mutations.updateGame, {
           input,
         })
       );

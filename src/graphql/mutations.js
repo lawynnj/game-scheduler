@@ -30,20 +30,7 @@ export const updateGameStrict = /* GraphQL */ `
       hostId
       createdAt
       updatedAt
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        createdAt
-        updatedAt
-        owner
-        games {
-          nextToken
-        }
-      }
+
       owner
     }
   }
@@ -182,20 +169,6 @@ export const createGame = /* GraphQL */ `
       hostId
       createdAt
       updatedAt
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        createdAt
-        updatedAt
-        owner
-        games {
-          nextToken
-        }
-      }
       owner
     }
   }
@@ -232,20 +205,6 @@ export const updateGame = /* GraphQL */ `
       hostId
       createdAt
       updatedAt
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        createdAt
-        updatedAt
-        owner
-        games {
-          nextToken
-        }
-      }
       owner
     }
   }

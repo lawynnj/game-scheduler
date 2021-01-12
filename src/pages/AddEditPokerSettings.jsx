@@ -176,15 +176,16 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
   const handleEdit = async (sanitizedVals) => {
     try {
-      await API.graphql(
-        graphqlOperation(mutations.updateGameStrict, {
+      await API.graphql({
+        ...graphqlOperation(mutations.updateGame, {
           input: {
             ...sanitizedVals,
             hostId: userId,
             id: settings.id,
           },
-        })
-      );
+        }),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+      });
     } catch (error) {
       console.log("Error", error);
     }
