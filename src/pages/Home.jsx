@@ -119,15 +119,16 @@ export default function Home({ user }) {
       try {
         const res = await API.graphql({
           ...graphqlOperation(queries.listGames, {
-            input: {
-              hostId: user.attributes.sub,
+            filter: {
+              hostId: {
+                eq: user.attributes.sub,
+              },
             },
           }),
-          authMode: user ? "AMAZON_COGNITO_USER_POOLS" : "API_KEY",
+          authMode: "AMAZON_COGNITO_USER_POOLS",
         });
         setGames(res.data.listGames);
       } catch (error) {
-        console.log(error);
         alert("Something went wrong!");
       }
     };
@@ -137,7 +138,7 @@ export default function Home({ user }) {
   const handleMakeActive = async ({ id }) => {
     try {
       const res = await API.graphql(
-        graphqlOperation(mutations.updateGameStrict, {
+        graphqlOperation(mutations.updateGame, {
           input: {
             id: id,
             status: "ACTIVE",
@@ -147,7 +148,7 @@ export default function Home({ user }) {
       const filtered = games.items.filter((item) => item.id !== id);
       setGames((val) => ({
         ...val,
-        items: [...filtered, res.data.updateGameStrict],
+        items: [...filtered, res.data.updateGame],
       }));
     } catch (error) {
       alert("Something went wrong!");
