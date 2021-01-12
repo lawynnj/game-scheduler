@@ -17,11 +17,12 @@ function PokerSettings() {
   const prevVote = usePrevious(vote);
   const fetchSettings = useCallback(async () => {
     try {
-      const res = await API.graphql(
-        graphqlOperation(queries.getGame, {
+      const res = await API.graphql({
+        ...graphqlOperation(queries.getGame, {
           id: gameId,
-        })
-      );
+        }),
+        authMode: "API_KEY",
+      });
       setSettings(res.data.getGame);
     } catch (error) {
       alert("Something went wrong!");

@@ -1,6 +1,5 @@
 """
 connection: https://docs.amplify.aws/cli/graphql-transformer/connection#definition
-owner should be able to access profile -
 """
 type User
   @model
@@ -60,7 +59,8 @@ type Game
       { allow: private, operations: [read] }
       { allow: public, operations: [read] }
     ]
-  ) {
+  )
+  @aws_cognito_user_pools {
   id: ID!
   title: String!
   type: String
