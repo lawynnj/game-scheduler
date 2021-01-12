@@ -117,16 +117,15 @@ export default function Home({ user }) {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const res = await API.graphql({
-          ...graphqlOperation(queries.listGames, {
+        const res = await API.graphql(
+          graphqlOperation(queries.listGames, {
             filter: {
               hostId: {
                 eq: user.attributes.sub,
               },
             },
-          }),
-          authMode: "AMAZON_COGNITO_USER_POOLS",
-        });
+          })
+        );
         setGames(res.data.listGames);
       } catch (error) {
         alert("Something went wrong!");
@@ -137,15 +136,14 @@ export default function Home({ user }) {
 
   const handleMakeActive = async ({ id }) => {
     try {
-      const res = await API.graphql({
-        ...graphqlOperation(mutations.updateGame, {
+      const res = await API.graphql(
+        graphqlOperation(mutations.updateGame, {
           input: {
             id: id,
             status: "ACTIVE",
           },
-        }),
-        authMode: "AMAZON_COGNITO_USER_POOLS",
-      });
+        })
+      );
       const filtered = games.items.filter((item) => item.id !== id);
       setGames((val) => ({
         ...val,
