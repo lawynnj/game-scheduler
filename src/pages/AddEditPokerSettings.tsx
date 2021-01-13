@@ -123,13 +123,14 @@ interface MyFormValues {
   timeOptions: TimeOptions[];
   buyInOptions: BuyInOptions[];
 }
+interface IAddEditPokerSettingsProps {
+  match: any;
+  userId: string;
+}
 const AddEditPokerSettings = ({
   match,
   userId,
-}: {
-  match: any;
-  userId: string;
-}) => {
+}: IAddEditPokerSettingsProps) => {
   const { gameId } = match.params;
   const isAddMode = !gameId;
   const classes = useStyles();
