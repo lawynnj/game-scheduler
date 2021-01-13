@@ -38,7 +38,8 @@ const getGraphData = (data, title, yLabel, xLabel) => ({
   height: 200,
 });
 
-export default function Results({ settings }) {
+export default function Results({ game }) {
+  const settings = game.getGame;
   const dateData = settings.dateOptions.map((date) => ({
     x: date.date,
     y: date.votes,
@@ -82,5 +83,5 @@ export default function Results({ settings }) {
 }
 
 Results.propTypes = {
-  settings: PropTypes.object.isRequired,
+  game: PropTypes.object.isRequired,
 };

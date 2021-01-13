@@ -8,6 +8,34 @@ interface IGame {
   createdAt: string;
 }
 
+interface DateOptions {
+  date: string;
+  votes: number;
+}
+interface TimeOptions {
+  time: string;
+  votes: number;
+}
+interface BuyInOptions {
+  amount: number;
+  votes: number;
+}
+
+export interface IGame2 {
+  id: string;
+  title: string;
+  status: GameStatus | null;
+  type: string;
+  buyIn: string;
+  eventTime: string;
+  buyInOptions: BuyInOptions[];
+  dateOptions: DateOptions[];
+  timeOptions: TimeOptions[];
+  hostId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 function mapListGamesQuery(
   listTodosQuery: GraphQLResult<ListGamesQuery>
 ): IGame[] {

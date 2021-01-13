@@ -6,49 +6,41 @@ import Vote from "../components/Vote";
 import Results from "../components/Results";
 import usePrevious from "../hooks/usePrevious";
 import useStateWithLocalStorage from "../hooks/useStateWithLocalStorage";
-import callGraphQL from "../utils/callGraphQl";
 import { GetGameQuery } from "../API";
+import { useQuery } from "../hooks/useQuery";
 
 function PokerSettings() {
   const { gameId } = useParams<{ gameId: string }>();
-  const [game, setGame] = useState<GetGameQuery | undefined>(undefined);
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
   const prevVote = usePrevious(vote);
-  const fetchGame = useCallback(async () => {
-    try {
-      const { data } = await callGraphQL<GetGameQuery>(queries.getGame, {
-        id: gameId,
-      });
-      setGame(data);
-    } catch (error) {
-      alert("Something went wrong!");
+  const { loading, data: game, error, refetch } = useQuery<GetGameQuery>(
+    queries.getGame,
+    {
+      id: gameId,
     }
-  }, [gameId]);
+  );
 
   useEffect(() => {
-    if (!game) {
-      fetchGame();
-    } else if (prevVote !== vote) {
-      fetchGame();
+    // refetch data when user votes
+    if (vote && prevVote !== undefined && prevVote !== vote) {
+      console.log("refetch");
+      refetch();
     }
     // prevVote holds previous value of vote state, don't include it in dep. array
     // eslint-disable-next-line
-  }, [vote, fetchGame, game, gameId]);
+  }, [vote]);
 
-  if (!game || !game?.getGame) {
-    return <CircularProgress />;
-  }
+  if (loading || game?.getGame === undefined) return <CircularProgress />;
 
   const hasVoted = vote !== undefined && vote !== "";
   return (
     <div>
       {hasVoted || game?.getGame?.status === "COMPLETED" ? (
-        <Results settings={game} />
+        <Results game={game} />
       ) : (
         <Vote
-          settings={game?.getGame}
-          onSubmit={({ game, vote }) => {
-            setGame(game);
+          game={game}
+          onSubmit={(vote) => {
             setVote(
               JSON.stringify({
                 buyIn: vote.buyIn,

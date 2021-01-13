@@ -50,10 +50,6 @@ export const getGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-      }
       buyInOptions {
         amount
         votes
