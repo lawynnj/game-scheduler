@@ -172,12 +172,14 @@ const VoteForm = withFormik<MyFormProps, FormValues>({
 
     if (!values.buyIn) {
       errors.buyIn = "Required";
-    } else if (!values.eventTime) {
+    }
+    if (!values.eventTime) {
       errors.eventTime = "Required";
     }
     if (!values.eventDate) {
       errors.eventDate = "Required";
     }
+
     return errors;
   },
   async handleSubmit(values: FormValues, { props }) {
