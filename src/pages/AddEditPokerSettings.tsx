@@ -20,6 +20,9 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { TimePicker } from "formik-material-ui-pickers";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import { DateOptions, TimeOptions, BuyInOptions } from "../models/game";
+import { GetGameQuery } from "../API";
+import { gqlOp, useQuery } from "../hooks/useQuery";
 
 const useStyles = makeStyles({
   input: {
@@ -34,93 +37,115 @@ const useStyles = makeStyles({
   },
 });
 
-const sanitizeInitVals = (data, initialValues) => {
-  const temp = {};
-  const arrayProps = ["dateOptions", "timeOptions", "buyInOptions", "players"];
-  const stringProps = ["type", "status", "title", "eventTime"];
-  Object.keys(initialValues).forEach((key) => {
-    if (Array.isArray(data[key])) {
-      temp[key] = [...data[key]];
-      if (key === "timeOptions") {
-        temp[key] = temp[key].map((obj) => {
-          let d = new Date();
-          let ds = d.toLocaleDateString();
-          obj["time"] = new Date(`${ds}T${obj.time}`);
-          return obj;
-        });
-      }
-    } else {
-      // Formik complains when values are null.
-      // Initialize them as empty string or array
-      if (arrayProps.includes(key)) {
-        temp[key] = [];
-      } else if (!data[key] && stringProps.includes(key)) {
-        temp[key] = "";
-      } else {
-        temp[key] = data[key];
-      }
-    }
-  });
-  return temp;
-};
+// const sanitizeInitVals = (game: GetGameQuery, initialValues: MyFormValues) => {
+//   const data = game?.getGame;
+//   if (data === null) {
+//     return;
+//   }
+//   const temp = {};
+//   const arrayProps = ["dateOptions", "timeOptions", "buyInOptions", "players"];
+//   const stringProps = ["type", "status", "title", "eventTime"];
+//   (Object.keys(initialValues) as Array<keyof typeof initialValues>).forEach(
+//     (key) => {
+//       if (data[key] !== null && Array.isArray(data[key])) {
+//         temp[key] = [...data[key]];
+//         if (key === "timeOptions") {
+//           temp[key] = temp[key].map((obj) => {
+//             let d = new Date();
+//             let ds = d.toLocaleDateString();
+//             obj["time"] = new Date(`${ds}T${obj.time}`);
+//             return obj;
+//           });
+//         }
+//       } else {
+//         // Formik complains when values are null.
+//         // Initialize them as empty string or array
+//         if (arrayProps.includes(key)) {
+//           temp[key] = [];
+//         } else if (!data[key] && stringProps.includes(key)) {
+//           temp[key] = "";
+//         } else {
+//           temp[key] = data[key];
+//         }
+//       }
+//     }
+//   );
+//   return temp;
+// };
 
-const sanitizeSubmitValues = (values) => {
-  const sanitizedVals = {
-    ...values,
-  };
+// const sanitizeSubmitValues = (values) => {
+// const sanitizedVals = {
+// ...values,
+// };
 
-  Object.keys(sanitizedVals).forEach((key) => {
-    if (
-      sanitizedVals[key] === "" ||
-      (Array.isArray(sanitizedVals[key]) && sanitizedVals[key].length === 0)
-    )
-      sanitizedVals[key] = null;
-  });
+// Object.keys(sanitizedVals).forEach((key) => {
+// if (
+// sanitizedVals[key] === "" ||
+// (Array.isArray(sanitizedVals[key]) && sanitizedVals[key].length === 0)
+// )
+// sanitizedVals[key] = null;
+// });
 
-  if (sanitizedVals.timeOptions) {
-    sanitizedVals.timeOptions = sanitizedVals.timeOptions.map((opt) => {
-      const sanitizedOpt = { ...opt };
-      return {
-        ...sanitizedOpt,
-        time: sanitizedOpt.time.toISOString().split("T")[1],
-      };
-    });
-  }
+// if (sanitizedVals.timeOptions) {
+// sanitizedVals.timeOptions = sanitizedVals.timeOptions.map((opt) => {
+// const sanitizedOpt = { ...opt };
+// return {
+// ...sanitizedOpt,
+// time: sanitizedOpt.time.toISOString().split("T")[1],
+// };
+// });
+// }
 
-  return sanitizedVals;
-};
+// return sanitizedVals;
+// };
 
-const validationSchema = Yup.object().shape({
-  title: Yup.string().required("Title is required"),
-  type: Yup.string(),
-  dateOptions: Yup.array().of(
-    Yup.object().shape({
-      date: Yup.date().required(),
-      votes: Yup.number().required(),
-    })
-  ),
-  buyInOptions: Yup.array().of(
-    Yup.object().shape({
-      amount: Yup.number().required().min(0),
-      votes: Yup.number().required(),
-    })
-  ),
-});
-
-const AddEditPokerSettings = ({ match, userId }) => {
+// const validationSchema = Yup.object().shape({
+//   title: Yup.string().required("Title is required"),
+//   type: Yup.string(),
+//   dateOptions: Yup.array().of(
+//     Yup.object().shape({
+//       date: Yup.date().required(),
+//       votes: Yup.number().required(),
+//     })
+//   ),
+//   buyInOptions: Yup.array().of(
+//     Yup.object().shape({
+//       amount: Yup.number().required().min(0),
+//       votes: Yup.number().required(),
+//     })
+//   ),
+// });
+interface MyFormValues {
+  title: string;
+  type: string;
+  status: string;
+  dateOptions: DateOptions[];
+  timeOptions: TimeOptions[];
+  buyInOptions: BuyInOptions[];
+}
+const AddEditPokerSettings = ({
+  match,
+  userId,
+}: {
+  match: any;
+  userId: string;
+}) => {
   const { gameId } = match.params;
   const isAddMode = !gameId;
   const classes = useStyles();
   const history = useHistory();
   const [showPrompt, setShowPrompt] = useState(false);
-  const [settings, setSettings] = useState(null);
-  const [initialValues, setInitialValues] = useState({
+  const { data: game, loading, refetch, error } = useQuery<GetGameQuery>(
+    queries.getGame,
+    {
+      id: gameId,
+      skip: !gameId,
+    }
+  );
+  const [initialValues, setInitialValues] = useState<MyFormValues>({
     title: "",
     type: "",
-    buyIn: 0,
-    eventTime: "",
     status: "PENDING",
-    players: [],
     dateOptions: [],
     timeOptions: [],
     buyInOptions: [],
@@ -130,33 +155,23 @@ const AddEditPokerSettings = ({ match, userId }) => {
     ? "Add Poker Game Settings"
     : "Edit Poker Game Settings";
   const buttonText = isAddMode ? "Add" : "Save";
-
+  const settings = game?.getGame;
   useEffect(() => {
     if (settings && !isAddMode && !formInitialized) {
-      setInitialValues(sanitizeInitVals(settings, initialValues));
+      const tmp: MyFormValues = {
+        title: game?.getGame?.title || "",
+        type: game?.getGame?.type || "",
+        status: game?.getGame?.status || "",
+        dateOptions: game?.getGame?.dateOptions || [],
+        timeOptions: game?.getGame?.timeOptions || [],
+        buyInOptions: game?.getGame?.buyInOptions || [],
+      };
+      setInitialValues(sanitizeInitVals(game, initialValues));
       setFormInitialized(true);
     }
   }, [isAddMode, settings, initialValues, formInitialized]);
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await API.graphql(
-          graphqlOperation(queries.getGame, {
-            id: gameId,
-          })
-        );
-        setSettings(res.data.getGame);
-      } catch (error) {
-        console.log(("error", error));
-      }
-    };
-    if (!isAddMode && !settings) {
-      fetchSettings();
-    }
-  }, [isAddMode, settings, gameId]);
-
-  const handleAdd = async (sanitizedVals) => {
+  const handleAdd = async (sanitizedVals: MyFormValues) => {
     try {
       await API.graphql(
         graphqlOperation(mutations.createGame, {
@@ -172,77 +187,82 @@ const AddEditPokerSettings = ({ match, userId }) => {
     }
   };
 
-  const handleEdit = async (sanitizedVals) => {
-    try {
-      await API.graphql(
-        graphqlOperation(mutations.updateGame, {
-          input: {
-            ...sanitizedVals,
-            hostId: userId,
-            id: settings.id,
-          },
-        })
-      );
-    } catch (error) {
-      console.log("Error", error);
-    }
+  const handleEdit = async (sanitizedVals: MyFormValues) => {
+    // try {
+    //   await API.graphql(
+    //     graphqlOperation(mutations.updateGame, {
+    //       input: {
+    //         ...sanitizedVals,
+    //         hostId: userId,
+    //         id: settings.id,
+    //       },
+    //     })
+    //   );
+    // } catch (error) {
+    //   console.log("Error", error);
+    // }
   };
 
-  const handleSubmit = async (values) => {
-    setShowPrompt(false);
-    const sanitizedVals = sanitizeSubmitValues(values);
-
-    if (isAddMode) {
-      await handleAdd(sanitizedVals);
-    } else {
-      await handleEdit(sanitizedVals);
-    }
+  const handleSubmit = async (values: MyFormValues) => {
+    // setShowPrompt(false);
+    // const sanitizedVals = sanitizeSubmitValues(values);
+    // if (isAddMode) {
+    //   await handleAdd(sanitizedVals);
+    // } else {
+    //   await handleEdit(sanitizedVals);
+    // }
   };
 
   if (!isAddMode && !settings) {
     return <CircularProgress />;
   }
 
-  const RenderArrayField = ({
-    isSubmitting,
-    index,
-    arrayHelpers,
-    name,
-    type = "text",
-  }) => {
-    let _type = type === "time" ? "text" : type;
-    let component = type === "time" ? TimePicker : TextField;
-    return (
-      <Box display="flex" key={index} alignItems="center">
-        <Field
-          type={_type}
-          name={name}
-          component={component}
-          margin="dense"
-          className={classes.input}
-          inputProps={{
-            onFocus: () => setShowPrompt(true),
-          }}
-          variant="outlined"
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <div>
-          <IconButton
-            style={{ marginLeft: 5 }}
-            aria-label="delete"
-            disabled={isSubmitting}
-            className={classes.margin}
-            onClick={() => arrayHelpers.remove(index)}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </div>
-      </Box>
-    );
-  };
-  const AddButton = ({ disabled, onClick }) => (
+  // const RenderArrayField = ({
+  //   isSubmitting,
+  //   index,
+  //   arrayHelpers,
+  //   name,
+  //   type = "text",
+  // }) => {
+  //   let _type = type === "time" ? "text" : type;
+  //   let component = type === "time" ? TimePicker : TextField;
+  //   return (
+  //     <Box display="flex" key={index} alignItems="center">
+  //       <Field
+  //         type={_type}
+  //         name={name}
+  //         component={component}
+  //         margin="dense"
+  //         className={classes.input}
+  //         inputProps={{
+  //           onFocus: () => setShowPrompt(true),
+  //         }}
+  //         variant="outlined"
+  //         InputLabelProps={{
+  //           shrink: true,
+  //         }}
+  //       />
+  //       <div>
+  //         <IconButton
+  //           style={{ marginLeft: 5 }}
+  //           aria-label="delete"
+  //           disabled={isSubmitting}
+  //           className={classes.margin}
+  //           onClick={() => arrayHelpers.remove(index)}
+  //         >
+  //           <DeleteIcon fontSize="small" />
+  //         </IconButton>
+  //       </div>
+  //     </Box>
+  //   );
+  // };
+  const AddButton = ({
+    disabled,
+    onClick,
+  }: {
+    disabled: boolean;
+    onClick: () => void;
+  }) => (
     <Button
       style={{ marginLeft: 5 }}
       aria-label="add"
@@ -267,7 +287,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
 
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          // validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
@@ -308,7 +328,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
                     >
                       Buy ins
                     </Typography>
-                    <FieldArray
+                    {/* <FieldArray
                       name="buyInOptions"
                       render={(arrayHelpers) => (
                         <div>
@@ -361,9 +381,9 @@ const AddEditPokerSettings = ({ match, userId }) => {
                           />
                         </div>
                       )}
-                    />
+                    /> */}
 
-                    <Typography
+                    {/* <Typography
                       variant="subtitle2"
                       style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                     >
@@ -394,7 +414,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
                           />
                         </div>
                       )}
-                    />
+                    /> */}
 
                     <Box
                       display="flex"
@@ -406,7 +426,6 @@ const AddEditPokerSettings = ({ match, userId }) => {
                         color="primary"
                         variant="contained"
                         style={{ marginRight: 10 }}
-                        className={classes.submitButton}
                         type="submit"
                         disabled={isSubmitting}
                       >
@@ -422,7 +441,7 @@ const AddEditPokerSettings = ({ match, userId }) => {
                       </Button>
                     </Box>
                   </FormControl>
-                  <Backdrop className={classes.backdrop} open={isSubmitting}>
+                  <Backdrop open={isSubmitting}>
                     <CircularProgress color="inherit" />
                   </Backdrop>
                 </Form>

@@ -8,15 +8,15 @@ interface IGame {
   createdAt: string;
 }
 
-interface DateOptions {
+export interface DateOptions {
   date: string;
   votes: number;
 }
-interface TimeOptions {
+export interface TimeOptions {
   time: string;
   votes: number;
 }
-interface BuyInOptions {
+export interface BuyInOptions {
   amount: number;
   votes: number;
 }

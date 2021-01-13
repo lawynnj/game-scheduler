@@ -22,7 +22,10 @@ export const gqlOp = async <
   return data;
 };
 
-export const useQuery = <ResultType extends {}, VariablesType extends {} = {}>(
+export const useQuery = <
+  ResultType extends {},
+  VariablesType extends { skip?: boolean } = {}
+>(
   query: string,
   variables?: VariablesType
 ): UseQueryType<ResultType> => {
@@ -35,7 +38,6 @@ export const useQuery = <ResultType extends {}, VariablesType extends {} = {}>(
       const data = await gqlOp<ResultType, VariablesType>(query, variables);
       setData(data);
     } catch (error) {
-      console.log(error);
       setError(error);
     } finally {
       setLoading(false);
@@ -47,7 +49,7 @@ export const useQuery = <ResultType extends {}, VariablesType extends {} = {}>(
   };
 
   useDeepCompareEffect(() => {
-    fetchQuery(query, variables);
+    if (!variables?.skip) fetchQuery(query, variables);
   }, [query, variables]);
 
   return {
