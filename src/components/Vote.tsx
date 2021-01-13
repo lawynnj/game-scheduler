@@ -9,27 +9,36 @@ import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { graphqlOperation } from "aws-amplify";
 import { RadioGroup } from "formik-material-ui";
-import { Formik, Field, Form, FormikProps } from "formik";
-import * as Yup from "yup";
+import {
+  FormikErrors,
+  FormikTouched,
+  Field,
+  Form,
+  FormikProps,
+  withFormik,
+} from "formik";
 import PropTypes from "prop-types";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import { publicAPI } from "../utils";
 import { GetGameQuery } from "../API";
 
-interface IVoteForm {
+interface FormValues {
   buyIn: string;
   eventTime: string;
   eventDate: string;
   [key: string]: string;
 }
 
-interface IVoteProps {
+interface MyFormProps {
   game: GetGameQuery;
-  onSubmit: (vote: IVoteForm) => void;
+  onSubmit: (vote: FormValues) => void;
 }
 
-interface VoteOptionProps extends Partial<FormikProps<IVoteForm>> {
+interface OtherProps {
+  game: GetGameQuery;
+}
+interface VoteOptionProps {
   title: string;
   name: string;
   disabled: boolean;
@@ -37,6 +46,8 @@ interface VoteOptionProps extends Partial<FormikProps<IVoteForm>> {
     value: string;
     label: string;
   }[];
+  errors: FormikErrors<FormValues>;
+  touched: FormikTouched<FormValues>;
 }
 
 const VoteOption = (props: VoteOptionProps) => {
@@ -62,16 +73,117 @@ const VoteOption = (props: VoteOptionProps) => {
   );
 };
 
-function Vote({ game, onSubmit }: IVoteProps) {
+function InnerForm(props: OtherProps & FormikProps<FormValues>) {
+  const { errors, touched, isSubmitting, game } = props;
   const settings = game?.getGame;
 
-  const initialValues: IVoteForm = {
+  const formatTime = (time: string) => {
+    try {
+      const tmp = time.split(".");
+      const tmpTime = tmp[0] + tmp[1][tmp[1].length - 1];
+      const d = parse(tmpTime, "HH:mm:ssX", new Date());
+      return format(d, "hh:mm a");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center">
+      <Typography variant="h6">Vote</Typography>
+      <Typography variant="subtitle1">
+        <div>{settings?.title}</div>
+        <Form>
+          <Box mt={2}>
+            {settings?.dateOptions ? (
+              <VoteOption
+                disabled={isSubmitting}
+                errors={errors}
+                touched={touched}
+                title="Date"
+                name="eventDate"
+                options={settings.dateOptions.map((date) => ({
+                  value: date?.date || "",
+                  label: date?.date
+                    ? format(new Date(date.date), "EEE MMM dd yyyy")
+                    : "",
+                }))}
+              />
+            ) : (
+              "No dates set up"
+            )}
+          </Box>
+          <Box mt={2}>
+            {settings?.timeOptions ? (
+              <VoteOption
+                disabled={isSubmitting}
+                errors={errors}
+                touched={touched}
+                title="Time"
+                name="eventTime"
+                options={settings?.timeOptions.map((time) => ({
+                  value: time?.time || "",
+                  label: time?.time ? `${formatTime(time.time)}` : "",
+                }))}
+              />
+            ) : (
+              "No times set up"
+            )}
+          </Box>
+          <Box mt={2}>
+            {settings?.buyInOptions ? (
+              <VoteOption
+                disabled={isSubmitting}
+                errors={errors}
+                touched={touched}
+                title="Buy in ($)"
+                name="buyIn"
+                options={settings.buyInOptions.map((buyIn) => ({
+                  value: buyIn?.amount?.toString() || "",
+                  label: `${buyIn?.amount || ""}`,
+                }))}
+              />
+            ) : (
+              "No dates set up"
+            )}
+          </Box>
+          <Button
+            color="primary"
+            variant="contained"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            Submit
+          </Button>
+        </Form>
+      </Typography>
+    </Box>
+  );
+}
+
+const VoteForm = withFormik<MyFormProps, FormValues>({
+  mapPropsToValues: () => ({
     buyIn: "",
     eventTime: "",
     eventDate: "",
-  };
-  const handleSubmit = async (values: IVoteForm) => {
+  }),
+  validate(values: FormValues) {
+    const errors: FormikErrors<FormValues> = {};
+
+    if (!values.buyIn) {
+      errors.buyIn = "Required";
+    } else if (!values.eventTime) {
+      errors.eventTime = "Required";
+    }
+    if (!values.eventDate) {
+      errors.eventDate = "Required";
+    }
+    return errors;
+  },
+  async handleSubmit(values: FormValues, { props }) {
     const { eventTime, eventDate, buyIn } = values;
+    const { game, onSubmit } = props;
+    const settings = game.getGame;
     const eventTimes = settings?.timeOptions?.map((time) => {
       if (time?.time === eventTime) {
         return {
@@ -127,104 +239,7 @@ function Vote({ game, onSubmit }: IVoteProps) {
       alert("Something went wrong!");
     } finally {
     }
-  };
+  },
+})(InnerForm);
 
-  const formatTime = (time: string) => {
-    try {
-      const tmp = time.split(".");
-      const tmpTime = tmp[0] + tmp[1][tmp[1].length - 1];
-      const d = parse(tmpTime, "HH:mm:ssX", new Date());
-      return format(d, "hh:mm a");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return (
-    <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center">
-      <Typography variant="h6">Vote</Typography>
-      <Typography variant="subtitle1">
-        <div>{settings?.title}</div>
-        <Formik
-          initialValues={initialValues}
-          //           validationSchema={Yup.object().shape({
-          //   eventTime: Yup.string().required("Title is required"),
-          //   eventDate: Yup.string().required("Date is required"),
-          //   buyIn: Yup.string().required("Buy in is required"),
-          // })}
-          onSubmit={async (values) => {
-            await handleSubmit(values);
-          }}
-        >
-          {({ isSubmitting, errors, touched }: FormikProps<IVoteForm>) => (
-            <Form>
-              <Box mt={2}>
-                {settings?.dateOptions ? (
-                  <VoteOption
-                    disabled={isSubmitting}
-                    errors={errors}
-                    touched={touched}
-                    title="Date"
-                    name="eventDate"
-                    options={settings.dateOptions.map((date) => ({
-                      value: date?.date || "",
-                      label: date?.date
-                        ? format(new Date(date.date), "EEE MMM dd yyyy")
-                        : "",
-                    }))}
-                  />
-                ) : (
-                  "No dates set up"
-                )}
-              </Box>
-              <Box mt={2}>
-                {settings?.timeOptions ? (
-                  <VoteOption
-                    disabled={isSubmitting}
-                    errors={errors}
-                    touched={touched}
-                    title="Time"
-                    name="eventTime"
-                    options={settings?.timeOptions.map((time) => ({
-                      value: time?.time || "",
-                      label: time?.time ? `${formatTime(time.time)}` : "",
-                    }))}
-                  />
-                ) : (
-                  "No times set up"
-                )}
-              </Box>
-              <Box mt={2}>
-                {settings?.buyInOptions ? (
-                  <VoteOption
-                    disabled={isSubmitting}
-                    errors={errors}
-                    touched={touched}
-                    title="Buy in ($)"
-                    name="buyIn"
-                    options={settings.buyInOptions.map((buyIn) => ({
-                      value: buyIn?.amount?.toString() || "",
-                      label: `${buyIn?.amount || ""}`,
-                    }))}
-                  />
-                ) : (
-                  "No dates set up"
-                )}
-              </Box>
-              <Button
-                color="primary"
-                variant="contained"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                Submit
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      </Typography>
-    </Box>
-  );
-}
-
-export default Vote;
+export default VoteForm;
