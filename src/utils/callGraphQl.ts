@@ -6,6 +6,7 @@ export interface GraphQLOptions {
   variables?: object;
   authMode?: GRAPHQL_AUTH_MODE;
   filter?: object;
+  id?: string | number;
 }
 
 async function callGraphQL<T>(
