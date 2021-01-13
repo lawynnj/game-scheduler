@@ -113,10 +113,14 @@ export default function Vote({ settings, onSubmit }) {
   };
 
   const formatTime = (time) => {
-    const tmp = time.split(".");
-    const tmptime = tmp[0] + tmp[1][tmp[1].length - 1];
-    const d = parse(tmptime, "hh:mm:ssX", new Date());
-    return format(d, "hh:mm a");
+    try {
+      const tmp = time.split(".");
+      const tmpTime = tmp[0] + tmp[1][tmp[1].length - 1];
+      const d = parse(tmpTime, "HH:mm:ssX", new Date());
+      return format(d, "hh:mm a");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
