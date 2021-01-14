@@ -12,6 +12,7 @@ import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { useQuery } from "../hooks/useQuery";
 import { BuyInOptions, DateOptions, TimeOptions } from "../models/game";
+import parseISO from "date-fns/parseISO";
 
 const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
   const cleanVals: PokerFormVals = {
@@ -25,6 +26,16 @@ const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
       return {
         ...sanitizedOpt,
         time: tmp.toISOString().split("T")[1],
+      };
+    });
+  }
+  if (cleanVals.dateOptions) {
+    cleanVals.dateOptions = cleanVals.dateOptions.map((opt) => {
+      const sanitizedOpt = { ...opt };
+      const tmp: Date = new Date(sanitizedOpt.date);
+      return {
+        ...sanitizedOpt,
+        date: tmp.toISOString().split("T")[0],
       };
     });
   }
@@ -64,8 +75,11 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
     if (game && !isAddMode && !formInitialized) {
       const dateOptions: DateOptions[] =
         game?.dateOptions?.map((dateOpt) => {
+          // add time and timezone to date to fix DatePicker bug
+          // see: https://stackoverflow.com/questions/60382084/material-ui-datepicker-showing-wrong-date
+          const dateStr = parseISO(dateOpt?.date ?? new Date().toISOString());
           return {
-            date: dateOpt?.date,
+            date: dateStr.toISOString(),
             votes: dateOpt?.votes,
           } as DateOptions;
         }) ?? [];
@@ -75,7 +89,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
           return {
             // To make the datetime picker component work, we need to prepend a dummy date.
             // The component expects a ISO date so we format it here.
-            time: "9999-09-26T" + timeOpt?.time,
+            time: "9999-01-01T" + timeOpt?.time,
             votes: timeOpt?.votes,
           } as TimeOptions;
         }) ?? [];
@@ -119,7 +133,6 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
 
   const handleEdit = async (values: PokerFormVals) => {
     try {
-      console.log(values);
       await API.graphql(
         graphqlOperation(mutations.updateGame, {
           input: {

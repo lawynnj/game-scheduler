@@ -16,7 +16,6 @@ import ArrayDateField from "../ArrayDateField";
 import ArrayTextField from "../ArrayTextField";
 import ArrayTimeField from "../ArrayTimeField";
 import AddButton from "./AddButton";
-
 export interface PokerFormVals {
   title: string;
   type: string;
@@ -190,8 +189,8 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                                 key={index}
                                 isSubmitting={isSubmitting}
                                 name={`dateOptions[${index}].date`}
-                                // margin="dense"
                                 variant="dialog"
+                                format="MM/dd/yyyy"
                                 type="text"
                                 inputProps={{
                                   onFocus: onFormFocus,
