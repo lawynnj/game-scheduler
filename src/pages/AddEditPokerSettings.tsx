@@ -32,12 +32,12 @@ const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
   return cleanVals;
 };
 
-interface IAddEditPokerSettingsProps {
+interface AddEditPokerSettingsProps {
   match: any;
   userId: string;
 }
 
-const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
+const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
   const { match, userId } = props;
   const { gameId } = match.params;
   const isAddMode = !gameId;
