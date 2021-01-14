@@ -1,27 +1,26 @@
-import React from "react";
-import * as mutations from "../graphql/mutations";
 import Box from "@material-ui/core/Box";
-import FormControl from "@material-ui/core/FormControl";
-import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import FormLabel from "@material-ui/core/FormLabel";
+import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormLabel from "@material-ui/core/FormLabel";
+import Radio from "@material-ui/core/Radio";
+import Typography from "@material-ui/core/Typography";
 import { graphqlOperation } from "aws-amplify";
-import { RadioGroup } from "formik-material-ui";
-import {
-  FormikErrors,
-  FormikTouched,
-  Field,
-  Form,
-  FormikProps,
-  withFormik,
-} from "formik";
-import PropTypes from "prop-types";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
-import { publicAPI } from "../utils";
+import {
+  Field,
+  Form,
+  FormikErrors,
+  FormikProps,
+  FormikTouched,
+  withFormik,
+} from "formik";
+import { RadioGroup } from "formik-material-ui";
+import React from "react";
 import { GetGameQuery } from "../API";
+import * as mutations from "../graphql/mutations";
+import { publicAPI } from "../utils";
 
 interface FormValues {
   buyIn: string;
