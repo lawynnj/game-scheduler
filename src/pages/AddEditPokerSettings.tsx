@@ -55,6 +55,7 @@ const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
 
   return cleanVals;
 };
+
 interface Test {
   title?: string;
 }
@@ -212,7 +213,9 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
       const timeOptions: TimeOptions[] =
         game?.timeOptions?.map((timeOpt) => {
           return {
-            time: timeOpt?.time,
+            // To make the datetime picker component work, we need to prepend a dummy date.
+            // The component expects a ISO date so we format it here.
+            time: "9999-09-26T" + timeOpt?.time,
             votes: timeOpt?.votes,
           } as TimeOptions;
         }) ?? [];
@@ -256,6 +259,7 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
 
   const handleEdit = async (values: PokerFormVals) => {
     try {
+      console.log(values);
       await API.graphql(
         graphqlOperation(mutations.updateGame, {
           input: {
@@ -295,7 +299,7 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
 
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          // validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
