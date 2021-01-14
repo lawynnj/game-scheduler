@@ -58,31 +58,44 @@ const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
 interface Test {
   title?: string;
 }
-type Person = {
-  firstName: string;
-};
 
 // ✔️ compiles
-const goodPersonSchema: Yup.SchemaOf<Person> = Yup.object({
-  firstName: Yup.string().defined(),
+const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
+  title: Yup.string().defined(),
+  type: Yup.string().defined(),
+  status: Yup.string().defined(),
+  dateOptions: Yup.array()
+    .of(
+      Yup.object()
+        .shape({
+          date: Yup.string().defined(),
+          votes: Yup.number().defined(),
+        })
+        .defined()
+    )
+    .defined(),
+  timeOptions: Yup.array()
+    .of(
+      Yup.object()
+        .shape({
+          time: Yup.string().defined(),
+          votes: Yup.number().defined(),
+        })
+        .defined()
+    )
+    .defined(),
+  buyInOptions: Yup.array()
+    .of(
+      Yup.object()
+        .shape({
+          amount: Yup.number().defined(),
+          votes: Yup.number().defined(),
+        })
+        .defined()
+    )
+    .defined(),
 }).defined();
 
-// const validationSchema = Yup.object<Test>().shape({
-//   title: Yup.string().defined("Title is required"),
-//   // type: Yup.string(),
-//   // dateOptions: Yup.array().of(
-//   //   Yup.object().shape({
-//   //     date: Yup.date().required(),
-//   //     votes: Yup.number().required(),
-//   //   })
-//   // ),
-//   // buyInOptions: Yup.array().of(
-//   //   Yup.object().shape({
-//   //     amount: Yup.number().required().min(0),
-//   //     votes: Yup.number().required(),
-//   //   })
-//   // ),
-// });
 interface PokerFormVals {
   title: string;
   type: string;
@@ -282,7 +295,7 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
 
         <Formik
           initialValues={initialValues}
-          // validationSchema={validationSchema}
+          validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >

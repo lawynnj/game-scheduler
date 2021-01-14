@@ -9,6 +9,7 @@
     "outDir": "build",
     "rootDir": "src",
     "strict": true,
+    "strictFunctionTypes": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
