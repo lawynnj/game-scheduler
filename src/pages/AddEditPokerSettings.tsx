@@ -11,12 +11,13 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { API, graphqlOperation } from "aws-amplify";
-import { ArrayHelpers, Field, FieldArray, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import { TimePicker } from "formik-material-ui-pickers";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Prompt, useHistory } from "react-router-dom";
+import * as Yup from "yup";
 import { GetGameQuery } from "../API";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
@@ -54,22 +55,33 @@ const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
 
   return cleanVals;
 };
+interface Test {
+  title?: string;
+}
+type Person = {
+  firstName: string;
+};
 
-// const validationSchema = Yup.object().shape({
-//   title: Yup.string().required("Title is required"),
-//   type: Yup.string(),
-//   dateOptions: Yup.array().of(
-//     Yup.object().shape({
-//       date: Yup.date().required(),
-//       votes: Yup.number().required(),
-//     })
-//   ),
-//   buyInOptions: Yup.array().of(
-//     Yup.object().shape({
-//       amount: Yup.number().required().min(0),
-//       votes: Yup.number().required(),
-//     })
-//   ),
+// ✔️ compiles
+const goodPersonSchema: Yup.SchemaOf<Person> = Yup.object({
+  firstName: Yup.string().defined(),
+}).defined();
+
+// const validationSchema = Yup.object<Test>().shape({
+//   title: Yup.string().defined("Title is required"),
+//   // type: Yup.string(),
+//   // dateOptions: Yup.array().of(
+//   //   Yup.object().shape({
+//   //     date: Yup.date().required(),
+//   //     votes: Yup.number().required(),
+//   //   })
+//   // ),
+//   // buyInOptions: Yup.array().of(
+//   //   Yup.object().shape({
+//   //     amount: Yup.number().required().min(0),
+//   //     votes: Yup.number().required(),
+//   //   })
+//   // ),
 // });
 interface PokerFormVals {
   title: string;
@@ -85,7 +97,7 @@ interface IAddEditPokerSettingsProps {
 }
 
 interface RenderArrayFieldProps {
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
   name: string;
   type?: string;
   handleFocus?: () => void;
@@ -113,11 +125,11 @@ const AddButton = ({ disabled, onClick }: AddButtonProps) => (
 
 const RenderArrayField = (props: RenderArrayFieldProps) => {
   const {
-    isSubmitting,
+    isSubmitting = false,
     name,
     type = "text",
-    handleFocus,
-    handleDelete,
+    handleFocus = () => ({}),
+    handleDelete = () => ({}),
   } = props;
   const _type = type === "time" ? "text" : type;
   const component = type === "time" ? TimePicker : TextField;
