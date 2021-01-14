@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import * as queries from "../graphql/queries";
 import { useParams } from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -13,12 +13,9 @@ function PokerSettings() {
   const { gameId } = useParams<{ gameId: string }>();
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
   const prevVote = usePrevious(vote);
-  const { loading, data: game, error, refetch } = useQuery<GetGameQuery>(
-    queries.getGame,
-    {
-      id: gameId,
-    }
-  );
+  const { loading, data, refetch } = useQuery<GetGameQuery>(queries.getGame, {
+    id: gameId,
+  });
 
   useEffect(() => {
     // refetch data when user votes
@@ -30,16 +27,16 @@ function PokerSettings() {
     // eslint-disable-next-line
   }, [vote]);
 
-  if (loading || game?.getGame === undefined) return <CircularProgress />;
+  if (loading || data?.getGame === undefined) return <CircularProgress />;
 
   const hasVoted = vote !== undefined && vote !== "";
   return (
     <div>
-      {hasVoted || game?.getGame?.status === "COMPLETED" ? (
-        <Results game={game} />
+      {hasVoted || data?.getGame?.status === "COMPLETED" ? (
+        <Results game={data} />
       ) : (
         <Vote
-          game={game}
+          game={data}
           onSubmit={(vote) => {
             setVote(
               JSON.stringify({

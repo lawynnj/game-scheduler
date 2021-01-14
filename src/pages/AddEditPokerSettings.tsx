@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Formik, Field, Form, FieldArray } from "formik";
-import { TextField } from "formik-material-ui";
-import FormControl from "@material-ui/core/FormControl";
-import Button from "@material-ui/core/Button";
+import DateFnsUtils from "@date-io/date-fns";
+import Backdrop from "@material-ui/core/Backdrop";
 import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import FormControl from "@material-ui/core/FormControl";
+import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
-import * as Yup from "yup";
-import { Prompt, useHistory } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { API, graphqlOperation } from "aws-amplify";
+import { ArrayHelpers, Field, FieldArray, Form, Formik } from "formik";
+import { TextField } from "formik-material-ui";
+import { TimePicker } from "formik-material-ui-pickers";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { Prompt, useHistory } from "react-router-dom";
+import { GetGameQuery } from "../API";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import DeleteIcon from "@material-ui/icons/Delete";
-import IconButton from "@material-ui/core/IconButton";
-import AddIcon from "@material-ui/icons/Add";
-import Backdrop from "@material-ui/core/Backdrop";
-import { TimePicker } from "formik-material-ui-pickers";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-import { DateOptions, TimeOptions, BuyInOptions } from "../models/game";
-import { GetGameQuery } from "../API";
-import { gqlOp, useQuery } from "../hooks/useQuery";
+import { useQuery } from "../hooks/useQuery";
+import { BuyInOptions, DateOptions, TimeOptions } from "../models/game";
 
 const useStyles = makeStyles({
   input: {
@@ -37,67 +36,24 @@ const useStyles = makeStyles({
   },
 });
 
-// const sanitizeInitVals = (game: GetGameQuery, initialValues: MyFormValues) => {
-//   const data = game?.getGame;
-//   if (data === null) {
-//     return;
-//   }
-//   const temp = {};
-//   const arrayProps = ["dateOptions", "timeOptions", "buyInOptions", "players"];
-//   const stringProps = ["type", "status", "title", "eventTime"];
-//   (Object.keys(initialValues) as Array<keyof typeof initialValues>).forEach(
-//     (key) => {
-//       if (data[key] !== null && Array.isArray(data[key])) {
-//         temp[key] = [...data[key]];
-//         if (key === "timeOptions") {
-//           temp[key] = temp[key].map((obj) => {
-//             let d = new Date();
-//             let ds = d.toLocaleDateString();
-//             obj["time"] = new Date(`${ds}T${obj.time}`);
-//             return obj;
-//           });
-//         }
-//       } else {
-//         // Formik complains when values are null.
-//         // Initialize them as empty string or array
-//         if (arrayProps.includes(key)) {
-//           temp[key] = [];
-//         } else if (!data[key] && stringProps.includes(key)) {
-//           temp[key] = "";
-//         } else {
-//           temp[key] = data[key];
-//         }
-//       }
-//     }
-//   );
-//   return temp;
-// };
+const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
+  const cleanVals: PokerFormVals = {
+    ...values,
+  };
 
-// const sanitizeSubmitValues = (values) => {
-// const sanitizedVals = {
-// ...values,
-// };
+  if (cleanVals.timeOptions) {
+    cleanVals.timeOptions = cleanVals.timeOptions.map((opt) => {
+      const sanitizedOpt = { ...opt };
+      const tmp: Date = new Date(sanitizedOpt.time);
+      return {
+        ...sanitizedOpt,
+        time: tmp.toISOString().split("T")[1],
+      };
+    });
+  }
 
-// Object.keys(sanitizedVals).forEach((key) => {
-// if (
-// sanitizedVals[key] === "" ||
-// (Array.isArray(sanitizedVals[key]) && sanitizedVals[key].length === 0)
-// )
-// sanitizedVals[key] = null;
-// });
-
-// if (sanitizedVals.timeOptions) {
-// sanitizedVals.timeOptions = sanitizedVals.timeOptions.map((opt) => {
-// const sanitizedOpt = { ...opt };
-// return {
-// ...sanitizedOpt,
-// time: sanitizedOpt.time.toISOString().split("T")[1],
-// };
-// });
-// }
-
-// return sanitizedVals;
-// };
+  return cleanVals;
+};
 
 // const validationSchema = Yup.object().shape({
 //   title: Yup.string().required("Title is required"),
@@ -115,7 +71,7 @@ const useStyles = makeStyles({
 //     })
 //   ),
 // });
-interface MyFormValues {
+interface PokerFormVals {
   title: string;
   type: string;
   status: string;
@@ -127,23 +83,86 @@ interface IAddEditPokerSettingsProps {
   match: any;
   userId: string;
 }
-const AddEditPokerSettings = ({
-  match,
-  userId,
-}: IAddEditPokerSettingsProps) => {
+
+interface RenderArrayFieldProps {
+  isSubmitting: boolean;
+  name: string;
+  type?: string;
+  handleFocus?: () => void;
+  handleDelete?: () => void;
+}
+
+interface AddButtonProps {
+  disabled: boolean;
+  onClick: () => void;
+}
+
+const AddButton = ({ disabled, onClick }: AddButtonProps) => (
+  <Button
+    style={{ marginLeft: 5 }}
+    aria-label="add"
+    color="primary"
+    variant="contained"
+    size="small"
+    disabled={disabled}
+    onClick={onClick}
+  >
+    <AddIcon fontSize="small" />
+  </Button>
+);
+
+const RenderArrayField = (props: RenderArrayFieldProps) => {
+  const {
+    isSubmitting,
+    name,
+    type = "text",
+    handleFocus,
+    handleDelete,
+  } = props;
+  const _type = type === "time" ? "text" : type;
+  const component = type === "time" ? TimePicker : TextField;
+  return (
+    <Box display="flex" alignItems="center">
+      <Field
+        type={_type}
+        name={name}
+        component={component}
+        margin="dense"
+        inputProps={{
+          onFocus: handleFocus,
+        }}
+        variant="outlined"
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+      <div>
+        <IconButton
+          style={{ marginLeft: 5 }}
+          aria-label="delete"
+          disabled={isSubmitting}
+          onClick={handleDelete}
+        >
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </div>
+    </Box>
+  );
+};
+
+const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
+  const { match, userId } = props;
   const { gameId } = match.params;
   const isAddMode = !gameId;
   const classes = useStyles();
   const history = useHistory();
   const [showPrompt, setShowPrompt] = useState(false);
-  const { data: game, loading, refetch, error } = useQuery<GetGameQuery>(
-    queries.getGame,
-    {
-      id: gameId,
-      skip: !gameId,
-    }
-  );
-  const [initialValues, setInitialValues] = useState<MyFormValues>({
+  const [formInitialized, setFormInitialized] = useState(false);
+  const { data, loading } = useQuery<GetGameQuery>(queries.getGame, {
+    id: gameId,
+    skip: !gameId,
+  });
+  const [initialValues, setInitialValues] = useState<PokerFormVals>({
     title: "",
     type: "",
     status: "PENDING",
@@ -151,33 +170,55 @@ const AddEditPokerSettings = ({
     timeOptions: [],
     buyInOptions: [],
   });
-  const [formInitialized, setFormInitialized] = useState(false);
-  const title = isAddMode
-    ? "Add Poker Game Settings"
-    : "Edit Poker Game Settings";
-  const buttonText = isAddMode ? "Add" : "Save";
-  const settings = game?.getGame;
+
+  const game = data?.getGame;
+
   useEffect(() => {
-    if (settings && !isAddMode && !formInitialized) {
-      const tmp: MyFormValues = {
-        title: game?.getGame?.title || "",
-        type: game?.getGame?.type || "",
-        status: game?.getGame?.status || "",
-        dateOptions: game?.getGame?.dateOptions || [],
-        timeOptions: game?.getGame?.timeOptions || [],
-        buyInOptions: game?.getGame?.buyInOptions || [],
+    // initialize form values if we are in edit mode
+    if (game && !isAddMode && !formInitialized) {
+      const dateOptions: DateOptions[] =
+        game?.dateOptions?.map((dateOpt) => {
+          return {
+            date: dateOpt?.date,
+            votes: dateOpt?.votes,
+          } as DateOptions;
+        }) ?? [];
+
+      const timeOptions: TimeOptions[] =
+        game?.timeOptions?.map((timeOpt) => {
+          return {
+            time: timeOpt?.time,
+            votes: timeOpt?.votes,
+          } as TimeOptions;
+        }) ?? [];
+
+      const buyInOptions: BuyInOptions[] =
+        game?.buyInOptions?.map((buyInOpt) => {
+          return {
+            amount: buyInOpt?.amount,
+            votes: buyInOpt?.votes,
+          } as BuyInOptions;
+        }) ?? [];
+
+      const values: PokerFormVals = {
+        title: game?.title || "",
+        type: game?.type || "",
+        status: game?.status || "",
+        dateOptions: dateOptions,
+        timeOptions: timeOptions,
+        buyInOptions: buyInOptions,
       };
-      setInitialValues(sanitizeInitVals(game, initialValues));
+      setInitialValues(values);
       setFormInitialized(true);
     }
-  }, [isAddMode, settings, initialValues, formInitialized]);
+  }, [isAddMode, game, initialValues, formInitialized]);
 
-  const handleAdd = async (sanitizedVals: MyFormValues) => {
+  const handleAdd = async (values: PokerFormVals) => {
     try {
       await API.graphql(
         graphqlOperation(mutations.createGame, {
           input: {
-            ...sanitizedVals,
+            ...values,
             hostId: userId,
           },
         })
@@ -188,94 +229,35 @@ const AddEditPokerSettings = ({
     }
   };
 
-  const handleEdit = async (sanitizedVals: MyFormValues) => {
-    // try {
-    //   await API.graphql(
-    //     graphqlOperation(mutations.updateGame, {
-    //       input: {
-    //         ...sanitizedVals,
-    //         hostId: userId,
-    //         id: settings.id,
-    //       },
-    //     })
-    //   );
-    // } catch (error) {
-    //   console.log("Error", error);
-    // }
+  const handleEdit = async (values: PokerFormVals) => {
+    try {
+      await API.graphql(
+        graphqlOperation(mutations.updateGame, {
+          input: {
+            ...values,
+            hostId: userId,
+            id: game?.id,
+          },
+        })
+      );
+    } catch (error) {
+      console.log("Error", error);
+    }
   };
 
-  const handleSubmit = async (values: MyFormValues) => {
-    // setShowPrompt(false);
-    // const sanitizedVals = sanitizeSubmitValues(values);
-    // if (isAddMode) {
-    //   await handleAdd(sanitizedVals);
-    // } else {
-    //   await handleEdit(sanitizedVals);
-    // }
+  const handleSubmit = async (values: PokerFormVals) => {
+    setShowPrompt(false);
+    const cleanVals = transformTimeOpts(values);
+    if (isAddMode) {
+      await handleAdd(cleanVals);
+    } else {
+      await handleEdit(cleanVals);
+    }
   };
 
-  if (!isAddMode && !settings) {
+  if (!isAddMode && loading) {
     return <CircularProgress />;
   }
-
-  // const RenderArrayField = ({
-  //   isSubmitting,
-  //   index,
-  //   arrayHelpers,
-  //   name,
-  //   type = "text",
-  // }) => {
-  //   let _type = type === "time" ? "text" : type;
-  //   let component = type === "time" ? TimePicker : TextField;
-  //   return (
-  //     <Box display="flex" key={index} alignItems="center">
-  //       <Field
-  //         type={_type}
-  //         name={name}
-  //         component={component}
-  //         margin="dense"
-  //         className={classes.input}
-  //         inputProps={{
-  //           onFocus: () => setShowPrompt(true),
-  //         }}
-  //         variant="outlined"
-  //         InputLabelProps={{
-  //           shrink: true,
-  //         }}
-  //       />
-  //       <div>
-  //         <IconButton
-  //           style={{ marginLeft: 5 }}
-  //           aria-label="delete"
-  //           disabled={isSubmitting}
-  //           className={classes.margin}
-  //           onClick={() => arrayHelpers.remove(index)}
-  //         >
-  //           <DeleteIcon fontSize="small" />
-  //         </IconButton>
-  //       </div>
-  //     </Box>
-  //   );
-  // };
-  const AddButton = ({
-    disabled,
-    onClick,
-  }: {
-    disabled: boolean;
-    onClick: () => void;
-  }) => (
-    <Button
-      style={{ marginLeft: 5 }}
-      aria-label="add"
-      color="primary"
-      variant="contained"
-      size="small"
-      disabled={disabled}
-      onClick={onClick}
-    >
-      <AddIcon fontSize="small" />
-    </Button>
-  );
 
   return (
     <Box p={2} display="flex" flexDirection="column">
@@ -283,7 +265,7 @@ const AddEditPokerSettings = ({
 
       <Box display="flex" flexDirection="column">
         <Typography variant="h6" align="center">
-          {title}
+          {isAddMode ? "Add Poker Game Settings" : "Edit Poker Game Settings"}
         </Typography>
 
         <Formik
@@ -329,20 +311,20 @@ const AddEditPokerSettings = ({
                     >
                       Buy ins
                     </Typography>
-                    {/* <FieldArray
+                    <FieldArray
                       name="buyInOptions"
                       render={(arrayHelpers) => (
                         <div>
-                          {values.buyInOptions &&
-                            values.buyInOptions.map((buyIn, index) => (
-                              <RenderArrayField
-                                key={index}
-                                index={index}
-                                type="number"
-                                arrayHelpers={arrayHelpers}
-                                name={`buyInOptions[${index}].amount`}
-                              />
-                            ))}
+                          {values?.buyInOptions?.map((buyIn, index) => (
+                            <RenderArrayField
+                              handleFocus={() => setShowPrompt(true)}
+                              handleDelete={() => arrayHelpers.remove(index)}
+                              key={index}
+                              isSubmitting={isSubmitting}
+                              type="number"
+                              name={`buyInOptions[${index}].amount`}
+                            />
+                          ))}
 
                           <AddButton
                             disabled={isSubmitting}
@@ -364,16 +346,16 @@ const AddEditPokerSettings = ({
                       name="dateOptions"
                       render={(arrayHelpers) => (
                         <div>
-                          {values.dateOptions &&
-                            values.dateOptions.map((date, index) => (
-                              <RenderArrayField
-                                key={index}
-                                index={index}
-                                type="date"
-                                arrayHelpers={arrayHelpers}
-                                name={`dateOptions[${index}].date`}
-                              />
-                            ))}
+                          {values?.dateOptions?.map((date, index) => (
+                            <RenderArrayField
+                              handleFocus={() => setShowPrompt(true)}
+                              handleDelete={() => arrayHelpers.remove(index)}
+                              key={index}
+                              type="date"
+                              isSubmitting={isSubmitting}
+                              name={`dateOptions[${index}].date`}
+                            />
+                          ))}
                           <AddButton
                             disabled={isSubmitting}
                             onClick={() =>
@@ -382,9 +364,9 @@ const AddEditPokerSettings = ({
                           />
                         </div>
                       )}
-                    /> */}
+                    />
 
-                    {/* <Typography
+                    <Typography
                       variant="subtitle2"
                       style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
                     >
@@ -394,16 +376,16 @@ const AddEditPokerSettings = ({
                       name="timeOptions"
                       render={(arrayHelpers) => (
                         <div>
-                          {values.timeOptions &&
-                            values.timeOptions.map((time, index) => (
-                              <RenderArrayField
-                                key={index}
-                                type="time"
-                                index={index}
-                                arrayHelpers={arrayHelpers}
-                                name={`timeOptions[${index}].time`}
-                              />
-                            ))}
+                          {values?.timeOptions?.map((time, index) => (
+                            <RenderArrayField
+                              key={index}
+                              handleFocus={() => setShowPrompt(true)}
+                              handleDelete={() => arrayHelpers.remove(index)}
+                              isSubmitting={isSubmitting}
+                              type="time"
+                              name={`timeOptions[${index}].time`}
+                            />
+                          ))}
                           <AddButton
                             disabled={isSubmitting}
                             onClick={() =>
@@ -415,7 +397,7 @@ const AddEditPokerSettings = ({
                           />
                         </div>
                       )}
-                    /> */}
+                    />
 
                     <Box
                       display="flex"
@@ -430,7 +412,7 @@ const AddEditPokerSettings = ({
                         type="submit"
                         disabled={isSubmitting}
                       >
-                        {buttonText}
+                        {isAddMode ? "Add" : "Save"}
                       </Button>
                       <Button
                         variant="contained"
