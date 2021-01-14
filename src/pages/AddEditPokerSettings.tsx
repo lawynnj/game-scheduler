@@ -12,8 +12,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { API, graphqlOperation } from "aws-amplify";
 import { Field, FieldArray, Form, Formik } from "formik";
-import { TextField } from "formik-material-ui";
-import { TimePicker } from "formik-material-ui-pickers";
+import { TextField, TextFieldProps } from "formik-material-ui";
+import { TimePicker, TimePickerProps } from "formik-material-ui-pickers";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Prompt, useHistory } from "react-router-dom";
@@ -23,6 +23,7 @@ import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { useQuery } from "../hooks/useQuery";
 import { BuyInOptions, DateOptions, TimeOptions } from "../models/game";
+import ArrayField, { ArrayFieldProps } from "../components/ArrayField";
 
 const useStyles = makeStyles({
   input: {
@@ -55,10 +56,6 @@ const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
 
   return cleanVals;
 };
-
-interface Test {
-  title?: string;
-}
 
 // ✔️ compiles
 const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
@@ -136,43 +133,16 @@ const AddButton = ({ disabled, onClick }: AddButtonProps) => (
     <AddIcon fontSize="small" />
   </Button>
 );
-
-const RenderArrayField = (props: RenderArrayFieldProps) => {
-  const {
-    isSubmitting = false,
-    name,
-    type = "text",
-    handleFocus = () => ({}),
-    handleDelete = () => ({}),
-  } = props;
-  const _type = type === "time" ? "text" : type;
-  const component = type === "time" ? TimePicker : TextField;
+const RenderArrayField = (props: ArrayFieldProps) => {
   return (
-    <Box display="flex" alignItems="center">
-      <Field
-        type={_type}
-        name={name}
-        component={component}
-        margin="dense"
-        inputProps={{
-          onFocus: handleFocus,
-        }}
-        variant="outlined"
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-      <div>
-        <IconButton
-          style={{ marginLeft: 5 }}
-          aria-label="delete"
-          disabled={isSubmitting}
-          onClick={handleDelete}
-        >
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </div>
-    </Box>
+    <ArrayField
+      margin="dense"
+      variant="outline"
+      InputLabelProps={{
+        shrink: true,
+      }}
+      {...props}
+    />
   );
 };
 
@@ -299,7 +269,7 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
 
         <Formik
           initialValues={initialValues}
-          // validationSchema={validationSchema}
+          validationSchema={validationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
@@ -345,9 +315,11 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
                       render={(arrayHelpers) => (
                         <div>
                           {values?.buyInOptions?.map((buyIn, index) => (
-                            <RenderArrayField
-                              handleFocus={() => setShowPrompt(true)}
-                              handleDelete={() => arrayHelpers.remove(index)}
+                            <ArrayField
+                              inputProps={{
+                                onFocus: () => setShowPrompt(true),
+                              }}
+                              onDelete={() => arrayHelpers.remove(index)}
                               key={index}
                               isSubmitting={isSubmitting}
                               type="number"
@@ -376,9 +348,12 @@ const AddEditPokerSettings = (props: IAddEditPokerSettingsProps) => {
                       render={(arrayHelpers) => (
                         <div>
                           {values?.dateOptions?.map((date, index) => (
-                            <RenderArrayField
-                              handleFocus={() => setShowPrompt(true)}
-                              handleDelete={() => arrayHelpers.remove(index)}
+                            <ArrayField
+                              inputProps={{
+                                onFocus: () => setShowPrompt(true),
+                              }}
+                              margin="normal"
+                              onDelete={() => arrayHelpers.remove(index)}
                               key={index}
                               type="date"
                               isSubmitting={isSubmitting}
