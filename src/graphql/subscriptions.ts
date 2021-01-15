@@ -1,3 +1,4 @@
+/* tslint:disable */
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
@@ -14,19 +15,6 @@ export const onCreateUser = /* GraphQL */ `
       updatedAt
       owner
       games {
-        items {
-          id
-          title
-          type
-          buyIn
-          eventTime
-          ipAddresses
-          status
-          hostId
-          createdAt
-          updatedAt
-          owner
-        }
         nextToken
       }
     }
@@ -45,19 +33,6 @@ export const onUpdateUser = /* GraphQL */ `
       updatedAt
       owner
       games {
-        items {
-          id
-          title
-          type
-          buyIn
-          eventTime
-          ipAddresses
-          status
-          hostId
-          createdAt
-          updatedAt
-          owner
-        }
         nextToken
       }
     }
@@ -76,19 +51,6 @@ export const onDeleteUser = /* GraphQL */ `
       updatedAt
       owner
       games {
-        items {
-          id
-          title
-          type
-          buyIn
-          eventTime
-          ipAddresses
-          status
-          hostId
-          createdAt
-          updatedAt
-          owner
-        }
         nextToken
       }
     }
@@ -123,20 +85,6 @@ export const onCreateGame = /* GraphQL */ `
       hostId
       createdAt
       updatedAt
-      host {
-        id
-        username
-        firstName
-        lastName
-        email
-        image
-        createdAt
-        updatedAt
-        owner
-        games {
-          nextToken
-        }
-      }
       owner
     }
   }
@@ -180,9 +128,6 @@ export const onUpdateGame = /* GraphQL */ `
         createdAt
         updatedAt
         owner
-        games {
-          nextToken
-        }
       }
       owner
     }
@@ -227,9 +172,6 @@ export const onDeleteGame = /* GraphQL */ `
         createdAt
         updatedAt
         owner
-        games {
-          nextToken
-        }
       }
       owner
     }

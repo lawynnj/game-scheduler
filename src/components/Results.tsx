@@ -11,7 +11,25 @@ import {
 } from "react-vis";
 import PropTypes from "prop-types";
 
-const RenderChart = ({ title, data, width, height, xLabel, yLabel }) => (
+import { GetGameQuery } from "../API";
+
+interface RenderChartProps {
+  title: string;
+  data: any;
+  width: number;
+  height: number;
+  xLabel: string;
+  yLabel: string;
+}
+
+const RenderChart = ({
+  title,
+  data,
+  width,
+  height,
+  xLabel,
+  yLabel,
+}: RenderChartProps) => (
   <>
     <Typography>{title}</Typography>
 
@@ -29,7 +47,12 @@ const RenderChart = ({ title, data, width, height, xLabel, yLabel }) => (
   </>
 );
 
-const getGraphData = (data, title, yLabel, xLabel) => ({
+const getGraphData = (
+  data: any,
+  title: string,
+  yLabel: string,
+  xLabel: string
+) => ({
   data,
   title,
   xLabel,
@@ -38,22 +61,43 @@ const getGraphData = (data, title, yLabel, xLabel) => ({
   height: 200,
 });
 
-export default function Results({ settings }) {
-  const dateData = settings.dateOptions.map((date) => ({
-    x: date.date,
-    y: date.votes,
-  }));
+interface ResultsProps {
+  game: GetGameQuery;
+}
+
+interface Coords {
+  x?: string;
+  y?: number;
+}
+export default function Results({ game: game_ }: ResultsProps) {
+  const game = game_?.getGame;
+  const dateData: Coords[] =
+    game?.dateOptions?.map(
+      (date) =>
+        ({
+          x: date?.date,
+          y: date?.votes,
+        } as Coords)
+    ) ?? [];
 
   const d = new Date().toISOString().split("T")[0];
-  const timeData = settings.timeOptions.map((time) => ({
-    x: new Date(d + "T" + time.time).toLocaleTimeString(),
-    y: time.votes,
-  }));
+  const timeData: Coords[] =
+    game?.timeOptions?.map(
+      (time) =>
+        ({
+          x: new Date(d + "T" + time?.time).toLocaleTimeString(),
+          y: time?.votes,
+        } as Coords)
+    ) ?? [];
 
-  const buyInData = settings.buyInOptions.map((buyIn) => ({
-    x: buyIn.amount,
-    y: buyIn.votes,
-  }));
+  const buyInData =
+    game?.buyInOptions?.map(
+      (buyIn) =>
+        ({
+          x: buyIn?.amount,
+          y: buyIn?.votes,
+        } as Coords)
+    ) ?? [];
 
   const graphs = [
     getGraphData(dateData, "Date", "Votes", "Dates"),
@@ -82,5 +126,5 @@ export default function Results({ settings }) {
 }
 
 Results.propTypes = {
-  settings: PropTypes.object.isRequired,
+  game: PropTypes.object.isRequired,
 };

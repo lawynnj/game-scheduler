@@ -8,7 +8,7 @@ import { Auth } from "aws-amplify";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 function ProtectedPages() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -34,7 +34,6 @@ function ProtectedPages() {
           render={(props) => (
             <AddEditPokerSettings {...props} userId={user.attributes.sub} />
           )}
-          userId={user.attributes.sub}
         />
         <Route
           path="/edit/:gameId"
