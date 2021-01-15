@@ -6,14 +6,15 @@ import RenderItemLink from "./GameListItem";
 import { GameStatus } from "../../API";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import IGame from "../../models/game";
+import { GameType } from "../../graphql/APITypes";
 
 type GamesProps = {
-  games: IGame[];
-  handleMakeActive: (Game: IGame) => void;
+  games: Partial<GameType>[];
+  handleMakeActive: (Game: GameType) => void;
 };
 
-const Games = ({ games, handleMakeActive }: GamesProps) => {
+const Games = (props: GamesProps) => {
+  const { games, handleMakeActive } = props;
   const filterGames = (status: string) => {
     return games.filter((game) => game.status === status);
   };
@@ -22,8 +23,8 @@ const Games = ({ games, handleMakeActive }: GamesProps) => {
     <>
       <p>Draft Games:</p>
       <List>
-        {filterGames(GameStatus.PENDING).map((game) => {
-          const date = new Date(game.createdAt);
+        {filterGames(GameStatus.PENDING).map((game: GameType) => {
+          const date = new Date(game.createdAt ?? "");
           return (
             <Box key={game.id} display="flex" flexDirection="row">
               <RenderItemLink
@@ -45,8 +46,8 @@ const Games = ({ games, handleMakeActive }: GamesProps) => {
       <Divider style={{ height: 1, marginTop: 10 }} />
       <p>Active Games:</p>
       <List>
-        {filterGames(GameStatus.ACTIVE).map((game) => {
-          const date = new Date(game.createdAt);
+        {filterGames(GameStatus.ACTIVE).map((game: GameType) => {
+          const date = new Date(game.createdAt ?? "");
           return (
             <Box display="flex" key={game.id}>
               <RenderItemLink
@@ -68,7 +69,7 @@ const Games = ({ games, handleMakeActive }: GamesProps) => {
       <Divider style={{ height: 1, marginTop: 10 }} />
       <p>Completed Games:</p>
       <List>
-        {filterGames(GameStatus.ACTIVE).map((game) => {
+        {filterGames(GameStatus.ACTIVE).map((game: GameType) => {
           return (
             <RenderItemLink
               key={game.id}

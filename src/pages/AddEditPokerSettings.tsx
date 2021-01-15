@@ -1,6 +1,7 @@
 import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { API, graphqlOperation } from "aws-amplify";
+import parseISO from "date-fns/parseISO";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Prompt, useHistory } from "react-router-dom";
@@ -12,7 +13,6 @@ import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { useQuery } from "../hooks/useQuery";
 import { BuyInOptions, DateOptions, TimeOptions } from "../models/game";
-import parseISO from "date-fns/parseISO";
 
 const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
   const cleanVals: PokerFormVals = {

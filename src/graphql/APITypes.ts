@@ -1,5 +1,5 @@
 import { DeepOmit } from "./DeepOmit";
-import { GetGameQuery, ListGamesQuery } from "../API";
+import { GetGameQuery } from "../API";
 
 export type GameType = DeepOmit<
   Exclude<GetGameQuery["getGame"], null>,

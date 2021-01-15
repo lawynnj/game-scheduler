@@ -4,23 +4,25 @@ import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
+  GameStatus,
   ListGamesQuery,
   UpdateGameMutation,
   UpdateGameMutationVariables,
-  GameStatus,
 } from "../API";
+import Games from "../components/Home/Games";
+import { GameType } from "../graphql/APITypes";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
-import IGame, { mapListGames } from "../models/game";
+import { mapListGames } from "../models/game";
 import callGraphQL from "../utils/callGraphQl";
-import Games from "../components/Home/Games";
 
 type HomeProps = {
   user: any;
 };
 
-export default function Home({ user }: HomeProps) {
-  const [games, setGames] = useState<IGame[]>([]);
+export default function Home(props: HomeProps) {
+  const { user } = props;
+  const [games, setGames] = useState<Partial<GameType>[]>([]);
   const history = useHistory();
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function Home({ user }: HomeProps) {
     fetchGames();
   }, [user.attributes.sub]);
 
-  const handleMakeActive = async (game: IGame) => {
+  const handleMakeActive = async (game: GameType) => {
     try {
       const { data } = await callGraphQL<UpdateGameMutation>(
         mutations.updateGame,
@@ -56,7 +58,7 @@ export default function Home({ user }: HomeProps) {
       const updatedGame = data?.updateGame;
 
       if (updatedGame) {
-        const tmp: IGame = {
+        const tmp: Partial<GameType> = {
           id: updatedGame.id,
           status: updatedGame.status,
           title: updatedGame.title,

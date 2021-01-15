@@ -1,13 +1,6 @@
 import { ListGamesQuery, GameStatus } from "../API";
 import { GraphQLResult } from "@aws-amplify/api";
-
-interface IGame {
-  id: string;
-  title: string;
-  status: GameStatus | null;
-  createdAt: string;
-}
-
+import { GameType } from "../graphql/APITypes";
 export interface DateOptions {
   date: string;
   votes: number;
@@ -21,36 +14,20 @@ export interface BuyInOptions {
   votes: number;
 }
 
-export interface IGame2 {
-  id: string;
-  title: string;
-  status: GameStatus | null;
-  type: string;
-  buyIn: string;
-  eventTime: string;
-  buyInOptions: BuyInOptions[];
-  dateOptions: DateOptions[];
-  timeOptions: TimeOptions[];
-  hostId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 function mapListGamesQuery(
-  listTodosQuery: GraphQLResult<ListGamesQuery>
-): IGame[] {
+  listGamesQuery: GraphQLResult<ListGamesQuery>
+): Partial<GameType>[] {
   return (
-    listTodosQuery.data?.listGames?.items?.map(
-      (todo) =>
+    listGamesQuery.data?.listGames?.items?.map(
+      (game) =>
         ({
-          id: todo?.id,
-          title: todo?.title,
-          status: todo?.status,
-          createdAt: todo?.createdAt,
-        } as IGame)
+          id: game?.id,
+          title: game?.title,
+          status: game?.status,
+          createdAt: game?.createdAt,
+        } as Partial<GameType>)
     ) || []
   );
 }
 
-export default IGame;
 export { mapListGamesQuery as mapListGames };

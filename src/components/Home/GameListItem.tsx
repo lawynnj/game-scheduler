@@ -9,7 +9,8 @@ type GameListItem = {
   title: string;
 };
 
-const RenderItemLink = ({ date, to, title }: GameListItem) => {
+const RenderItemLink = (props: GameListItem) => {
+  const { date, to, title } = props;
   const history = useHistory();
   const d = date
     ? `Created on ${format(date, "EEE MMM dd yyyy 'at' h:m aaaa")}`
