@@ -14,7 +14,8 @@ import * as queries from "../graphql/queries";
 import { useQuery } from "../hooks/useQuery";
 import { BuyInOptions, DateOptions, TimeOptions } from "../models/game";
 
-const transformTimeOpts = (values: PokerFormVals): PokerFormVals => {
+const transformFormVals = (values: PokerFormVals): PokerFormVals => {
+  // transoform form values to satisfy db schema. E.g. Transform a datetime string to just the `date` or `time`
   const cleanVals: PokerFormVals = {
     ...values,
   };
@@ -149,7 +150,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
 
   const handleSubmit = async (values: PokerFormVals) => {
     setShowPrompt(false);
-    const cleanVals = transformTimeOpts(values);
+    const cleanVals = transformFormVals(values);
     if (isAddMode) {
       await handleAdd(cleanVals);
     } else {
