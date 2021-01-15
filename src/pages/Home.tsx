@@ -81,8 +81,11 @@ export default function Home({ user }: HomeProps) {
       >
         Create Game Settings
       </Button>
-      {games && <Games handleMakeActive={handleMakeActive} games={games} />}
-      {!games && <p>You do not have any games</p>}
+      {games ? (
+        <Games handleMakeActive={handleMakeActive} games={games} />
+      ) : (
+        <p>You do not have any games</p>
+      )}
     </Box>
   );
 }

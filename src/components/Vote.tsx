@@ -1,3 +1,4 @@
+import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
@@ -5,7 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import Radio from "@material-ui/core/Radio";
 import Typography from "@material-ui/core/Typography";
-import { graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import {
@@ -20,8 +21,6 @@ import { RadioGroup } from "formik-material-ui";
 import React from "react";
 import { GetGameQuery } from "../API";
 import * as mutations from "../graphql/mutations";
-import { publicAPI } from "../utils";
-
 interface FormValues {
   buyIn: string;
   eventTime: string;
@@ -224,12 +223,12 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
         dateOptions: eventDates,
         timeOptions: eventTimes,
       };
-
-      await publicAPI(
-        graphqlOperation(mutations.updateGame, {
+      await API.graphql({
+        ...graphqlOperation(mutations.updateGame, {
           input,
-        })
-      );
+        }),
+        authMode: GRAPHQL_AUTH_MODE.API_KEY,
+      });
 
       onSubmit({
         eventDate,
