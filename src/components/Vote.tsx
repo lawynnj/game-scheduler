@@ -29,7 +29,7 @@ interface FormValues {
   [key: string]: string;
 }
 
-interface MyFormProps {
+interface VoteFormProps {
   game: GetGameQuery;
   onSubmit: (vote: FormValues) => void;
 }
@@ -160,7 +160,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
   );
 }
 
-const VoteForm = withFormik<MyFormProps, FormValues>({
+const VoteForm = withFormik<VoteFormProps, FormValues>({
   mapPropsToValues: () => ({
     buyIn: "",
     eventTime: "",
