@@ -12,7 +12,7 @@ import { useQuery } from "../hooks/useQuery";
 function PokerSettings() {
   const { gameId } = useParams<{ gameId: string }>();
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
-  const prevVote = usePrevious(vote);
+  const prevVote = usePrevious<string>(vote);
   const { loading, data, refetch } = useQuery<GetGameQuery>(queries.getGame, {
     id: gameId,
     isPublic: true,
