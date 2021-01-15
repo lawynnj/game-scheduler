@@ -15,10 +15,10 @@ export interface BuyInOptions {
 }
 
 function mapListGamesQuery(
-  listGamesQuery: GraphQLResult<ListGamesQuery>
+  listGamesQuery: ListGamesQuery
 ): Partial<GameType>[] {
   return (
-    listGamesQuery.data?.listGames?.items?.map(
+    listGamesQuery.listGames?.items?.map(
       (game) =>
         ({
           id: game?.id,

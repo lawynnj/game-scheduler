@@ -14,7 +14,7 @@ import { GameType } from "../graphql/APITypes";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { mapListGames } from "../models/game";
-import callGraphQL from "../utils/callGraphQl";
+import { gqlOp } from "../utils/gqlOp";
 
 type HomeProps = {
   user: any;
@@ -28,13 +28,14 @@ export default function Home(props: HomeProps) {
   useEffect(() => {
     async function fetchGames() {
       try {
-        const res = await callGraphQL<ListGamesQuery>(queries.listGames, {
+        const res = await gqlOp<ListGamesQuery>(queries.listGames, {
           filter: {
             hostId: {
               eq: user.attributes.sub,
             },
           },
         });
+
         setGames(mapListGames(res));
       } catch (error) {
         alert("Something went wrong!");
@@ -45,15 +46,12 @@ export default function Home(props: HomeProps) {
 
   const handleMakeActive = async (game: GameType) => {
     try {
-      const { data } = await callGraphQL<UpdateGameMutation>(
-        mutations.updateGame,
-        {
-          input: {
-            id: game.id,
-            status: GameStatus.ACTIVE,
-          },
-        } as UpdateGameMutationVariables
-      );
+      const data = await gqlOp<UpdateGameMutation>(mutations.updateGame, {
+        input: {
+          id: game.id,
+          status: GameStatus.ACTIVE,
+        },
+      } as UpdateGameMutationVariables);
 
       const updatedGame = data?.updateGame;
 
