@@ -15,18 +15,17 @@ function PokerSettings() {
   const prevVote = usePrevious(vote);
   const { loading, data, refetch } = useQuery<GetGameQuery>(queries.getGame, {
     id: gameId,
+    isPublic: true,
   });
 
   useEffect(() => {
     // refetch data when user votes
     if (vote && prevVote !== undefined && prevVote !== vote) {
-      console.log("refetch");
       refetch();
     }
     // prevVote holds previous value of vote state, don't include it in dep. array
     // eslint-disable-next-line
   }, [vote]);
-
   if (loading || data?.getGame === undefined) return <CircularProgress />;
 
   const hasVoted = vote !== undefined && vote !== "";
