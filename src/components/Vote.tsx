@@ -184,60 +184,67 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
     const { eventTime, eventDate, buyIn } = values;
     const { game, onSubmit } = props;
     const settings = game.getGame;
-    const eventTimes = settings?.timeOptions?.map((time) => {
-      if (time?.time === eventTime) {
-        return {
-          ...time,
-          votes: time.votes + 1,
-        };
-      } else {
-        return time;
-      }
-    });
-
-    const eventDates = settings?.dateOptions?.map((date) => {
-      if (date?.date === eventDate) {
-        return {
-          ...date,
-          votes: date?.votes + 1,
-        };
-      } else {
-        return date;
-      }
-    });
-
-    const buyIns = settings?.buyInOptions?.map((_buyIn) => {
-      if (_buyIn?.amount === parseInt(buyIn)) {
-        return {
-          ..._buyIn,
-          votes: _buyIn?.votes + 1,
-        };
-      } else {
-        return _buyIn;
-      }
-    });
-    try {
-      const input = {
-        id: settings?.id || "",
-        buyInOptions: buyIns,
-        dateOptions: eventDates,
-        timeOptions: eventTimes,
-      };
-      await API.graphql({
-        ...graphqlOperation(mutations.updateGame, {
-          input,
-        }),
-        authMode: GRAPHQL_AUTH_MODE.API_KEY,
+    if (
+      settings?.timeOptions &&
+      settings?.dateOptions &&
+      settings?.buyInOptions
+    ) {
+      const eventTimes = settings.timeOptions.map((time) => {
+        if (time?.time === eventTime) {
+          return {
+            ...time,
+            votes: time.votes + 1,
+          };
+        } else {
+          return time;
+        }
       });
 
-      onSubmit({
-        eventDate,
-        eventTime,
-        buyIn,
+      const eventDates = settings.dateOptions.map((date) => {
+        if (date?.date === eventDate) {
+          return {
+            ...date,
+            votes: date?.votes + 1,
+          };
+        } else {
+          return date;
+        }
       });
-    } catch (error) {
+
+      const buyIns = settings.buyInOptions.map((_buyIn) => {
+        if (_buyIn?.amount === parseInt(buyIn)) {
+          return {
+            ..._buyIn,
+            votes: _buyIn?.votes + 1,
+          };
+        } else {
+          return _buyIn;
+        }
+      });
+      try {
+        const input = {
+          id: settings.id,
+          buyInOptions: buyIns,
+          dateOptions: eventDates,
+          timeOptions: eventTimes,
+        };
+        await API.graphql({
+          ...graphqlOperation(mutations.updateGame, {
+            input,
+          }),
+          authMode: GRAPHQL_AUTH_MODE.API_KEY,
+        });
+
+        onSubmit({
+          eventDate,
+          eventTime,
+          buyIn,
+        });
+      } catch (error) {
+        alert("Something went wrong!");
+      }
+    } else {
       alert("Something went wrong!");
-    } finally {
     }
   },
 })(InnerForm);

@@ -39,11 +39,7 @@ const ArrayFieldWrapper = (props: ArrayFieldWrapperProps) => {
     <Box display="flex" alignItems="center">
       {children}
       <div>
-        <IconButton
-          {...getBtnProps(deleteBtnProps)}
-          aria-label="delete"
-          onClick={onDelete}
-        >
+        <IconButton {...getBtnProps(deleteBtnProps)} onClick={onDelete}>
           <DeleteIcon {...getIconProps(iconProps)} />
         </IconButton>
       </div>
