@@ -154,7 +154,9 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                               <ArrayTextField
                                 name={`buyInOptions[${index}].amount`}
                                 key={index}
-                                isSubmitting={isSubmitting}
+                                deleteBtnProps={{
+                                  disabled: isSubmitting,
+                                }}
                                 variant="outlined"
                                 margin="dense"
                                 onDelete={() => arrayHelpers.remove(index)}
@@ -187,7 +189,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                               <ArrayDateField
                                 onDelete={() => arrayHelpers.remove(index)}
                                 key={index}
-                                isSubmitting={isSubmitting}
+                                deleteBtnProps={{ disabled: isSubmitting }}
                                 name={`dateOptions[${index}].date`}
                                 variant="dialog"
                                 format="MM/dd/yyyy"
@@ -223,7 +225,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                               <ArrayTimeField
                                 onDelete={() => arrayHelpers.remove(index)}
                                 key={index}
-                                isSubmitting={isSubmitting}
+                                deleteBtnProps={{ disabled: isSubmitting }}
                                 name={`timeOptions[${index}].time`}
                                 margin="dense"
                                 variant="dialog"

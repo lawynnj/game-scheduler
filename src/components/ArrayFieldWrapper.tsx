@@ -1,22 +1,37 @@
 import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import React, { ReactChild, ReactChildren } from "react";
-
-export interface WrapperProps {
-  isSubmitting?: boolean;
-  name?: string;
-  type?: string;
-  buttonStyles?: object;
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
+export interface ArrayFieldWrapperProps {
+  deleteBtnProps?: IconButtonProps;
   onDelete?: () => void;
+  iconProps?: SvgIconProps;
   children?: ReactChild | ReactChildren;
 }
 
-const Wrapper = (props: WrapperProps) => {
+function getIconProps(props: SvgIconProps): SvgIconProps {
+  return {
+    fontSize: "small",
+    ...props,
+  };
+}
+
+function getBtnProps(props: IconButtonProps): IconButtonProps {
+  return {
+    style: {
+      marginLeft: 5,
+    },
+    "aria-label": "delete",
+    ...props,
+  };
+}
+
+const ArrayFieldWrapper = (props: ArrayFieldWrapperProps) => {
   const {
-    isSubmitting = false,
-    buttonStyles = { marginLeft: 5 },
+    deleteBtnProps = {},
     onDelete = () => undefined,
+    iconProps = {},
     children,
   } = props;
 
@@ -25,16 +40,15 @@ const Wrapper = (props: WrapperProps) => {
       {children}
       <div>
         <IconButton
-          style={buttonStyles}
+          {...getBtnProps(deleteBtnProps)}
           aria-label="delete"
-          disabled={isSubmitting}
           onClick={onDelete}
         >
-          <DeleteIcon fontSize="small" />
+          <DeleteIcon {...getIconProps(iconProps)} />
         </IconButton>
       </div>
     </Box>
   );
 };
 
-export default Wrapper;
+export default ArrayFieldWrapper;

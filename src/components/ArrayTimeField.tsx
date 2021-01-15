@@ -1,20 +1,18 @@
-import { Field } from "formik";
+import { Field, FieldAttributes } from "formik";
 import { TimePicker, TimePickerProps } from "formik-material-ui-pickers";
 import React from "react";
-import Wrapper, { WrapperProps } from "./ArrayFieldWrapper";
+import ArrayFieldWrapper, { ArrayFieldWrapperProps } from "./ArrayFieldWrapper";
 
-export type ArrayTimeFieldProps = WrapperProps & Partial<TimePickerProps>;
+export type ArrayTimeFieldProps = ArrayFieldWrapperProps &
+  FieldAttributes<any> &
+  Partial<TimePickerProps>;
 
 const ArrayTimeField = (props: ArrayTimeFieldProps) => {
-  const { buttonStyles, isSubmitting, onDelete, ...rest } = props;
+  const { deleteBtnProps, onDelete, ...rest } = props;
   return (
-    <Wrapper
-      onDelete={onDelete}
-      isSubmitting={isSubmitting}
-      buttonStyles={buttonStyles}
-    >
+    <ArrayFieldWrapper onDelete={onDelete} deleteBtnProps={deleteBtnProps}>
       <Field component={TimePicker} {...rest} />
-    </Wrapper>
+    </ArrayFieldWrapper>
   );
 };
 

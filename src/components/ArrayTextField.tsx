@@ -1,20 +1,18 @@
-import { Field } from "formik";
+import { Field, FieldAttributes } from "formik";
 import { TextField, TextFieldProps } from "formik-material-ui";
 import React from "react";
-import Wrapper, { WrapperProps } from "./ArrayFieldWrapper";
+import ArrayFieldWrapper, { ArrayFieldWrapperProps } from "./ArrayFieldWrapper";
 
-export type ArrayTextFieldProps = WrapperProps & Partial<TextFieldProps>;
+export type ArrayTextFieldProps = ArrayFieldWrapperProps &
+  FieldAttributes<any> &
+  Partial<TextFieldProps>;
 
 const ArrayTextField = (props: ArrayTextFieldProps) => {
-  const { buttonStyles, isSubmitting, onDelete, ...rest } = props;
+  const { deleteBtnProps, onDelete, ...rest } = props;
   return (
-    <Wrapper
-      onDelete={onDelete}
-      isSubmitting={isSubmitting}
-      buttonStyles={buttonStyles}
-    >
+    <ArrayFieldWrapper onDelete={onDelete} deleteBtnProps={deleteBtnProps}>
       <Field component={TextField} {...rest} />
-    </Wrapper>
+    </ArrayFieldWrapper>
   );
 };
 
