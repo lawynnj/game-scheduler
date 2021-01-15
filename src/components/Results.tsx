@@ -11,6 +11,14 @@ import {
 } from "react-vis";
 import PropTypes from "prop-types";
 
+interface RenderChartProps {
+  title: string;
+  data: string;
+  width: number;
+  height: number;
+  xLabel: string;
+  yLabel: string;
+}
 const RenderChart = ({ title, data, width, height, xLabel, yLabel }) => (
   <>
     <Typography>{title}</Typography>
