@@ -7,7 +7,7 @@ import { Route, Switch } from "react-router-dom";
 import { Auth } from "aws-amplify";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-function ProtectedPages() {
+function ProtectedPages(): JSX.Element {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {

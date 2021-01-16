@@ -15,7 +15,7 @@ type HomeProps = {
   user: any;
 };
 
-export default function Home(props: HomeProps) {
+export default function Home(props: HomeProps): JSX.Element {
   const { user } = props;
   const [games, setGames] = useState<Partial<GameType>[]>([]);
   const history = useHistory();

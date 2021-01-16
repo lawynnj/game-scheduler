@@ -6,7 +6,7 @@ import ProtectedPages from "./pages/ProtectedPages";
 import SharedSettings from "./pages/SharedSettings";
 Amplify.configure(config);
 
-function App() {
+function App(): JSX.Element {
   return (
     <div className="App">
       <Switch>

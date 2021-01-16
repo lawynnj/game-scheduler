@@ -1,11 +1,11 @@
 import React from "react";
 import useDeepCompareEffect from "use-deep-compare-effect";
 import { API, graphqlOperation } from "aws-amplify";
-
 import { GRAPHQL_AUTH_MODE } from "@aws-amplify/api-graphql";
+
 type UseQueryType<ResultType> = {
   loading: boolean;
-  error: any;
+  error: unknown;
   data: ResultType;
   refetch: () => void;
 };
@@ -17,7 +17,7 @@ interface AuthType {
 export const gqlOp = async <ResultType extends {}, VariablesType extends AuthType = {}>(
   query: string,
   variables?: VariablesType,
-) => {
+): Promise<ResultType> => {
   const { isPublic = false, ...rest } = variables || {};
   const authMode = isPublic === true ? GRAPHQL_AUTH_MODE.API_KEY : GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS;
 

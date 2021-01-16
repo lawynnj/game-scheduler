@@ -27,7 +27,7 @@ function getBtnProps(props: IconButtonProps): IconButtonProps {
   };
 }
 
-const ArrayFieldWrapper = (props: ArrayFieldWrapperProps) => {
+const ArrayFieldWrapper = (props: ArrayFieldWrapperProps): JSX.Element => {
   const { deleteBtnProps = {}, onDelete = () => undefined, iconProps = {}, children } = props;
 
   return (

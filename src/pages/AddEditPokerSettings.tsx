@@ -4,7 +4,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import parseISO from "date-fns/parseISO";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Prompt, useHistory } from "react-router-dom";
+import { Prompt, useHistory, match } from "react-router-dom";
 import { GetGameQuery } from "../API";
 import PokerSettingsForm, { PokerFormVals } from "../components/AddEditPokerSettings/PokerSettingsForm";
 import * as mutations from "../graphql/mutations";
@@ -42,12 +42,15 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
   return cleanVals;
 };
 
+interface MatchProps {
+  gameId: string;
+}
 interface AddEditPokerSettingsProps {
-  match: any;
+  match: match<MatchProps>;
   userId: string;
 }
 
-const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
+const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => {
   const { match, userId } = props;
   const { gameId } = match.params;
   const isAddMode = !gameId;

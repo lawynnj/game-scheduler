@@ -9,6 +9,7 @@ import { GetGameQuery } from "../API";
 
 interface RenderChartProps {
   title: string;
+  // eslint-disable-next-line
   data: any;
   width: number;
   height: number;
@@ -29,14 +30,15 @@ const RenderChart = ({ title, data, width, height, xLabel, yLabel }: RenderChart
   </>
 );
 
-const getGraphData = (data: any, title: string, yLabel: string, xLabel: string) => ({
-  data,
-  title,
-  xLabel,
-  yLabel,
-  width: 300,
-  height: 200,
-});
+const getGraphData = (data: Coords[], title: string, yLabel: string, xLabel: string) =>
+  ({
+    data,
+    title,
+    xLabel,
+    yLabel,
+    width: 300,
+    height: 200,
+  } as RenderChartProps);
 
 interface ResultsProps {
   game: GetGameQuery;
@@ -76,7 +78,7 @@ export default function Results({ game: game_ }: ResultsProps): JSX.Element {
         } as Coords),
     ) ?? [];
 
-  const graphs = [
+  const graphs: RenderChartProps[] = [
     getGraphData(dateData, "Date", "Votes", "Dates"),
     getGraphData(timeData, "Time", "Votes", "Times"),
     getGraphData(buyInData, "Buy In", "Votes", "Amounts"),

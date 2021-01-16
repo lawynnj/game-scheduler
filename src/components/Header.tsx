@@ -7,7 +7,7 @@ import Box from "@material-ui/core/Box";
 
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header(): JSX.Element {
   return (
     <AppBar position="static">
       <Toolbar>

@@ -3,9 +3,9 @@ import { TextField, TextFieldProps } from "formik-material-ui";
 import React from "react";
 import ArrayFieldWrapper, { ArrayFieldWrapperProps } from "./ArrayFieldWrapper";
 
-export type ArrayTextFieldProps = ArrayFieldWrapperProps & FieldAttributes<any> & Partial<TextFieldProps>;
+export type ArrayTextFieldProps = ArrayFieldWrapperProps & FieldAttributes<Partial<TextFieldProps>>;
 
-const ArrayTextField = (props: ArrayTextFieldProps) => {
+const ArrayTextField = (props: ArrayTextFieldProps): JSX.Element => {
   const { deleteBtnProps, onDelete, ...rest } = props;
   return (
     <ArrayFieldWrapper onDelete={onDelete} deleteBtnProps={deleteBtnProps}>

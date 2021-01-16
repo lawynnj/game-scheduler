@@ -25,7 +25,6 @@ export interface PokerFormVals {
   buyInOptions: BuyInOptions[];
 }
 
-// ✔️ compiles
 const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
   title: Yup.string().defined(),
   type: Yup.string().defined(),
@@ -66,7 +65,7 @@ interface PokerSettingsFormProps {
   onCancel: () => void;
   submitBtnText: string;
   title: string;
-  initialValues: any;
+  initialValues: PokerFormVals;
   handleSubmit: (values: PokerFormVals) => void;
   onFormFocus: () => void;
 }
@@ -84,7 +83,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PokerSettingsForm(props: PokerSettingsFormProps) {
+export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.Element {
   const { title, onCancel, submitBtnText, initialValues, handleSubmit, onFormFocus } = props;
 
   const classes = useStyles();

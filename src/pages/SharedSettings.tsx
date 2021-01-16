@@ -9,7 +9,7 @@ import useStateWithLocalStorage from "../hooks/useStateWithLocalStorage";
 import { GetGameQuery } from "../API";
 import { useQuery } from "../hooks/useQuery";
 
-function PokerSettings() {
+function PokerSettings(): JSX.Element {
   const { gameId } = useParams<{ gameId: string }>();
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
   const prevVote = usePrevious<string>(vote);

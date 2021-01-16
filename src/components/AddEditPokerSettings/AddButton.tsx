@@ -7,7 +7,7 @@ interface AddButtonProps {
   onClick: () => void;
 }
 
-const AddButton = ({ disabled, onClick }: AddButtonProps) => (
+const AddButton = ({ disabled, onClick }: AddButtonProps): JSX.Element => (
   <Button
     style={{ marginLeft: 5 }}
     aria-label="add"
