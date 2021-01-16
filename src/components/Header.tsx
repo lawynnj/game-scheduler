@@ -11,12 +11,7 @@ export default function Header() {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          width="100%"
-        >
+        <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%">
           <Typography variant="h6" color="inherit">
             <Link to="/">Poker Game Organizer</Link>
           </Typography>

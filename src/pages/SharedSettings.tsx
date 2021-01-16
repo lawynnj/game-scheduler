@@ -42,7 +42,7 @@ function PokerSettings() {
                 buyIn: vote.buyIn,
                 eventDate: vote.eventDate,
                 eventTime: vote.eventTime,
-              })
+              }),
             );
           }}
         />

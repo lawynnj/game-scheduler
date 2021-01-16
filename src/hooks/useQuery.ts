@@ -14,18 +14,12 @@ interface AuthType {
   isPublic?: boolean;
 }
 
-export const gqlOp = async <
-  ResultType extends {},
-  VariablesType extends AuthType = {}
->(
+export const gqlOp = async <ResultType extends {}, VariablesType extends AuthType = {}>(
   query: string,
-  variables?: VariablesType
+  variables?: VariablesType,
 ) => {
   const { isPublic = false, ...rest } = variables || {};
-  const authMode =
-    isPublic === true
-      ? GRAPHQL_AUTH_MODE.API_KEY
-      : GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS;
+  const authMode = isPublic === true ? GRAPHQL_AUTH_MODE.API_KEY : GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS;
 
   const { data } = (await API.graphql({
     ...graphqlOperation(query, rest),
@@ -40,12 +34,9 @@ interface QueryType extends AuthType {
   skip?: boolean;
 }
 
-export const useQuery = <
-  ResultType extends {},
-  VariablesType extends QueryType = {}
->(
+export const useQuery = <ResultType extends {}, VariablesType extends QueryType = {}>(
   query: string,
-  variables?: VariablesType
+  variables?: VariablesType,
 ): UseQueryType<ResultType> => {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");

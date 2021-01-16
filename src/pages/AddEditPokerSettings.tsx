@@ -6,9 +6,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Prompt, useHistory } from "react-router-dom";
 import { GetGameQuery } from "../API";
-import PokerSettingsForm, {
-  PokerFormVals,
-} from "../components/AddEditPokerSettings/PokerSettingsForm";
+import PokerSettingsForm, { PokerFormVals } from "../components/AddEditPokerSettings/PokerSettingsForm";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { useQuery } from "../hooks/useQuery";
@@ -124,7 +122,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
             ...values,
             hostId: userId,
           },
-        })
+        }),
       );
       history.push("/");
     } catch (error) {
@@ -141,7 +139,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
             hostId: userId,
             id: game?.id,
           },
-        })
+        }),
       );
     } catch (error) {
       console.log("Error", error);
@@ -169,9 +167,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
       <PokerSettingsForm
         onCancel={() => history.push(isAddMode ? "." : "..")}
         submitBtnText={isAddMode ? "Add" : "Save"}
-        title={
-          isAddMode ? "Add Poker Game Settings" : "Edit Poker Game Settings"
-        }
+        title={isAddMode ? "Add Poker Game Settings" : "Edit Poker Game Settings"}
         handleSubmit={handleSubmit}
         initialValues={initialValues}
         onFormFocus={() => setShowPrompt(true)}

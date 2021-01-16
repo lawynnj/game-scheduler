@@ -29,17 +29,10 @@ function ProtectedPages() {
     <div>
       <Header />
       <Switch>
-        <Route
-          path="/create"
-          render={(props) => (
-            <AddEditPokerSettings {...props} userId={user.attributes.sub} />
-          )}
-        />
+        <Route path="/create" render={(props) => <AddEditPokerSettings {...props} userId={user.attributes.sub} />} />
         <Route
           path="/edit/:gameId"
-          render={(props) => (
-            <AddEditPokerSettings {...props} userId={user.attributes.sub} />
-          )}
+          render={(props) => <AddEditPokerSettings {...props} userId={user.attributes.sub} />}
         />
         <Route exact path="/" render={() => <Home user={user} />} />
       </Switch>

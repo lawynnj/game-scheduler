@@ -1,11 +1,4 @@
-type Primitive =
-  | string
-  | Function
-  | number
-  | boolean
-  | symbol
-  | undefined
-  | null;
+type Primitive = string | Function | number | boolean | symbol | undefined | null;
 
 type DeepOmitArray<T extends any[], K> = {
   [P in keyof T]: DeepOmit<T[P], K>;

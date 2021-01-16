@@ -28,12 +28,7 @@ function getBtnProps(props: IconButtonProps): IconButtonProps {
 }
 
 const ArrayFieldWrapper = (props: ArrayFieldWrapperProps) => {
-  const {
-    deleteBtnProps = {},
-    onDelete = () => undefined,
-    iconProps = {},
-    children,
-  } = props;
+  const { deleteBtnProps = {}, onDelete = () => undefined, iconProps = {}, children } = props;
 
   return (
     <Box display="flex" alignItems="center">
