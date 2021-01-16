@@ -1,10 +1,9 @@
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import React from "react";
-import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalBarSeries } from "react-vis";
 import PropTypes from "prop-types";
-
+import React from "react";
+import { HorizontalGridLines, VerticalBarSeries, XAxis, XYPlot, YAxis } from "react-vis";
 import { GetGameQuery } from "../API";
 
 interface RenderChartProps {

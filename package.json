@@ -51,9 +51,9 @@
   "lint-staged": {
     "*/**/*.{tsx, ts, js, jsx}": [
       "organize-imports-cli",
+      "eslint --cache --fix",
       "git add"
-    ],
-    "*/**/*.{tsx, js}": "eslint --cache --fix"
+    ]
   },
   "eslintConfig": {
     "extends": [
