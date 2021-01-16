@@ -29,6 +29,7 @@ function PokerSettings(): JSX.Element {
   if (loading || data?.getGame === undefined) return <CircularProgress />;
 
   const hasVoted = vote !== undefined && vote !== "";
+
   return (
     <div>
       {hasVoted || data?.getGame?.status === "COMPLETED" ? (

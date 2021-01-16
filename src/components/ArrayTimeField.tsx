@@ -7,6 +7,7 @@ export type ArrayTimeFieldProps = ArrayFieldWrapperProps & FieldAttributes<Parti
 
 const ArrayTimeField = (props: ArrayTimeFieldProps): JSX.Element => {
   const { deleteBtnProps, onDelete, ...rest } = props;
+
   return (
     <ArrayFieldWrapper onDelete={onDelete} deleteBtnProps={deleteBtnProps}>
       <Field component={TimePicker} {...rest} />

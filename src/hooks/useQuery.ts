@@ -27,6 +27,7 @@ export const gqlOp = async <ResultType extends {}, VariablesType extends AuthTyp
   })) as {
     data: ResultType;
   };
+
   return data;
 };
 

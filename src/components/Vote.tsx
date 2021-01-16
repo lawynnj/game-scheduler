@@ -43,6 +43,7 @@ interface VoteOptionProps {
 
 const VoteOption = (props: VoteOptionProps) => {
   const { title, name, disabled, options, touched = {}, errors = {} } = props;
+
   return (
     <FormControl component="fieldset">
       <FormLabel component="legend">{title}</FormLabel>
@@ -73,6 +74,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
       const tmp = time.split(".");
       const tmpTime = tmp[0] + tmp[1][tmp[1].length - 1];
       const d = parse(tmpTime, "HH:mm:ssX", new Date());
+
       return format(d, "hh:mm a");
     } catch (error) {
       console.log(error);

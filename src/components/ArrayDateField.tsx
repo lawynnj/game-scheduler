@@ -7,6 +7,7 @@ export type ArrayDateFieldProps = ArrayFieldWrapperProps & FieldAttributes<Parti
 
 const ArrayDateField = (props: ArrayDateFieldProps): JSX.Element => {
   const { deleteBtnProps, onDelete, ...rest } = props;
+
   return (
     <ArrayFieldWrapper onDelete={onDelete} deleteBtnProps={deleteBtnProps}>
       <Field component={DatePicker} {...rest} />

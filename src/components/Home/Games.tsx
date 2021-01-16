@@ -26,6 +26,7 @@ const Games = (props: GamesProps): JSX.Element => {
       <List>
         {filterGames(GameStatus.PENDING).map((game: GameType) => {
           const date = new Date(game.createdAt ?? "");
+
           return (
             <Box key={game.id} display="flex" flexDirection="row">
               <RenderItemLink date={date} title={game.title} to={`/edit/${game.id}`} />
@@ -41,6 +42,7 @@ const Games = (props: GamesProps): JSX.Element => {
       <List>
         {filterGames(GameStatus.ACTIVE).map((game: GameType) => {
           const date = new Date(game.createdAt ?? "");
+
           return (
             <Box display="flex" key={game.id}>
               <RenderItemLink date={date} title={game.title} to={`/shared/${game.id}`} />

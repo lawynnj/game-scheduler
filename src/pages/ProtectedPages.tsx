@@ -26,6 +26,7 @@ function ProtectedPages(): JSX.Element {
   if (!user) {
     return <CircularProgress />;
   }
+
   return (
     <div>
       <Header />

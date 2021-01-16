@@ -87,6 +87,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
   const { title, onCancel, submitBtnText, initialValues, handleSubmit, onFormFocus } = props;
 
   const classes = useStyles();
+
   return (
     <div>
       <Box display="flex" flexDirection="column">

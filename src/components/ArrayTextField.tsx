@@ -7,6 +7,7 @@ export type ArrayTextFieldProps = ArrayFieldWrapperProps & FieldAttributes<Parti
 
 const ArrayTextField = (props: ArrayTextFieldProps): JSX.Element => {
   const { deleteBtnProps, onDelete, ...rest } = props;
+
   return (
     <ArrayFieldWrapper onDelete={onDelete} deleteBtnProps={deleteBtnProps}>
       <Field component={TextField} {...rest} />

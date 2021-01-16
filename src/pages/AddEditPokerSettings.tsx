@@ -22,6 +22,7 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
     cleanVals.timeOptions = cleanVals.timeOptions.map((opt) => {
       const sanitizedOpt = { ...opt };
       const tmp: Date = new Date(sanitizedOpt.time);
+
       return {
         ...sanitizedOpt,
         time: tmp.toISOString().split("T")[1],
@@ -32,6 +33,7 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
     cleanVals.dateOptions = cleanVals.dateOptions.map((opt) => {
       const sanitizedOpt = { ...opt };
       const tmp: Date = new Date(sanitizedOpt.date);
+
       return {
         ...sanitizedOpt,
         date: tmp.toISOString().split("T")[0],
@@ -80,6 +82,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
           // add time and timezone to date to fix DatePicker bug
           // see: https://stackoverflow.com/questions/60382084/material-ui-datepicker-showing-wrong-date
           const dateStr = parseISO(dateOpt?.date ?? new Date().toISOString());
+
           return {
             date: dateStr.toISOString(),
             votes: dateOpt?.votes,
