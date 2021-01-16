@@ -41,7 +41,19 @@
     "build": "tsc",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "eslint '*/**/*.{js,ts,tsx}'  --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*/**/*.{tsx, ts, js, jsx}": [
+      "organize-imports-cli",
+      "git add"
+    ],
+    "*/**/*.{tsx, js}": "eslint --cache --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -69,6 +81,9 @@
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.3",
+    "organize-imports-cli": "^0.8.0",
     "prettier": "^2.2.1"
   }
 }
