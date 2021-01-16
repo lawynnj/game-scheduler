@@ -12,6 +12,7 @@ import { mapListGames } from "../models/game";
 import { gqlOp } from "../utils/gqlOp";
 
 type HomeProps = {
+  // eslint-disable-next-line
   user: any;
 };
 

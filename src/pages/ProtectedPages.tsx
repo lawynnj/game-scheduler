@@ -8,6 +8,7 @@ import { Auth } from "aws-amplify";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 function ProtectedPages(): JSX.Element {
+  // eslint-disable-next-line
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
