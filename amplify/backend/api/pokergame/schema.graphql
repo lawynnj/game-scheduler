@@ -3,15 +3,7 @@ connection: https://docs.amplify.aws/cli/graphql-transformer/connection#definiti
 """
 type User
   @model
-  @auth(rules: [
-      { allow: owner } 
-      { 
-        allow: groups
-        groups: ["admin"]
-        operations: [read, create, update, delete]
-      }
-    ]
-  )
+  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["admin"], operations: [read, create, update, delete] }])
   @aws_cognito_user_pools {
   id: ID!
   username: String
@@ -70,12 +62,9 @@ type Game
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
   players: [Player] # array of players
-  buyInOptions: [BuyInOptions] 
-    @auth(rules: [{ allow: public, operations: [update] }]) # array of buy ins
-  dateOptions: [DateOptions] 
-    @auth(rules: [{ allow: public, operations: [update] }]) # array of dates
-  timeOptions: [TimeOptions] 
-    @auth(rules: [{ allow: public, operations: [update] }]) # array of times # array of time
+  buyInOptions: [BuyInOptions] @auth(rules: [{ allow: public, operations: [update] }, { allow: owner }]) # array of buy ins
+  dateOptions: [DateOptions] @auth(rules: [{ allow: public, operations: [update] }, { allow: owner }]) # array of dates
+  timeOptions: [TimeOptions] @auth(rules: [{ allow: public, operations: [update] }, { allow: owner }]) # array of times # array of time
   ipAddresses: [AWSIPAddress]
 
   status: GameStatus
