@@ -20,21 +20,25 @@ export type GameInput = {
 export type PlayerInput = {
   name: string,
   email?: string | null,
+  uuid: string,
 };
 
 export type BuyInOptionsInput = {
   amount: number,
   votes: number,
+  uuid: string,
 };
 
 export type DateOptionsInput = {
   date: string,
   votes: number,
+  uuid: string,
 };
 
 export type TimeOptionsInput = {
   time: string,
   votes: number,
+  uuid: string,
 };
 
 export enum GameStatus {
