@@ -30,7 +30,10 @@
       "output": {
         "authConfig": {
           "defaultAuthentication": {
-            "authenticationType": "AWS_IAM"
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authgameschedulerapife7a84e4"
+            }
           },
           "additionalAuthenticationProviders": [
             {
@@ -38,12 +41,6 @@
               "apiKeyConfig": {
                 "apiKeyExpirationDays": 365,
                 "description": "public access"
-              }
-            },
-            {
-              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-              "userPoolConfig": {
-                "userPoolId": "authgameschedulerapife7a84e4"
               }
             }
           ]
