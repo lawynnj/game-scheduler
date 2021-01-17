@@ -46,6 +46,7 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
 interface MatchProps {
   gameId: string;
 }
+
 interface AddEditPokerSettingsProps {
   match: match<MatchProps>;
   userId: string;
