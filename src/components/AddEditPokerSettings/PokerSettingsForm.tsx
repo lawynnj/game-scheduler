@@ -10,13 +10,13 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { Field, FieldArray, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
 import { BuyInOptions, DateOptions, TimeOptions } from "../../models/game";
 import ArrayDateField from "../ArrayDateField";
 import ArrayTextField from "../ArrayTextField";
 import ArrayTimeField from "../ArrayTimeField";
 import AddButton from "./AddButton";
-
 export interface PokerFormVals {
   title: string;
   type: string;
@@ -143,7 +143,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.buyInOptions?.map((buyIn: BuyInOptions, index: number) => (
                             <ArrayTextField
                               name={`buyInOptions[${index}].amount`}
-                              key={key.uuid}
+                              key={buyIn?.uuid}
                               deleteBtnProps={{
                                 disabled: isSubmitting,
                               }}
@@ -155,7 +155,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
 
                           <AddButton
                             disabled={isSubmitting}
-                            onClick={() => arrayHelpers.push({ amount: 0, votes: 0 })}
+                            onClick={() => arrayHelpers.push({ amount: 0, votes: 0, uuid: uuidv4() })}
                           />
                         </div>
                       )}

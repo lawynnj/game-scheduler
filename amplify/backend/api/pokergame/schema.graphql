@@ -76,20 +76,24 @@ type Game
 input DateOptionsInput {
   date: AWSDate!
   votes: Int!
+  uuid: ID!
 }
 
 input TimeOptionsInput {
   time: AWSTime!
   votes: Int!
+  uuid: ID!
 }
 
 input BuyInOptionsInput {
   amount: Int!
   votes: Int!
+  uuid: ID!
 }
 input PlayerInput {
   name: String!
   email: String
+  uuid: ID!
 }
 
 input GameInput {

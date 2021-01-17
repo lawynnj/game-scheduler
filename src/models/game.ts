@@ -4,14 +4,17 @@ import { GameType } from "../graphql/APITypes";
 export interface DateOptions {
   date: string;
   votes: number;
+  uuid: string;
 }
 export interface TimeOptions {
   time: string;
   votes: number;
+  uuid: string;
 }
 export interface BuyInOptions {
   amount: number;
   votes: number;
+  uuid: string;
 }
 
 function mapListGamesQuery(listGamesQuery: ListGamesQuery): Partial<GameType>[] {
