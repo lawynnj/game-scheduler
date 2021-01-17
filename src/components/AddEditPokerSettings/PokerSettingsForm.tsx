@@ -17,6 +17,7 @@ import ArrayDateField from "../ArrayDateField";
 import ArrayTextField from "../ArrayTextField";
 import ArrayTimeField from "../ArrayTimeField";
 import AddButton from "./AddButton";
+
 export interface PokerFormVals {
   title: string;
   type: string;
@@ -182,7 +183,10 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                               }}
                             />
                           ))}
-                          <AddButton disabled={isSubmitting} onClick={() => arrayHelpers.push({ date: 0, votes: 0 })} />
+                          <AddButton
+                            disabled={isSubmitting}
+                            onClick={() => arrayHelpers.push({ date: 0, votes: 0, uuid: uuidv4() })}
+                          />
                         </div>
                       )}
                     />
@@ -214,6 +218,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                               arrayHelpers.push({
                                 time: new Date(),
                                 votes: 0,
+                                uuid: uuidv4(),
                               })
                             }
                           />
