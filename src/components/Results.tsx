@@ -1,7 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import PropTypes from "prop-types";
 import React from "react";
 import { HorizontalGridLines, VerticalBarSeries, XAxis, XYPlot, YAxis } from "react-vis";
 import { GetGameQuery } from "../API";
@@ -96,7 +95,3 @@ export default function Results({ game: game_ }: ResultsProps): JSX.Element {
     </Box>
   );
 }
-
-Results.propTypes = {
-  game: PropTypes.object.isRequired,
-};
