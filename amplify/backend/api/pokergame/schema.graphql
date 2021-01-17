@@ -17,24 +17,24 @@ type User
 type DateOptions {
   date: AWSDate!
   votes: Int!
-  uuid: ID
+  uuid: ID!
 }
 
 type TimeOptions {
   time: AWSTime!
   votes: Int!
-  uuid: ID
+  uuid: ID!
 }
 
 type BuyInOptions {
   amount: Int!
   votes: Int!
-  uuid: ID
+  uuid: ID!
 }
 type Player {
   name: String!
   email: String
-  uuid: ID
+  uuid: ID!
 }
 
 enum GameStatus {
