@@ -25,7 +25,6 @@ export interface PokerFormVals {
   buyInOptions: BuyInOptions[];
 }
 
-// ✔️ compiles
 const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
   title: Yup.string().defined(),
   type: Yup.string().defined(),
@@ -37,7 +36,7 @@ const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
           date: Yup.string().defined(),
           votes: Yup.number().defined(),
         })
-        .defined()
+        .defined(),
     )
     .defined(),
   timeOptions: Yup.array()
@@ -47,7 +46,7 @@ const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
           time: Yup.string().defined(),
           votes: Yup.number().defined(),
         })
-        .defined()
+        .defined(),
     )
     .defined(),
   buyInOptions: Yup.array()
@@ -57,7 +56,7 @@ const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
           amount: Yup.number().defined(),
           votes: Yup.number().defined(),
         })
-        .defined()
+        .defined(),
     )
     .defined(),
 }).defined();
@@ -66,7 +65,7 @@ interface PokerSettingsFormProps {
   onCancel: () => void;
   submitBtnText: string;
   title: string;
-  initialValues: any;
+  initialValues: PokerFormVals;
   handleSubmit: (values: PokerFormVals) => void;
   onFormFocus: () => void;
 }
@@ -84,17 +83,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PokerSettingsForm(props: PokerSettingsFormProps) {
-  const {
-    title,
-    onCancel,
-    submitBtnText,
-    initialValues,
-    handleSubmit,
-    onFormFocus,
-  } = props;
+export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.Element {
+  const { title, onCancel, submitBtnText, initialValues, handleSubmit, onFormFocus } = props;
 
   const classes = useStyles();
+
   return (
     <div>
       <Box display="flex" flexDirection="column">
@@ -139,103 +132,81 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                       }}
                     />
 
-                    <Typography
-                      variant="subtitle2"
-                      style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
-                    >
+                    <Typography variant="subtitle2" style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}>
                       Buy ins
                     </Typography>
                     <FieldArray
                       name="buyInOptions"
                       render={(arrayHelpers) => (
                         <div>
-                          {values?.buyInOptions?.map(
-                            (buyIn: BuyInOptions, index: number) => (
-                              <ArrayTextField
-                                name={`buyInOptions[${index}].amount`}
-                                key={index}
-                                deleteBtnProps={{
-                                  disabled: isSubmitting,
-                                }}
-                                variant="outlined"
-                                margin="dense"
-                                onDelete={() => arrayHelpers.remove(index)}
-                              />
-                            )
-                          )}
+                          {values?.buyInOptions?.map((buyIn: BuyInOptions, index: number) => (
+                            <ArrayTextField
+                              name={`buyInOptions[${index}].amount`}
+                              key={index}
+                              deleteBtnProps={{
+                                disabled: isSubmitting,
+                              }}
+                              variant="outlined"
+                              margin="dense"
+                              onDelete={() => arrayHelpers.remove(index)}
+                            />
+                          ))}
 
                           <AddButton
                             disabled={isSubmitting}
-                            onClick={() =>
-                              arrayHelpers.push({ amount: 0, votes: 0 })
-                            }
+                            onClick={() => arrayHelpers.push({ amount: 0, votes: 0 })}
                           />
                         </div>
                       )}
                     />
 
-                    <Typography
-                      variant="subtitle2"
-                      style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
-                    >
+                    <Typography variant="subtitle2" style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}>
                       Dates
                     </Typography>
                     <FieldArray
                       name="dateOptions"
                       render={(arrayHelpers) => (
                         <div>
-                          {values?.dateOptions?.map(
-                            (date: DateOptions, index: number) => (
-                              <ArrayDateField
-                                onDelete={() => arrayHelpers.remove(index)}
-                                key={index}
-                                deleteBtnProps={{ disabled: isSubmitting }}
-                                name={`dateOptions[${index}].date`}
-                                variant="dialog"
-                                format="MM/dd/yyyy"
-                                type="text"
-                                inputProps={{
-                                  onFocus: onFormFocus,
-                                }}
-                              />
-                            )
-                          )}
-                          <AddButton
-                            disabled={isSubmitting}
-                            onClick={() =>
-                              arrayHelpers.push({ date: 0, votes: 0 })
-                            }
-                          />
+                          {values?.dateOptions?.map((date: DateOptions, index: number) => (
+                            <ArrayDateField
+                              onDelete={() => arrayHelpers.remove(index)}
+                              key={index}
+                              deleteBtnProps={{ disabled: isSubmitting }}
+                              name={`dateOptions[${index}].date`}
+                              variant="dialog"
+                              format="MM/dd/yyyy"
+                              type="text"
+                              inputProps={{
+                                onFocus: onFormFocus,
+                              }}
+                            />
+                          ))}
+                          <AddButton disabled={isSubmitting} onClick={() => arrayHelpers.push({ date: 0, votes: 0 })} />
                         </div>
                       )}
                     />
 
-                    <Typography
-                      variant="subtitle2"
-                      style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}
-                    >
+                    <Typography variant="subtitle2" style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}>
                       Times
                     </Typography>
                     <FieldArray
                       name="timeOptions"
                       render={(arrayHelpers) => (
                         <div>
-                          {values?.timeOptions?.map(
-                            (time: TimeOptions, index: number) => (
-                              <ArrayTimeField
-                                onDelete={() => arrayHelpers.remove(index)}
-                                key={index}
-                                deleteBtnProps={{ disabled: isSubmitting }}
-                                name={`timeOptions[${index}].time`}
-                                margin="dense"
-                                variant="dialog"
-                                type="text"
-                                inputProps={{
-                                  onFocus: onFormFocus,
-                                }}
-                              />
-                            )
-                          )}
+                          {values?.timeOptions?.map((time: TimeOptions, index: number) => (
+                            <ArrayTimeField
+                              onDelete={() => arrayHelpers.remove(index)}
+                              key={index}
+                              deleteBtnProps={{ disabled: isSubmitting }}
+                              name={`timeOptions[${index}].time`}
+                              margin="dense"
+                              variant="dialog"
+                              type="text"
+                              inputProps={{
+                                onFocus: onFormFocus,
+                              }}
+                            />
+                          ))}
                           <AddButton
                             disabled={isSubmitting}
                             onClick={() =>
@@ -249,12 +220,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                       )}
                     />
 
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      mt={3}
-                      width="100%"
-                    >
+                    <Box display="flex" justifyContent="center" mt={3} width="100%">
                       <Button
                         color="primary"
                         variant="contained"
@@ -264,12 +230,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps) {
                       >
                         {submitBtnText}
                       </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        disabled={isSubmitting}
-                        onClick={onCancel}
-                      >
+                      <Button variant="contained" color="secondary" disabled={isSubmitting} onClick={onCancel}>
                         Cancel
                       </Button>
                     </Box>

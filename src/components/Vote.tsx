@@ -9,14 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import { API, graphqlOperation } from "aws-amplify";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
-import {
-  Field,
-  Form,
-  FormikErrors,
-  FormikProps,
-  FormikTouched,
-  withFormik,
-} from "formik";
+import { Field, Form, FormikErrors, FormikProps, FormikTouched, withFormik } from "formik";
 import { RadioGroup } from "formik-material-ui";
 import React from "react";
 import { GetGameQuery } from "../API";
@@ -50,6 +43,7 @@ interface VoteOptionProps {
 
 const VoteOption = (props: VoteOptionProps) => {
   const { title, name, disabled, options, touched = {}, errors = {} } = props;
+
   return (
     <FormControl component="fieldset">
       <FormLabel component="legend">{title}</FormLabel>
@@ -80,6 +74,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
       const tmp = time.split(".");
       const tmpTime = tmp[0] + tmp[1][tmp[1].length - 1];
       const d = parse(tmpTime, "HH:mm:ssX", new Date());
+
       return format(d, "hh:mm a");
     } catch (error) {
       console.log(error);
@@ -102,9 +97,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 name="eventDate"
                 options={settings.dateOptions.map((date) => ({
                   value: date?.date || "",
-                  label: date?.date
-                    ? format(new Date(date.date), "EEE MMM dd yyyy")
-                    : "",
+                  label: date?.date ? format(new Date(date.date), "EEE MMM dd yyyy") : "",
                 }))}
               />
             ) : (
@@ -145,12 +138,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
               "No dates set up"
             )}
           </Box>
-          <Button
-            color="primary"
-            variant="contained"
-            type="submit"
-            disabled={isSubmitting}
-          >
+          <Button color="primary" variant="contained" type="submit" disabled={isSubmitting}>
             Submit
           </Button>
         </Form>
@@ -184,11 +172,7 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
     const { eventTime, eventDate, buyIn } = values;
     const { game, onSubmit } = props;
     const settings = game.getGame;
-    if (
-      settings?.timeOptions &&
-      settings?.dateOptions &&
-      settings?.buyInOptions
-    ) {
+    if (settings?.timeOptions && settings?.dateOptions && settings?.buyInOptions) {
       const eventTimes = settings.timeOptions.map((time) => {
         if (time?.time === eventTime) {
           return {

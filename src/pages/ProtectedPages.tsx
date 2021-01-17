@@ -7,7 +7,8 @@ import { Route, Switch } from "react-router-dom";
 import { Auth } from "aws-amplify";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-function ProtectedPages() {
+function ProtectedPages(): JSX.Element {
+  // eslint-disable-next-line
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -25,21 +26,15 @@ function ProtectedPages() {
   if (!user) {
     return <CircularProgress />;
   }
+
   return (
     <div>
       <Header />
       <Switch>
-        <Route
-          path="/create"
-          render={(props) => (
-            <AddEditPokerSettings {...props} userId={user.attributes.sub} />
-          )}
-        />
+        <Route path="/create" render={(props) => <AddEditPokerSettings {...props} userId={user.attributes.sub} />} />
         <Route
           path="/edit/:gameId"
-          render={(props) => (
-            <AddEditPokerSettings {...props} userId={user.attributes.sub} />
-          )}
+          render={(props) => <AddEditPokerSettings {...props} userId={user.attributes.sub} />}
         />
         <Route exact path="/" render={() => <Home user={user} />} />
       </Switch>

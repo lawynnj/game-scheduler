@@ -7,16 +7,11 @@ import Box from "@material-ui/core/Box";
 
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header(): JSX.Element {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          width="100%"
-        >
+        <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%">
           <Typography variant="h6" color="inherit">
             <Link to="/">Poker Game Organizer</Link>
           </Typography>

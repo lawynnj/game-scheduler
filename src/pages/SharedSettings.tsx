@@ -9,7 +9,7 @@ import useStateWithLocalStorage from "../hooks/useStateWithLocalStorage";
 import { GetGameQuery } from "../API";
 import { useQuery } from "../hooks/useQuery";
 
-function PokerSettings() {
+function PokerSettings(): JSX.Element {
   const { gameId } = useParams<{ gameId: string }>();
   const [vote, setVote] = useStateWithLocalStorage(`vote-${gameId}`);
   const prevVote = usePrevious<string>(vote);
@@ -29,6 +29,7 @@ function PokerSettings() {
   if (loading || data?.getGame === undefined) return <CircularProgress />;
 
   const hasVoted = vote !== undefined && vote !== "";
+
   return (
     <div>
       {hasVoted || data?.getGame?.status === "COMPLETED" ? (
@@ -42,7 +43,7 @@ function PokerSettings() {
                 buyIn: vote.buyIn,
                 eventDate: vote.eventDate,
                 eventTime: vote.eventTime,
-              })
+              }),
             );
           }}
         />

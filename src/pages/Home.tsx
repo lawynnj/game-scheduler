@@ -3,12 +3,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  GameStatus,
-  ListGamesQuery,
-  UpdateGameMutation,
-  UpdateGameMutationVariables,
-} from "../API";
+import { GameStatus, ListGamesQuery, UpdateGameMutation, UpdateGameMutationVariables } from "../API";
 import Games from "../components/Home/Games";
 import { GameType } from "../graphql/APITypes";
 import * as mutations from "../graphql/mutations";
@@ -17,10 +12,11 @@ import { mapListGames } from "../models/game";
 import { gqlOp } from "../utils/gqlOp";
 
 type HomeProps = {
+  // eslint-disable-next-line
   user: any;
 };
 
-export default function Home(props: HomeProps) {
+export default function Home(props: HomeProps): JSX.Element {
   const { user } = props;
   const [games, setGames] = useState<Partial<GameType>[]>([]);
   const history = useHistory();
@@ -73,19 +69,10 @@ export default function Home(props: HomeProps) {
   return (
     <Box p={2}>
       <Typography variant="h5">Hi {user.username},</Typography>
-      <Button
-        style={{ marginTop: 5 }}
-        color="primary"
-        variant="contained"
-        onClick={() => history.push("/create")}
-      >
+      <Button style={{ marginTop: 5 }} color="primary" variant="contained" onClick={() => history.push("/create")}>
         Create Game Settings
       </Button>
-      {games ? (
-        <Games handleMakeActive={handleMakeActive} games={games} />
-      ) : (
-        <p>You do not have any games</p>
-      )}
+      {games ? <Games handleMakeActive={handleMakeActive} games={games} /> : <p>You do not have any games</p>}
     </Box>
   );
 }

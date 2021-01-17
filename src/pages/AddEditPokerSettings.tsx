@@ -4,11 +4,9 @@ import { API, graphqlOperation } from "aws-amplify";
 import parseISO from "date-fns/parseISO";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Prompt, useHistory } from "react-router-dom";
+import { Prompt, useHistory, match } from "react-router-dom";
 import { GetGameQuery } from "../API";
-import PokerSettingsForm, {
-  PokerFormVals,
-} from "../components/AddEditPokerSettings/PokerSettingsForm";
+import PokerSettingsForm, { PokerFormVals } from "../components/AddEditPokerSettings/PokerSettingsForm";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
 import { useQuery } from "../hooks/useQuery";
@@ -24,6 +22,7 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
     cleanVals.timeOptions = cleanVals.timeOptions.map((opt) => {
       const sanitizedOpt = { ...opt };
       const tmp: Date = new Date(sanitizedOpt.time);
+
       return {
         ...sanitizedOpt,
         time: tmp.toISOString().split("T")[1],
@@ -34,6 +33,7 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
     cleanVals.dateOptions = cleanVals.dateOptions.map((opt) => {
       const sanitizedOpt = { ...opt };
       const tmp: Date = new Date(sanitizedOpt.date);
+
       return {
         ...sanitizedOpt,
         date: tmp.toISOString().split("T")[0],
@@ -44,12 +44,15 @@ const transformFormVals = (values: PokerFormVals): PokerFormVals => {
   return cleanVals;
 };
 
+interface MatchProps {
+  gameId: string;
+}
 interface AddEditPokerSettingsProps {
-  match: any;
+  match: match<MatchProps>;
   userId: string;
 }
 
-const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
+const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => {
   const { match, userId } = props;
   const { gameId } = match.params;
   const isAddMode = !gameId;
@@ -79,6 +82,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
           // add time and timezone to date to fix DatePicker bug
           // see: https://stackoverflow.com/questions/60382084/material-ui-datepicker-showing-wrong-date
           const dateStr = parseISO(dateOpt?.date ?? new Date().toISOString());
+
           return {
             date: dateStr.toISOString(),
             votes: dateOpt?.votes,
@@ -124,7 +128,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
             ...values,
             hostId: userId,
           },
-        })
+        }),
       );
       history.push("/");
     } catch (error) {
@@ -141,7 +145,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
             hostId: userId,
             id: game?.id,
           },
-        })
+        }),
       );
     } catch (error) {
       console.log("Error", error);
@@ -169,9 +173,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps) => {
       <PokerSettingsForm
         onCancel={() => history.push(isAddMode ? "." : "..")}
         submitBtnText={isAddMode ? "Add" : "Save"}
-        title={
-          isAddMode ? "Add Poker Game Settings" : "Edit Poker Game Settings"
-        }
+        title={isAddMode ? "Add Poker Game Settings" : "Edit Poker Game Settings"}
         handleSubmit={handleSubmit}
         initialValues={initialValues}
         onFormFocus={() => setShowPrompt(true)}
