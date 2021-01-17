@@ -1,6 +1,6 @@
-import { ListGamesQuery, GameStatus } from "../API";
-import { GraphQLResult } from "@aws-amplify/api";
+import { ListGamesQuery } from "../API";
 import { GameType } from "../graphql/APITypes";
+
 export interface DateOptions {
   date: string;
   votes: number;
@@ -14,9 +14,7 @@ export interface BuyInOptions {
   votes: number;
 }
 
-function mapListGamesQuery(
-  listGamesQuery: ListGamesQuery
-): Partial<GameType>[] {
+function mapListGamesQuery(listGamesQuery: ListGamesQuery): Partial<GameType>[] {
   return (
     listGamesQuery.listGames?.items?.map(
       (game) =>
@@ -25,7 +23,7 @@ function mapListGamesQuery(
           title: game?.title,
           status: game?.status,
           createdAt: game?.createdAt,
-        } as Partial<GameType>)
+        } as Partial<GameType>),
     ) || []
   );
 }

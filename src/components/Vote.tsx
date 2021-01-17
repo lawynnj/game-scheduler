@@ -14,6 +14,7 @@ import { RadioGroup } from "formik-material-ui";
 import React from "react";
 import { GetGameQuery } from "../API";
 import * as mutations from "../graphql/mutations";
+
 interface FormValues {
   buyIn: string;
   eventTime: string;
@@ -29,6 +30,7 @@ interface VoteFormProps {
 interface OtherProps {
   game: GetGameQuery;
 }
+
 interface VoteOptionProps {
   title: string;
   name: string;

@@ -1,8 +1,9 @@
 import Box from "@material-ui/core/Box";
 import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
+import { SvgIconProps } from "@material-ui/core/SvgIcon";
 import DeleteIcon from "@material-ui/icons/Delete";
 import React, { ReactChild, ReactChildren } from "react";
-import { SvgIconProps } from "@material-ui/core/SvgIcon";
+
 export interface ArrayFieldWrapperProps {
   deleteBtnProps?: IconButtonProps;
   onDelete?: () => void;
