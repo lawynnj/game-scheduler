@@ -67,18 +67,22 @@ export const onCreateGame = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
@@ -100,18 +104,22 @@ export const onUpdateGame = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
@@ -144,18 +152,22 @@ export const onDeleteGame = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status

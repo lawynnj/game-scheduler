@@ -13,18 +13,22 @@ export const updateGameStrict = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
@@ -36,10 +40,7 @@ export const updateGameStrict = /* GraphQL */ `
   }
 `;
 export const createUser = /* GraphQL */ `
-  mutation CreateUser(
-    $input: CreateUserInput!
-    $condition: ModelUserConditionInput
-  ) {
+  mutation CreateUser($input: CreateUserInput!, $condition: ModelUserConditionInput) {
     createUser(input: $input, condition: $condition) {
       id
       username
@@ -57,10 +58,7 @@ export const createUser = /* GraphQL */ `
   }
 `;
 export const updateUser = /* GraphQL */ `
-  mutation UpdateUser(
-    $input: UpdateUserInput!
-    $condition: ModelUserConditionInput
-  ) {
+  mutation UpdateUser($input: UpdateUserInput!, $condition: ModelUserConditionInput) {
     updateUser(input: $input, condition: $condition) {
       id
       username
@@ -78,10 +76,7 @@ export const updateUser = /* GraphQL */ `
   }
 `;
 export const deleteUser = /* GraphQL */ `
-  mutation DeleteUser(
-    $input: DeleteUserInput!
-    $condition: ModelUserConditionInput
-  ) {
+  mutation DeleteUser($input: DeleteUserInput!, $condition: ModelUserConditionInput) {
     deleteUser(input: $input, condition: $condition) {
       id
       username
@@ -99,10 +94,7 @@ export const deleteUser = /* GraphQL */ `
   }
 `;
 export const createGame = /* GraphQL */ `
-  mutation CreateGame(
-    $input: CreateGameInput!
-    $condition: ModelGameConditionInput
-  ) {
+  mutation CreateGame($input: CreateGameInput!, $condition: ModelGameConditionInput) {
     createGame(input: $input, condition: $condition) {
       id
       title
@@ -112,18 +104,22 @@ export const createGame = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
@@ -135,10 +131,7 @@ export const createGame = /* GraphQL */ `
   }
 `;
 export const deleteGame = /* GraphQL */ `
-  mutation DeleteGame(
-    $input: DeleteGameInput!
-    $condition: ModelGameConditionInput
-  ) {
+  mutation DeleteGame($input: DeleteGameInput!, $condition: ModelGameConditionInput) {
     deleteGame(input: $input, condition: $condition) {
       id
       title
@@ -148,18 +141,22 @@ export const deleteGame = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
@@ -171,10 +168,7 @@ export const deleteGame = /* GraphQL */ `
   }
 `;
 export const updateGame = /* GraphQL */ `
-  mutation UpdateGame(
-    $input: UpdateGameInput!
-    $condition: ModelGameConditionInput
-  ) {
+  mutation UpdateGame($input: UpdateGameInput!, $condition: ModelGameConditionInput) {
     updateGame(input: $input, condition: $condition) {
       id
       title
@@ -184,18 +178,22 @@ export const updateGame = /* GraphQL */ `
       players {
         name
         email
+        uuid
       }
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
