@@ -143,7 +143,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.buyInOptions?.map((buyIn: BuyInOptions, index: number) => (
                             <ArrayTextField
                               name={`buyInOptions[${index}].amount`}
-                              key={index}
+                              key={key.uuid}
                               deleteBtnProps={{
                                 disabled: isSubmitting,
                               }}
@@ -171,7 +171,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.dateOptions?.map((date: DateOptions, index: number) => (
                             <ArrayDateField
                               onDelete={() => arrayHelpers.remove(index)}
-                              key={index}
+                              key={date?.uuid}
                               deleteBtnProps={{ disabled: isSubmitting }}
                               name={`dateOptions[${index}].date`}
                               variant="dialog"
@@ -197,7 +197,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.timeOptions?.map((time: TimeOptions, index: number) => (
                             <ArrayTimeField
                               onDelete={() => arrayHelpers.remove(index)}
-                              key={index}
+                              key={time.uuid}
                               deleteBtnProps={{ disabled: isSubmitting }}
                               name={`timeOptions[${index}].time`}
                               margin="dense"
