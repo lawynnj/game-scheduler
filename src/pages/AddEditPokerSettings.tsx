@@ -2,9 +2,8 @@ import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { API, graphqlOperation } from "aws-amplify";
 import parseISO from "date-fns/parseISO";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Prompt, useHistory, match } from "react-router-dom";
+import { match, Prompt, useHistory } from "react-router-dom";
 import { GetGameQuery } from "../API";
 import PokerSettingsForm, { PokerFormVals } from "../components/AddEditPokerSettings/PokerSettingsForm";
 import * as mutations from "../graphql/mutations";
@@ -180,10 +179,6 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
       />
     </Box>
   );
-};
-
-AddEditPokerSettings.propTypes = {
-  match: PropTypes.object.isRequired,
 };
 
 export default AddEditPokerSettings;
