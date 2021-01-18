@@ -8,7 +8,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useHistory } from "react-router-dom";
 import { GameStatus } from "../../API";
 import { GameType } from "../../graphql/APITypes";
-import RenderItemLink from "./GameListItem";
+import GameListItem from "./GameListItem";
 
 type GamesProps = {
   games: Partial<GameType>[];
@@ -40,7 +40,7 @@ const Games = (props: GamesProps): JSX.Element => {
       return (
         <Card key={game.id}>
           <div>
-            <RenderItemLink date={date} title={game.title} to={`/edit/${game.id}`} />
+            <GameListItem date={date} title={game.title} to={`/edit/${game.id}`} />
           </div>
           <div>
             <Button
@@ -72,7 +72,7 @@ const Games = (props: GamesProps): JSX.Element => {
       return (
         <Card key={game.id}>
           <div>
-            <RenderItemLink date={date} title={game.title} to={`/shared/${game.id}`} />
+            <GameListItem date={date} title={game.title} to={`/shared/${game.id}`} />
           </div>
           <div>
             <CopyToClipboard text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}>
@@ -95,7 +95,7 @@ const Games = (props: GamesProps): JSX.Element => {
 
   const renderCompletedGames = (): JSX.Element | JSX.Element[] => {
     const items = filterGames(GameStatus.COMPLETED).map((game: GameType) => {
-      return <RenderItemLink key={game.id} title={game.title} to={`/shared/${game.id}`} />;
+      return <GameListItem key={game.id} title={game.title} to={`/shared/${game.id}`} />;
     });
 
     return items.length > 0 ? items : <p>No completed games!</p>;
