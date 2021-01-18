@@ -95,11 +95,7 @@ export default function Home(props: HomeProps): JSX.Element {
       <Button style={{ marginTop: 5 }} color="primary" variant="contained" onClick={() => history.push("/create")}>
         Create Game Settings
       </Button>
-      {games ? (
-        <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />
-      ) : (
-        <p>You do not have any games</p>
-      )}
+      <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />
     </Box>
   );
 }
