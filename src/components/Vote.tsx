@@ -210,12 +210,13 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
       try {
         const input = {
           id: settings.id,
+          hostId: settings.hostId,
           buyInOptions: buyIns,
           dateOptions: eventDates,
           timeOptions: eventTimes,
         };
         await API.graphql({
-          ...graphqlOperation(mutations.updateGame, {
+          ...graphqlOperation(mutations.updateGameVote, {
             input,
           }),
           authMode: GRAPHQL_AUTH_MODE.API_KEY,

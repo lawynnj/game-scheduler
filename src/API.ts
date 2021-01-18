@@ -20,21 +20,25 @@ export type GameInput = {
 export type PlayerInput = {
   name: string,
   email?: string | null,
+  uuid: string,
 };
 
 export type BuyInOptionsInput = {
   amount: number,
   votes: number,
+  uuid: string,
 };
 
 export type DateOptionsInput = {
   date: string,
   votes: number,
+  uuid: string,
 };
 
 export type TimeOptionsInput = {
   time: string,
   votes: number,
+  uuid: string,
 };
 
 export enum GameStatus {
@@ -198,6 +202,14 @@ export type UpdateGameInput = {
   hostId?: string | null,
 };
 
+export type GameVote = {
+  id: string,
+  hostId: string,
+  buyInOptions: Array< BuyInOptionsInput | null >,
+  dateOptions: Array< DateOptionsInput | null >,
+  timeOptions: Array< TimeOptionsInput | null >,
+};
+
 export type ModelUserFilterInput = {
   id?: ModelIDInput | null,
   username?: ModelStringInput | null,
@@ -241,21 +253,25 @@ export type UpdateGameStrictMutation = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -355,21 +371,25 @@ export type CreateGameMutation = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -397,21 +417,25 @@ export type DeleteGameMutation = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -439,21 +463,64 @@ export type UpdateGameMutation = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
+    } | null > | null,
+    ipAddresses: Array< string | null > | null,
+    status: GameStatus | null,
+    hostId: string,
+    createdAt: string,
+    updatedAt: string,
+    owner: string | null,
+  } | null,
+};
+
+export type UpdateGameVoteMutationVariables = {
+  input?: GameVote | null,
+};
+
+export type UpdateGameVoteMutation = {
+  updateGameVote:  {
+    __typename: "Game",
+    id: string,
+    title: string,
+    type: string | null,
+    buyIn: number | null,
+    eventTime: string | null,
+    buyInOptions:  Array< {
+      __typename: "BuyInOptions",
+      amount: number,
+      votes: number,
+      uuid: string,
+    } | null > | null,
+    dateOptions:  Array< {
+      __typename: "DateOptions",
+      date: string,
+      votes: number,
+      uuid: string,
+    } | null > | null,
+    timeOptions:  Array< {
+      __typename: "TimeOptions",
+      time: string,
+      votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -528,16 +595,19 @@ export type GetGameQuery = {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -656,21 +726,25 @@ export type OnCreateGameSubscription = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -693,21 +767,25 @@ export type OnUpdateGameSubscription = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
@@ -742,21 +820,25 @@ export type OnDeleteGameSubscription = {
       __typename: "Player",
       name: string,
       email: string | null,
+      uuid: string,
     } | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
       votes: number,
+      uuid: string,
     } | null > | null,
     dateOptions:  Array< {
       __typename: "DateOptions",
       date: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     timeOptions:  Array< {
       __typename: "TimeOptions",
       time: string,
       votes: number,
+      uuid: string,
     } | null > | null,
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,

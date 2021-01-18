@@ -10,6 +10,7 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { Field, FieldArray, Form, Formik } from "formik";
 import { TextField } from "formik-material-ui";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
 import { BuyInOptions, DateOptions, TimeOptions } from "../../models/game";
 import ArrayDateField from "../ArrayDateField";
@@ -143,7 +144,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.buyInOptions?.map((buyIn: BuyInOptions, index: number) => (
                             <ArrayTextField
                               name={`buyInOptions[${index}].amount`}
-                              key={index}
+                              key={buyIn?.uuid}
                               deleteBtnProps={{
                                 disabled: isSubmitting,
                               }}
@@ -155,7 +156,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
 
                           <AddButton
                             disabled={isSubmitting}
-                            onClick={() => arrayHelpers.push({ amount: 0, votes: 0 })}
+                            onClick={() => arrayHelpers.push({ amount: 0, votes: 0, uuid: uuidv4() })}
                           />
                         </div>
                       )}
@@ -171,7 +172,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.dateOptions?.map((date: DateOptions, index: number) => (
                             <ArrayDateField
                               onDelete={() => arrayHelpers.remove(index)}
-                              key={index}
+                              key={date?.uuid}
                               deleteBtnProps={{ disabled: isSubmitting }}
                               name={`dateOptions[${index}].date`}
                               variant="dialog"
@@ -182,7 +183,10 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                               }}
                             />
                           ))}
-                          <AddButton disabled={isSubmitting} onClick={() => arrayHelpers.push({ date: 0, votes: 0 })} />
+                          <AddButton
+                            disabled={isSubmitting}
+                            onClick={() => arrayHelpers.push({ date: 0, votes: 0, uuid: uuidv4() })}
+                          />
                         </div>
                       )}
                     />
@@ -197,7 +201,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                           {values?.timeOptions?.map((time: TimeOptions, index: number) => (
                             <ArrayTimeField
                               onDelete={() => arrayHelpers.remove(index)}
-                              key={index}
+                              key={time.uuid}
                               deleteBtnProps={{ disabled: isSubmitting }}
                               name={`timeOptions[${index}].time`}
                               margin="dense"
@@ -214,6 +218,7 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                               arrayHelpers.push({
                                 time: new Date(),
                                 votes: 0,
+                                uuid: uuidv4(),
                               })
                             }
                           />

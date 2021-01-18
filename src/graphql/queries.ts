@@ -3,11 +3,7 @@
 // this is an auto generated file. This will be overwritten
 
 export const listUsers = /* GraphQL */ `
-  query ListUsers(
-    $filter: ModelUserFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
+  query ListUsers($filter: ModelUserFilterInput, $limit: Int, $nextToken: String) {
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
@@ -53,14 +49,17 @@ export const getGame = /* GraphQL */ `
       buyInOptions {
         amount
         votes
+        uuid
       }
       dateOptions {
         date
         votes
+        uuid
       }
       timeOptions {
         time
         votes
+        uuid
       }
       ipAddresses
       status
@@ -72,11 +71,7 @@ export const getGame = /* GraphQL */ `
   }
 `;
 export const listGames = /* GraphQL */ `
-  query ListGames(
-    $filter: ModelGameFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
+  query ListGames($filter: ModelGameFilterInput, $limit: Int, $nextToken: String) {
     listGames(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id

@@ -317,6 +317,13 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
+                },
+                "uuid": {
+                    "name": "uuid",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 }
             }
         },
@@ -334,6 +341,13 @@ export const schema = {
                     "name": "votes",
                     "isArray": false,
                     "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "uuid": {
+                    "name": "uuid",
+                    "isArray": false,
+                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 }
@@ -355,6 +369,13 @@ export const schema = {
                     "type": "Int",
                     "isRequired": true,
                     "attributes": []
+                },
+                "uuid": {
+                    "name": "uuid",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 }
             }
         },
@@ -374,9 +395,16 @@ export const schema = {
                     "type": "Int",
                     "isRequired": true,
                     "attributes": []
+                },
+                "uuid": {
+                    "name": "uuid",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 }
             }
         }
     },
-    "version": "12b56b63a93c25e2bccf49f7f8a76e4b"
+    "version": "a419aba6ec749f6d8d096db72c5b97c5"
 };

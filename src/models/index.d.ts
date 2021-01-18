@@ -10,24 +10,28 @@ export enum GameStatus {
 export declare class Player {
   readonly name: string;
   readonly email?: string;
+  readonly uuid: string;
   constructor(init: ModelInit<Player>);
 }
 
 export declare class BuyInOptions {
   readonly amount: number;
   readonly votes: number;
+  readonly uuid: string;
   constructor(init: ModelInit<BuyInOptions>);
 }
 
 export declare class DateOptions {
   readonly date: string;
   readonly votes: number;
+  readonly uuid: string;
   constructor(init: ModelInit<DateOptions>);
 }
 
 export declare class TimeOptions {
   readonly time: string;
   readonly votes: number;
+  readonly uuid: string;
   constructor(init: ModelInit<TimeOptions>);
 }
 

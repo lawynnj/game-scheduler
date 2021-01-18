@@ -84,6 +84,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
           const dateStr = parseISO(dateOpt?.date ?? new Date().toISOString());
 
           return {
+            ...dateOpt,
             date: dateStr.toISOString(),
             votes: dateOpt?.votes,
           } as DateOptions;
@@ -92,6 +93,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
       const timeOptions: TimeOptions[] =
         game?.timeOptions?.map((timeOpt) => {
           return {
+            ...timeOpt,
             // To make the datetime picker component work, we need to prepend a dummy date.
             // The component expects a ISO date so we format it here.
             time: "9999-01-01T" + timeOpt?.time,
@@ -102,6 +104,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
       const buyInOptions: BuyInOptions[] =
         game?.buyInOptions?.map((buyInOpt) => {
           return {
+            ...buyInOpt,
             amount: buyInOpt?.amount,
             votes: buyInOpt?.votes,
           } as BuyInOptions;
