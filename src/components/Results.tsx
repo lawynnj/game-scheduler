@@ -85,7 +85,9 @@ export default function Results({ game: game_ }: ResultsProps): JSX.Element {
   return (
     <Box padding={4} display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h5">Results</Typography>
-      <Grid container style={{ marginTop: 10 }} alignItems="center" justify="center" spacing={2}>
+
+      <Typography variant="h6">{game?.title}</Typography>
+      <Grid container style={{ marginTop: 10 }} alignItems="center" justify="center" spacing={2} direction="column">
         {graphs.map((graph) => (
           <Grid item sm={12} md={4} key={graph.title}>
             <RenderChart {...graph} />

@@ -92,7 +92,14 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
 
   return (
     <div>
-      <Box display="flex" flexDirection="column">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignContent="center"
+        alignItems="center"
+        justifyContent="center"
+        marginTop="30px"
+      >
         <Typography variant="h6" align="center">
           {title}
         </Typography>
