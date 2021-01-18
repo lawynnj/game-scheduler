@@ -16,8 +16,13 @@ type GamesProps = {
   onDelete: (id: string) => void;
 };
 
-// eslint-disable-next-line
-const Card = ({ children }: { children: ReactNode }) => {
+type CardProps = {
+  children: ReactNode;
+};
+
+const Card = (props: CardProps): JSX.Element => {
+  const { children } = props;
+
   return (
     <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
       {children}
