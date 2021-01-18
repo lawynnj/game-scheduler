@@ -1,4 +1,13 @@
 {
-  "permissions": {},
+  "permissions": {
+    "storage": {
+      "Game:@model(appsync)": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
   "lambdaLayers": []
 }

@@ -204,3 +204,35 @@ export const updateGame = /* GraphQL */ `
     }
   }
 `;
+export const updateGameVote = /* GraphQL */ `
+  mutation UpdateGameVote($input: GameVote) {
+    updateGameVote(input: $input) {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      buyInOptions {
+        amount
+        votes
+        uuid
+      }
+      dateOptions {
+        date
+        votes
+        uuid
+      }
+      timeOptions {
+        time
+        votes
+        uuid
+      }
+      ipAddresses
+      status
+      hostId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;

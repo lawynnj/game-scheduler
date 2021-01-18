@@ -60,11 +60,8 @@ type Game
   eventTime: AWSDateTime # selected date and time
   players: [Player] # array of players
   buyInOptions: [BuyInOptions]
-    @auth(rules: [{ allow: private, operations: [update] }, { allow: public, operations: [update] }, { allow: owner }]) # array of buy ins
   dateOptions: [DateOptions]
-    @auth(rules: [{ allow: private, operations: [update] }, { allow: public, operations: [update] }, { allow: owner }]) # array of dates
   timeOptions: [TimeOptions]
-    @auth(rules: [{ allow: private, operations: [update] }, { allow: public, operations: [update] }, { allow: owner }]) # array of times # array of time
   ipAddresses: [AWSIPAddress]
 
   status: GameStatus
@@ -110,7 +107,15 @@ input GameInput {
   ipAddresses: [AWSIPAddress]
   status: GameStatus
 }
+input GameVote {
+  id: ID!
+  hostId: ID!
+  buyInOptions: [BuyInOptionsInput]!
+  dateOptions: [DateOptionsInput]! # array of dates
+  timeOptions: [TimeOptionsInput]! # array of times
+}
 
 type Mutation {
   updateGameStrict(input: GameInput, nextToken: String): Game
+  updateGameVote(input: GameVote): Game @function(name: "updateGameVote-${env}")
 }
