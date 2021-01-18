@@ -213,6 +213,7 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
           buyInOptions: buyIns,
           dateOptions: eventDates,
           timeOptions: eventTimes,
+          title: "broken!",
         };
         await API.graphql({
           ...graphqlOperation(mutations.updateGame, {
