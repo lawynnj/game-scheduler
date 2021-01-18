@@ -84,10 +84,12 @@ const Games = (props: GamesProps): JSX.Element => {
   };
 
   const renderCompletedGames = (): JSX.Element | JSX.Element[] => {
-    const items = filterGames(GameStatus.COMPLETED).map((game: GameType) => {
+    const items = filterGames(GameStatus.ACTIVE).map((game: GameType) => {
       return (
         <GameListItem key={game.id} title={game.title}>
-          <Button onClick={() => history.push(`/shared/${game.id}`)}>View</Button>
+          <Button onClick={() => history.push(`/shared/${game.id}`)} color="primary" variant="contained">
+            View
+          </Button>
         </GameListItem>
       );
     });
