@@ -5,41 +5,72 @@
 	ENV
 	REGION
 Amplify Params - DO NOT EDIT */
-const region = process.env.REGION;
 const AWS = require("aws-sdk");
+const region = process.env.REGION;
 const docClient = new AWS.DynamoDB.DocumentClient({ region });
-const gameTableName = process.env.GAME_TABLE_NAME;
+const gameTableName = process.env.API_POKERGAME_GAMETABLE_NAME;
 
-const params = {
-  TableName: gameTableName,
-};
+function generateUpdateParams(tablename, key, item) {
+  let updateExpression = "set";
+  let ExpressionAttributeNames = {};
+  let ExpressionAttributeValues = {};
 
-async function updateVotes(event, callback) {
+  for (const property in item) {
+    updateExpression += ` #${property} = :${property} ,`;
+    ExpressionAttributeNames["#" + property] = property;
+    ExpressionAttributeValues[":" + property] = item[property];
+  }
+
+  updateExpression = updateExpression.slice(0, -1);
+
+  const params = {
+    TableName: tablename,
+    Key: key,
+    UpdateExpression: updateExpression,
+    ExpressionAttributeNames: ExpressionAttributeNames,
+    ExpressionAttributeValues: ExpressionAttributeValues,
+    ReturnValues: "ALL_NEW",
+  };
+
+  return params;
+}
+
+async function updateVotes(event) {
   if (event.arguments && event.arguments.input) {
-    const { id, buyInOptions, dateOptions, timeOptions } = event.arguments.input;
-    params.Item = {
-      id,
-      buyInOptions,
-      dateOptions,
-      timeOptions,
-    };
-
     try {
-      /* code */
-      console.log("sending put request");
-      const res = await docClient.put(params);
-      console.log(res);
+      const { id, buyInOptions, hostId, dateOptions, timeOptions } = event.arguments.input;
+      const item = {
+        hostId,
+        buyInOptions,
+        dateOptions,
+        timeOptions,
+      };
+      const key = { id };
+      const params = generateUpdateParams(gameTableName, key, item);
+
+      const res = await docClient.update(params).promise();
+
+      const data = {
+        ...res.Attributes,
+        id,
+      };
+      return data;
     } catch (e) {
-      console.log("Error");
-      console.log(e);
+      throw e;
     }
   } else {
-    throw Error("Invalid arguments");
+    throw Error("Error: Invalid arguments");
   }
 }
 
-exports.handler = async (event, _, callback) => {
-  if (event.typeName === "Mutation") {
-    updateVotes(event, callback);
+exports.handler = async (event, context, callback) => {
+  try {
+    let res = {};
+    if (event.typeName === "Mutation") {
+      res = await updateVotes(event, callback);
+    }
+    context.succeed(res);
+  } catch (error) {
+    context.fail(error);
   }
 };
