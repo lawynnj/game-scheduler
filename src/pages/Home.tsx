@@ -1,6 +1,5 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
@@ -91,9 +90,8 @@ export default function Home(props: HomeProps): JSX.Element {
 
   return (
     <Box p={2}>
-      <Typography variant="h5">Hi {user.username},</Typography>
       <Button style={{ marginTop: 5 }} color="primary" variant="contained" onClick={() => history.push("/create")}>
-        Create Game Settings
+        Create A Poll
       </Button>
       <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />
     </Box>
