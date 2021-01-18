@@ -1,4 +1,3 @@
-import Box from "@material-ui/core/Box";
 import React, { useEffect, useState } from "react";
 import {
   DeleteGameMutation,
@@ -85,9 +84,5 @@ export default function Home(props: HomeProps): JSX.Element {
     }
   };
 
-  return (
-    <Box p={2}>
-      <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />
-    </Box>
-  );
+  return <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />;
 }
