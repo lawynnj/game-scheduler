@@ -22,7 +22,7 @@ const RenderChart = ({ title, data, width, height, xLabel, yLabel }: RenderChart
     <XYPlot xType="ordinal" width={width} height={height} margin={{ bottom: 80 }}>
       <HorizontalGridLines />
       <XAxis tickLabelAngle={-45} title={xLabel} />
-      <YAxis title={yLabel} />
+      <YAxis title={yLabel} tickFormat={(val) => (Math.round(val) === val ? val : "")} />
       <VerticalBarSeries barWidth={0.3} data={data} />
     </XYPlot>
   </>
@@ -77,9 +77,9 @@ export default function Results({ game: game_ }: ResultsProps): JSX.Element {
     ) ?? [];
 
   const graphs: RenderChartProps[] = [
-    getGraphData(dateData, "Date", "Votes", "Dates"),
-    getGraphData(timeData, "Time", "Votes", "Times"),
-    getGraphData(buyInData, "Buy In", "Votes", "Amounts"),
+    getGraphData(dateData, "Date", "Votes", "Date"),
+    getGraphData(timeData, "Time", "Votes", "Time"),
+    getGraphData(buyInData, "Buy In", "Votes", "Amount"),
   ];
 
   return (

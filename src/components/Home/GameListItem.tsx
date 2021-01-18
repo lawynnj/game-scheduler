@@ -1,23 +1,22 @@
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import format from "date-fns/format";
-import React from "react";
-import { useHistory } from "react-router-dom";
+import React, { ReactChild } from "react";
 
 type GameListItem = {
   date?: Date;
-  to: string;
   title: string;
+  children?: ReactChild;
 };
 
 const GameListItem = (props: GameListItem): JSX.Element => {
-  const { date, to, title } = props;
-  const history = useHistory();
+  const { date, title, children } = props;
   const d = date ? `Created on ${format(date, "EEE MMM dd yyyy 'at' h:m aaaa")}` : "";
 
   return (
-    <ListItem button onClick={() => history.push(to)}>
-      <ListItemText primary={title} secondary={d} style={{ wordBreak: "break-all" }} />
+    <ListItem>
+      <ListItemText primary={title} secondary={d} />
+      {children}
     </ListItem>
   );
 };

@@ -3,8 +3,12 @@ import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
+import TrashIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import CopyIcon from "@material-ui/icons/FilterNone";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useHistory } from "react-router-dom";
@@ -31,23 +35,25 @@ const Games = (props: GamesProps): JSX.Element => {
       const date = new Date(game.createdAt ?? "");
 
       return (
-        <Grid container alignItems="center" justify="center" key={game.id}>
-          <Grid item xs={12} md={6}>
-            <GameListItem date={date} title={game.title} to={`/edit/${game.id}`} />
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <div style={{ textAlign: "center", alignItems: "center" }}>
-              <Button color="primary" variant="contained" onClick={() => onMakeActive({ ...game })} size="small">
-                Publish
-              </Button>
-            </div>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <Button color="secondary" variant="contained" onClick={() => onDelete(game.id)} size="small">
-              Delete
+        <GameListItem key={game.id} date={date} title={game.title}>
+          <>
+            <IconButton style={{ marginRight: 20 }} onClick={() => history.push(`/edit/${game.id}`)} size="small">
+              <EditIcon />
+            </IconButton>
+            <Button
+              style={{ marginRight: 20 }}
+              color="primary"
+              variant="contained"
+              onClick={() => onMakeActive({ ...game })}
+              size="small"
+            >
+              Publish
             </Button>
-          </Grid>
-        </Grid>
+            <IconButton onClick={() => onDelete(game.id)} size="small">
+              <TrashIcon />
+            </IconButton>
+          </>
+        </GameListItem>
       );
     });
 
@@ -59,21 +65,18 @@ const Games = (props: GamesProps): JSX.Element => {
       const date = new Date(game.createdAt ?? "");
 
       return (
-        <Grid container alignItems="center" justify="center" key={game.id}>
-          <Grid item xs={12} md={6}>
-            <GameListItem date={date} title={game.title} to={`/shared/${game.id}`} />
-          </Grid>
-          <Grid item xs={12} md={3}>
+        <GameListItem key={game.id} date={date} title={game.title}>
+          <>
             <CopyToClipboard text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}>
-              <Button style={{ minWidth: 100, marginRight: 10 }} color="primary" variant="contained" size="small">
-                Copy link
-              </Button>
+              <IconButton color="primary">
+                <CopyIcon style={{ transform: "scaleY(-1)" }} />
+              </IconButton>
             </CopyToClipboard>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <Button color="secondary" variant="contained" size="small" onClick={() => onDelete(game.id)}></Button>
-          </Grid>
-        </Grid>
+            <IconButton onClick={() => onDelete(game.id)}>
+              <TrashIcon />
+            </IconButton>
+          </>
+        </GameListItem>
       );
     });
 
@@ -82,7 +85,11 @@ const Games = (props: GamesProps): JSX.Element => {
 
   const renderCompletedGames = (): JSX.Element | JSX.Element[] => {
     const items = filterGames(GameStatus.COMPLETED).map((game: GameType) => {
-      return <GameListItem key={game.id} title={game.title} to={`/shared/${game.id}`} />;
+      return (
+        <GameListItem key={game.id} title={game.title}>
+          <Button onClick={() => history.push(`/shared/${game.id}`)}>View</Button>
+        </GameListItem>
+      );
     });
 
     return items.length > 0 ? items : <p>No completed games!</p>;
