@@ -3,7 +3,7 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
-import React from "react";
+import React, { ReactNode } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useHistory } from "react-router-dom";
 import { GameStatus } from "../../API";
@@ -14,6 +14,15 @@ type GamesProps = {
   games: Partial<GameType>[];
   onMakeActive: (Game: GameType) => void;
   onDelete: (id: string) => void;
+};
+
+// eslint-disable-next-line
+const Card = ({ children }: { children: ReactNode }) => {
+  return (
+    <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
+      {children}
+    </Box>
+  );
 };
 
 const Games = (props: GamesProps): JSX.Element => {
@@ -29,15 +38,27 @@ const Games = (props: GamesProps): JSX.Element => {
       const date = new Date(game.createdAt ?? "");
 
       return (
-        <Box key={game.id} display="flex" flexDirection="row">
-          <RenderItemLink date={date} title={game.title} to={`/edit/${game.id}`} />
-          <Button style={{ width: 150 }} color="primary" onClick={() => onMakeActive({ ...game })}>
-            Make Active
-          </Button>
-          <Button color="secondary" variant="contained" onClick={() => onDelete(game.id)}>
-            Delete
-          </Button>
-        </Box>
+        <Card key={game.id}>
+          <div>
+            <RenderItemLink date={date} title={game.title} to={`/edit/${game.id}`} />
+          </div>
+          <div>
+            <Button
+              style={{ width: 150, marginRight: 10 }}
+              color="primary"
+              variant="contained"
+              onClick={() => onMakeActive({ ...game })}
+              size="small"
+            >
+              Publish
+            </Button>
+          </div>
+          <div>
+            <Button color="secondary" variant="contained" onClick={() => onDelete(game.id)} size="small">
+              Delete
+            </Button>
+          </div>
+        </Card>
       );
     });
 
@@ -49,17 +70,23 @@ const Games = (props: GamesProps): JSX.Element => {
       const date = new Date(game.createdAt ?? "");
 
       return (
-        <Box display="flex" key={game.id}>
-          <RenderItemLink date={date} title={game.title} to={`/shared/${game.id}`} />
-          <CopyToClipboard text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}>
-            <Button style={{ minWidth: 100 }} size="small">
-              Copy link
+        <Card key={game.id}>
+          <div>
+            <RenderItemLink date={date} title={game.title} to={`/shared/${game.id}`} />
+          </div>
+          <div>
+            <CopyToClipboard text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}>
+              <Button style={{ minWidth: 100, marginRight: 10 }} color="primary" variant="contained" size="small">
+                Copy link
+              </Button>
+            </CopyToClipboard>
+          </div>
+          <div>
+            <Button color="secondary" variant="contained" size="small" onClick={() => onDelete(game.id)}>
+              Delete
             </Button>
-          </CopyToClipboard>
-          <Button color="secondary" variant="contained" onClick={() => onDelete(game.id)}>
-            Delete
-          </Button>
-        </Box>
+          </div>
+        </Card>
       );
     });
 
@@ -67,7 +94,7 @@ const Games = (props: GamesProps): JSX.Element => {
   };
 
   const renderCompletedGames = (): JSX.Element | JSX.Element[] => {
-    const items = filterGames(GameStatus.ACTIVE).map((game: GameType) => {
+    const items = filterGames(GameStatus.COMPLETED).map((game: GameType) => {
       return <RenderItemLink key={game.id} title={game.title} to={`/shared/${game.id}`} />;
     });
 
@@ -75,8 +102,8 @@ const Games = (props: GamesProps): JSX.Element => {
   };
 
   return (
-    <>
-      <Grid container style={{ maxWidth: 500 }}>
+    <Box display="flex" justifyContent="center" marginTop="30px">
+      <Grid container style={{ maxWidth: 600 }}>
         <Grid item xs={12} sm={6}>
           <Typography variant="h3">Polls</Typography>
         </Grid>
@@ -92,7 +119,7 @@ const Games = (props: GamesProps): JSX.Element => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <p>Draft:</p>
+          <p>Drafts:</p>
           <List>{renderDraftGames()}</List>
           <Divider style={{ height: 1, marginTop: 10 }} />
         </Grid>
@@ -108,7 +135,7 @@ const Games = (props: GamesProps): JSX.Element => {
           <List>{renderCompletedGames()}</List>
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };
 
