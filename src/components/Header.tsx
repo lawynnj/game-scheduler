@@ -1,11 +1,10 @@
-import React from "react";
 import AppBar from "@material-ui/core/AppBar";
+import Box from "@material-ui/core/Box";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import { AmplifySignOut } from "@aws-amplify/ui-react";
-import Box from "@material-ui/core/Box";
-
+import React from "react";
 import { Link } from "react-router-dom";
+import SignOut from "../components/SignoutButton";
 
 export default function Header(): JSX.Element {
   return (
@@ -16,7 +15,7 @@ export default function Header(): JSX.Element {
             <Link to="/">Poker Game Organizer</Link>
           </Typography>
           <div>
-            <AmplifySignOut />
+            <SignOut />
           </div>
         </Box>
       </Toolbar>

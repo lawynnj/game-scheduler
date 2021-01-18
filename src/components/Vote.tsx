@@ -84,7 +84,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
   };
 
   return (
-    <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center">
+    <Box p={2} mt={2} display="flex" flexDirection="column" alignItems="center" justifyContent="center" paddingY="30px">
       <Typography variant="h6">Vote</Typography>
       <Typography variant="subtitle1">
         <div>{settings?.title}</div>
@@ -140,9 +140,11 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
               "No dates set up"
             )}
           </Box>
-          <Button color="primary" variant="contained" type="submit" disabled={isSubmitting}>
-            Submit
-          </Button>
+          <div style={{ textAlign: "center", marginTop: 20 }}>
+            <Button color="primary" variant="contained" type="submit" disabled={isSubmitting}>
+              Submit
+            </Button>
+          </div>
         </Form>
       </Typography>
     </Box>

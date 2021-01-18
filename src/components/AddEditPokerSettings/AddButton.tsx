@@ -1,6 +1,6 @@
-import React from "react";
+import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
-import Button from "@material-ui/core/Button";
+import React from "react";
 
 interface AddButtonProps {
   disabled: boolean;
@@ -8,17 +8,9 @@ interface AddButtonProps {
 }
 
 const AddButton = ({ disabled, onClick }: AddButtonProps): JSX.Element => (
-  <Button
-    style={{ marginLeft: 5 }}
-    aria-label="add"
-    color="primary"
-    variant="contained"
-    size="small"
-    disabled={disabled}
-    onClick={onClick}
-  >
+  <IconButton aria-label="add" size="medium" disabled={disabled} edge="start" onClick={onClick}>
     <AddIcon fontSize="small" />
-  </Button>
+  </IconButton>
 );
 
 export default AddButton;
