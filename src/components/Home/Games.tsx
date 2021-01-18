@@ -1,20 +1,21 @@
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import RenderItemLink from "./GameListItem";
 import { GameStatus } from "../../API";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
 import { GameType } from "../../graphql/APITypes";
+import RenderItemLink from "./GameListItem";
 
 type GamesProps = {
   games: Partial<GameType>[];
-  handleMakeActive: (Game: GameType) => void;
+  onMakeActive: (Game: GameType) => void;
+  onDelete: (id: string) => void;
 };
 
 const Games = (props: GamesProps): JSX.Element => {
-  const { games, handleMakeActive } = props;
+  const { games, onMakeActive, onDelete } = props;
 
   const filterGames = (status: string) => {
     return games.filter((game) => game.status === status);
@@ -30,8 +31,11 @@ const Games = (props: GamesProps): JSX.Element => {
           return (
             <Box key={game.id} display="flex" flexDirection="row">
               <RenderItemLink date={date} title={game.title} to={`/edit/${game.id}`} />
-              <Button style={{ width: 150 }} color="primary" onClick={() => handleMakeActive({ ...game })}>
+              <Button style={{ width: 150 }} color="primary" onClick={() => onMakeActive({ ...game })}>
                 Make Active
+              </Button>
+              <Button color="secondary" variant="contained" onClick={() => onDelete(game.id)}>
+                Delete
               </Button>
             </Box>
           );
