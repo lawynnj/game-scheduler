@@ -1,8 +1,7 @@
-import React from "react";
-
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import format from "date-fns/format";
+import React from "react";
 import { useHistory } from "react-router-dom";
 
 type GameListItem = {
@@ -18,7 +17,7 @@ const RenderItemLink = (props: GameListItem): JSX.Element => {
 
   return (
     <ListItem button onClick={() => history.push(to)}>
-      <ListItemText primary={title} secondary={d} />
+      <ListItemText primary={title} secondary={d} style={{ wordBreak: "break-all" }} />
     </ListItem>
   );
 };
