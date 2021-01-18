@@ -1,9 +1,11 @@
+import { Grid, Typography } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useHistory } from "react-router-dom";
 import { GameStatus } from "../../API";
 import { GameType } from "../../graphql/APITypes";
 import RenderItemLink from "./GameListItem";
@@ -17,6 +19,7 @@ type GamesProps = {
 const Games = (props: GamesProps): JSX.Element => {
   const { games, onMakeActive, onDelete } = props;
 
+  const history = useHistory();
   const filterGames = (status: string) => {
     return games.filter((game) => game.status === status);
   };
@@ -73,14 +76,38 @@ const Games = (props: GamesProps): JSX.Element => {
 
   return (
     <>
-      <p>Draft Games:</p>
-      <List>{renderDraftGames()}</List>
-      <Divider style={{ height: 1, marginTop: 10 }} />
-      <p>Active Games:</p>
-      <List>{renderActiveGames()}</List>
-      <Divider style={{ height: 1, marginTop: 10 }} />
-      <p>Completed Games:</p>
-      <List>{renderCompletedGames()}</List>
+      <Grid container style={{ maxWidth: 500 }}>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="h3">Polls</Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Button
+            size="small"
+            style={{ marginTop: 5, float: "right" }}
+            color="primary"
+            variant="contained"
+            onClick={() => history.push("/create")}
+          >
+            Create A Poll
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <p>Draft:</p>
+          <List>{renderDraftGames()}</List>
+          <Divider style={{ height: 1, marginTop: 10 }} />
+        </Grid>
+
+        <Grid item xs={12}>
+          <p>Active:</p>
+          <List>{renderActiveGames()}</List>
+          <Divider style={{ height: 1, marginTop: 10 }} />
+        </Grid>
+
+        <Grid item xs={12}>
+          <p>Completed:</p>
+          <List>{renderCompletedGames()}</List>
+        </Grid>
+      </Grid>
     </>
   );
 };
