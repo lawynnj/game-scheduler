@@ -21,6 +21,7 @@ type HomeProps = {
 export default function Home(props: HomeProps): JSX.Element {
   const { user } = props;
   const [games, setGames] = useState<Partial<GameType>[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchGames() {
@@ -36,6 +37,8 @@ export default function Home(props: HomeProps): JSX.Element {
         setGames(mapListGames(res));
       } catch (error) {
         alert("Something went wrong!");
+      } finally {
+        setLoading(false);
       }
     }
     fetchGames();
@@ -84,5 +87,5 @@ export default function Home(props: HomeProps): JSX.Element {
     }
   };
 
-  return <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />;
+  return <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} loading={loading} />;
 }

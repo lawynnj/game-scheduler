@@ -166,11 +166,15 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
   };
 
   if (!isAddMode && loading) {
-    return <CircularProgress />;
+    return (
+      <Box display="flex" justifyContent="center" paddingY="30px">
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
-    <Box p={2} display="flex" flexDirection="column">
+    <>
       <Prompt when={showPrompt} message="Are you sure you want to leave?" />
 
       <PokerSettingsForm
@@ -181,7 +185,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
         initialValues={initialValues}
         onFormFocus={() => setShowPrompt(true)}
       />
-    </Box>
+    </>
   );
 };
 

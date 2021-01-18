@@ -1,9 +1,11 @@
-import { Grid, Typography } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
-import React, { ReactNode } from "react";
+import Typography from "@material-ui/core/Typography";
+import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useHistory } from "react-router-dom";
 import { GameStatus } from "../../API";
@@ -14,25 +16,11 @@ type GamesProps = {
   games: Partial<GameType>[];
   onMakeActive: (Game: GameType) => void;
   onDelete: (id: string) => void;
-};
-
-type CardProps = {
-  children: ReactNode;
-};
-
-const Card = (props: CardProps): JSX.Element => {
-  const { children } = props;
-
-  return (
-    <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between">
-      {children}
-    </Box>
-  );
+  loading: boolean;
 };
 
 const Games = (props: GamesProps): JSX.Element => {
-  const { games, onMakeActive, onDelete } = props;
-
+  const { games, onMakeActive, onDelete, loading } = props;
   const history = useHistory();
   const filterGames = (status: string) => {
     return games.filter((game) => game.status === status);
@@ -43,27 +31,23 @@ const Games = (props: GamesProps): JSX.Element => {
       const date = new Date(game.createdAt ?? "");
 
       return (
-        <Card key={game.id}>
-          <div>
+        <Grid container alignItems="center" justify="center" key={game.id}>
+          <Grid item xs={12} md={6}>
             <GameListItem date={date} title={game.title} to={`/edit/${game.id}`} />
-          </div>
-          <div>
-            <Button
-              style={{ width: 150, marginRight: 10 }}
-              color="primary"
-              variant="contained"
-              onClick={() => onMakeActive({ ...game })}
-              size="small"
-            >
-              Publish
-            </Button>
-          </div>
-          <div>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <div style={{ textAlign: "center", alignItems: "center" }}>
+              <Button color="primary" variant="contained" onClick={() => onMakeActive({ ...game })} size="small">
+                Publish
+              </Button>
+            </div>
+          </Grid>
+          <Grid item xs={6} md={3}>
             <Button color="secondary" variant="contained" onClick={() => onDelete(game.id)} size="small">
               Delete
             </Button>
-          </div>
-        </Card>
+          </Grid>
+        </Grid>
       );
     });
 
@@ -75,23 +59,21 @@ const Games = (props: GamesProps): JSX.Element => {
       const date = new Date(game.createdAt ?? "");
 
       return (
-        <Card key={game.id}>
-          <div>
+        <Grid container alignItems="center" justify="center" key={game.id}>
+          <Grid item xs={12} md={6}>
             <GameListItem date={date} title={game.title} to={`/shared/${game.id}`} />
-          </div>
-          <div>
+          </Grid>
+          <Grid item xs={12} md={3}>
             <CopyToClipboard text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}>
               <Button style={{ minWidth: 100, marginRight: 10 }} color="primary" variant="contained" size="small">
                 Copy link
               </Button>
             </CopyToClipboard>
-          </div>
-          <div>
-            <Button color="secondary" variant="contained" size="small" onClick={() => onDelete(game.id)}>
-              Delete
-            </Button>
-          </div>
-        </Card>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Button color="secondary" variant="contained" size="small" onClick={() => onDelete(game.id)}></Button>
+          </Grid>
+        </Grid>
       );
     });
 
@@ -106,8 +88,16 @@ const Games = (props: GamesProps): JSX.Element => {
     return items.length > 0 ? items : <p>No completed games!</p>;
   };
 
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" paddingY="30px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Box display="flex" justifyContent="center" marginTop="30px">
+    <Box display="flex" justifyContent="center" paddingY="30px" paddingX="20px">
       <Grid container style={{ maxWidth: 600 }}>
         <Grid item xs={12} sm={6}>
           <Typography variant="h3">Polls</Typography>
