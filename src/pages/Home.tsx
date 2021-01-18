@@ -3,7 +3,13 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { GameStatus, ListGamesQuery, UpdateGameMutation, UpdateGameMutationVariables } from "../API";
+import {
+  DeleteGameMutation,
+  GameStatus,
+  ListGamesQuery,
+  UpdateGameMutation,
+  UpdateGameMutationVariables,
+} from "../API";
 import Games from "../components/Home/Games";
 import { GameType } from "../graphql/APITypes";
 import * as mutations from "../graphql/mutations";
@@ -40,6 +46,23 @@ export default function Home(props: HomeProps): JSX.Element {
     fetchGames();
   }, [user.attributes.sub]);
 
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure?")) {
+      try {
+        await gqlOp<DeleteGameMutation>(mutations.deleteGame, {
+          input: {
+            id,
+          },
+        });
+        const filtered: Partial<GameType>[] = games.filter((game) => game.id !== id);
+        setGames(filtered);
+        alert("Deleted");
+      } catch (error) {
+        alert("Something went wrong!");
+      }
+    }
+  };
+
   const handleMakeActive = async (game: GameType) => {
     try {
       const data = await gqlOp<UpdateGameMutation>(mutations.updateGame, {
@@ -72,7 +95,7 @@ export default function Home(props: HomeProps): JSX.Element {
       <Button style={{ marginTop: 5 }} color="primary" variant="contained" onClick={() => history.push("/create")}>
         Create Game Settings
       </Button>
-      {games ? <Games handleMakeActive={handleMakeActive} games={games} /> : <p>You do not have any games</p>}
+      <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} />
     </Box>
   );
 }
