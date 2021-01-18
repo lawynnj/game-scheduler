@@ -117,5 +117,5 @@ input GameVote {
 
 type Mutation {
   updateGameStrict(input: GameInput, nextToken: String): Game
-  updateGameVote(input: GameVote): Game @function(name: "updateGameVote-${env}")
+  updateGameVote(input: GameVote): Game @function(name: "updateGameVote-${env}") @aws_api_key
 }
