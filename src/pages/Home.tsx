@@ -1,6 +1,5 @@
 import Box from "@material-ui/core/Box";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import {
   DeleteGameMutation,
   GameStatus,
@@ -23,7 +22,6 @@ type HomeProps = {
 export default function Home(props: HomeProps): JSX.Element {
   const { user } = props;
   const [games, setGames] = useState<Partial<GameType>[]>([]);
-  const history = useHistory();
 
   useEffect(() => {
     async function fetchGames() {
