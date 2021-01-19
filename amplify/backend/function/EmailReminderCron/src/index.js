@@ -12,7 +12,6 @@ const LAMBDA_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
 const cwe = new AWS.CloudWatchEvents();
 
 exports.handler = async (event, context) => {
-  console.log("## ENVIRONMENT VARIABLES: " + serialize(process.env));
   console.log("## CONTEXT: " + serialize(context));
   console.log("## EVENT: " + serialize(event));
 
