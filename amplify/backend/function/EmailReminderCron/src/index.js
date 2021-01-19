@@ -6,81 +6,133 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
-const ARN = process.env.AWS_CWE_ARN_POKER_GAME;
+const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
 const LAMBDA_ARN = process.env.LAMBDA_ARN_POKER_GAME;
+const cwe = new AWS.CloudWatchEvents();
 
-function initCloudWatchEvents(modifiedGames) {
-  const cwe = new AWS.CloudWatchEvents();
-  return (
-    modifiedGames
-      // filter for games that are newly completed
-      .filter(
-        ({ newImage, oldImage }) =>
-          newImage.status === "COMPLETED" && oldImage.status !== newImage.status
-      )
-      .map(async ({ newImage }) => {
-        try {
-          console.log("Creating rule...");
-          if (!newImage.eventTime) {
-            throw new Error("Invalid value eventTime:", newImage.eventTime);
-          }
-          // configure rule to run on the event time
-          const fullDate = new Date(newImage.eventTime);
-          const min = fullDate.getMinutes();
-          const hour = fullDate.getHours();
-          const date = fullDate.getDate();
-          const month = fullDate.getMonth() + 1;
-          const year = fullDate.getFullYear();
-          const schedule = `cron(${min} ${hour} ${date} ${month} ? ${year})`;
-          const ruleName = "poker-game-" + newImage.id;
-          const ruleParams = {
-            Name: ruleName,
-            Description: "Email notification for game:" + newImage.id,
-            RoleArn: ARN,
-            ScheduleExpression: schedule,
-            State: "ENABLED",
-          };
-          await cwe.putRule(ruleParams).promise();
+exports.handler = async (event, context) => {
+  console.log("## ENVIRONMENT VARIABLES: " + serialize(process.env));
+  console.log("## CONTEXT: " + serialize(context));
+  console.log("## EVENT: " + serialize(event));
 
-          // Set lambda fn as the rule target
-          console.log("Setting targets...");
-          const targetParams = {
-            Rule: "poker-game-" + newImage.id,
-            Targets: [
-              {
-                Arn: LAMBDA_ARN,
-                Id: "Send-emails",
-                Input: JSON.stringify({
-                  gameId: newImage.id,
-                  ruleName,
-                  targetId: "Send-emails",
-                }),
-              },
-            ],
-          };
-          await cwe.putTargets(targetParams).promise();
-        } catch (error) {
-          console.log("Error", error);
-        }
-      })
-  );
-}
-exports.handler = async (event) => {
-  //eslint-disable-line
-  console.log("EVENT\n" + JSON.stringify(event, null, 2));
-
-  // map DDB objects to JSON
-  const modifiedRecords = event.Records.filter(
-    (record) => record.eventName === "MODIFY"
-  ).map((record) => {
-    return {
-      newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
-      oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
-    };
-  });
   try {
+    // map DDB objects to JSON
+    const modifiedRecords = event.Records.filter((record) => record.eventName === "MODIFY").map((record) => {
+      return {
+        newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
+        oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
+      };
+    });
     await Promise.all(initCloudWatchEvents(modifiedRecords));
+
+    return formatResponse(serialize({ success: true }));
   } catch (error) {
-    console.log("Error", error);
+    return formatError(error);
   }
 };
+
+function getSchedule(datetime) {
+  const fullDate = new Date(datetime);
+  const min = fullDate.getMinutes();
+  const hour = fullDate.getHours();
+  const date = fullDate.getDate();
+  const month = fullDate.getMonth() + 1;
+  const year = fullDate.getFullYear();
+  const schedule = `cron(${min} ${hour} ${date} ${month} ? ${year})`;
+
+  return schedule;
+}
+
+function getPutTargetParams(gameId, lambdaArn, ruleName) {
+  const targetParams = {
+    Rule: "poker-game-" + gameId,
+    Targets: [
+      {
+        Arn: lambdaArn,
+        Id: "Send-emails",
+        Input: JSON.stringify({
+          gameId,
+          ruleName,
+          targetId: "Send-emails",
+        }),
+      },
+    ],
+  };
+
+  return targetParams;
+}
+
+function getPutRuleParams(gameId, roleArn, ruleName, schedule) {
+  const ruleParams = {
+    Name: ruleName,
+    Description: "Email notification for game:" + gameId,
+    RoleArn: roleArn,
+    ScheduleExpression: schedule,
+    State: "ENABLED",
+  };
+
+  return ruleParams;
+}
+
+async function createRule({ newImage: game }) {
+  try {
+    if (!game.eventTime) {
+      throw new Error("Invalid value eventTime:", game.eventTime);
+    }
+
+    // configure rule to run on the event time
+    console.log("Creating rule...");
+    const schedule = getSchedule(game.eventTime);
+    const ruleName = "poker-game-" + game.id;
+    const ruleParams = getPutRuleParams(game.id, CWE_ROLE_ARN, ruleName, schedule);
+    await cwe.putRule(ruleParams).promise();
+
+    // Set lambda fn as the rule target
+    console.log("Setting targets...");
+    const targetParams = getPutTargetParams(game.id, LAMBDA_ARN, ruleName);
+
+    await cwe.putTargets(targetParams).promise();
+  } catch (error) {
+    throw error;
+  }
+}
+
+function initCloudWatchEvents(modifiedGames) {
+  // filter for games that are newly completed
+  const completedGamesFilter = ({ newImage, oldImage }) =>
+    newImage.status === "COMPLETED" && oldImage.status !== newImage.status;
+
+  const promises = modifiedGames.filter(completedGamesFilter).map(createRule);
+
+  return promises;
+}
+
+function formatResponse(body) {
+  var response = {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: body,
+  };
+
+  return response;
+}
+
+function formatError(error) {
+  const errorCode = error.code || "Internal Server Error";
+  var response = {
+    statusCode: error.statusCode || 500,
+    headers: {
+      "Content-Type": "text/plain",
+      "x-amzn-ErrorType": error.code,
+    },
+    body: errorCode + ": " + error.message,
+  };
+
+  return response;
+}
+
+function serialize(object) {
+  return JSON.stringify(object, null, 2);
+}
