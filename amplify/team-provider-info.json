@@ -34,6 +34,14 @@
                 }
               ],
               "hash": "qk0IbKOgtDoytFPFujc730SZ5MNFGThvZtzwmOsI6oA="
+            },
+            "2": {
+              "permissions": [
+                {
+                  "type": "private"
+                }
+              ],
+              "hash": "QOmq4zXL/fZHGTqgJQcCzk6a3LU24l0NKlXZkGEhj5o="
             }
           }
         }
