@@ -6,8 +6,9 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
+const createError = require("http-errors");
 const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
-const LAMBDA_ARN = process.env.LAMBDA_ARN_POKER_GAME;
+const LAMBDA_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
 const cwe = new AWS.CloudWatchEvents();
 
 exports.handler = async (event, context) => {
@@ -77,7 +78,7 @@ function getPutRuleParams(gameId, roleArn, ruleName, schedule) {
 async function createRule({ newImage: game }) {
   try {
     if (!game.eventTime) {
-      throw new Error("Invalid value eventTime:", game.eventTime);
+      throw createError.BadRequest("Invalid value eventTime:", game.eventTime);
     }
 
     // configure rule to run on the event time
@@ -120,12 +121,12 @@ function formatResponse(body) {
 }
 
 function formatError(error) {
-  const errorCode = error.code || "Internal Server Error";
-  var response = {
+  const errorCode = error.code || error.name || "Internal Server Error";
+  const response = {
     statusCode: error.statusCode || 500,
     headers: {
       "Content-Type": "text/plain",
-      "x-amzn-ErrorType": error.code,
+      "x-amzn-ErrorType": errorCode,
     },
     body: errorCode + ": " + error.message,
   };
