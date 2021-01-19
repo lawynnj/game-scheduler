@@ -7,13 +7,15 @@
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
 const createError = require("http-errors");
+const rest = require("/opt/nodejs/rest");
+
 const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
 const LAMBDA_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
 const cwe = new AWS.CloudWatchEvents();
 
 exports.handler = async (event, context) => {
-  console.log("## CONTEXT: " + serialize(context));
-  console.log("## EVENT: " + serialize(event));
+  console.log("## CONTEXT: " + rest.serialize(context));
+  console.log("## EVENT: " + rest.serialize(event));
 
   try {
     // map DDB objects to JSON
@@ -25,9 +27,9 @@ exports.handler = async (event, context) => {
     });
     await Promise.all(initCloudWatchEvents(modifiedRecords));
 
-    return formatResponse(serialize({ success: true }));
+    return rest.formatResponse(rest.serialize({ success: true }));
   } catch (error) {
-    return formatError(error);
+    return rest.formatError(error);
   }
 };
 
@@ -105,34 +107,4 @@ function initCloudWatchEvents(modifiedGames) {
   const promises = modifiedGames.filter(completedGamesFilter).map(createRule);
 
   return promises;
-}
-
-function formatResponse(body) {
-  var response = {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body,
-  };
-
-  return response;
-}
-
-function formatError(error) {
-  const errorCode = error.code || error.name || "Internal Server Error";
-  const response = {
-    statusCode: error.statusCode || 500,
-    headers: {
-      "Content-Type": "text/plain",
-      "x-amzn-ErrorType": errorCode,
-    },
-    body: errorCode + ": " + error.message,
-  };
-
-  return response;
-}
-
-function serialize(object) {
-  return JSON.stringify(object, null, 2);
 }
