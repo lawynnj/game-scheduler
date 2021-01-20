@@ -17,6 +17,18 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const cwe = new AWS.CloudWatchEvents();
 const sns = new AWS.SNS();
 
+exports.handler = async (event, context) => {
+  try {
+    console.log("## CONTEXT: " + rest.serialize(context));
+    console.log("## EVENT: " + rest.serialize(event));
+
+    await publishSnsMessage(event);
+    return rest.formatResponse("success");
+  } catch (error) {
+    return rest.formatError(error);
+  }
+};
+
 async function getGame(gameId) {
   try {
     const params = {
@@ -79,15 +91,3 @@ async function publishSnsMessage({ gameId, ruleName, targetId }) {
     throw error;
   }
 }
-
-exports.handler = async (event, context) => {
-  try {
-    console.log("## CONTEXT: " + rest.serialize(context));
-    console.log("## EVENT: " + rest.serialize(event));
-
-    await publishSnsMessage(event);
-    return rest.formatResponse("success");
-  } catch (error) {
-    return rest.formatError(error);
-  }
-};
