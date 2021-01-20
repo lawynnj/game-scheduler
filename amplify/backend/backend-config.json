@@ -153,6 +153,13 @@
           "attributes": [
             "GraphQLAPIIdOutput"
           ]
+        },
+        {
+          "category": "function",
+          "resourceName": "restApi",
+          "attributes": [
+            "Arn"
+          ]
         }
       ]
     },
