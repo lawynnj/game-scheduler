@@ -13,6 +13,10 @@
     "apipokergameGraphQLAPIIdOutput": {
       "Type": "String",
       "Default": "apipokergameGraphQLAPIIdOutput"
+    },
+    "functionrestApiArn": {
+      "Type": "String",
+      "Default": "functionrestApiArn"
     }
   },
   "Conditions": {
@@ -98,11 +102,15 @@
           ]
         },
         "Runtime": "nodejs12.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:restApi-dev:2"
+          }
+        ],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/NotificationRuleProcessor-35693661747757367875-build.zip"
+          "S3Key": "amplify-builds/NotificationRuleProcessor-79725152637a785a4959-build.zip"
         }
       }
     },
