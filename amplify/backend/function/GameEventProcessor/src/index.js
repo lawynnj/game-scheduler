@@ -70,6 +70,9 @@ async function getUser(userId) {
       },
     };
     const user = await docClient.get(params).promise();
+    if (!user.hasOwnProperty("Item")) {
+      throw createError.BadRequest(`User with id: ${userId} does not exist`);
+    }
     return user;
   } catch (error) {
     throw error;
