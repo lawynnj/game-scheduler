@@ -18,7 +18,7 @@ const sns = new AWS.SNS();
 
 AWS.config.update({ region: process.env.AWS_REGION });
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
   console.log("## CONTEXT: " + rest.serialize(context));
   console.log("## EVENT: " + rest.serialize(event));
 
