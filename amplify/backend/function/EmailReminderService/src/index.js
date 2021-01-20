@@ -6,15 +6,17 @@ exports.handler = async function (event) {
   console.log("## CONTEXT: " + rest.serialize(context));
   console.log("## EVENT: " + rest.serialize(event));
 
-  const res = await sendEmails(records);
+  try {
+    await Promise.all(event.Records.map(sendEmail));
 
-  return res;
+    return rest.formatSuccess();
+  } catch (error) {
+    return rest.formatError(error);
+  }
 };
 
-async function sendEmails(records) {
-  const promises = [];
-
-  for (const record of records) {
+async function sendEmail(record) {
+  try {
     // get recipients, subject and body for email
     const message = JSON.parse(record.Sns.Message);
     const recipients = message.recipients;
@@ -30,18 +32,13 @@ async function sendEmails(records) {
         Body: {
           Text: { Data: body },
         },
-
         Subject: { Data: subject },
       },
       Source: process.env.AWS_SES_POKER_APP_EMAIL,
     };
-    promises.push(ses.sendEmail(params).promise());
-  }
 
-  try {
-    await Promise.all(promises);
-    return rest.formatSuccess();
+    return await ses.sendEmail(params).promise();
   } catch (error) {
-    return rest.formatError(error);
+    throw error;
   }
 }
