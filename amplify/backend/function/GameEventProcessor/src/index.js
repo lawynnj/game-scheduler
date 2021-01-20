@@ -45,7 +45,7 @@ async function publishGameNotification({ oldImage, newImage }) {
           body: `Your poker game:${newImage.title} is active!`,
           recipients: [{ email: user.Item.email, name: user.Item.username }],
         }),
-        TopicArn: process.env.SNS_POKER_GAME_TOPIC_ARN,
+        TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
         Subject: process.env.SNS_SUBJECT || "Finalized game settings",
       };
       const res = await sns.publish(params).promise();

@@ -60,7 +60,7 @@ async function publishSnsMessage({ gameId, ruleName, targetId }) {
         body: `The poker game: ${game.Item.title} is today at ${game.Item.eventTime}`,
         recipients,
       }),
-      TopicArn: process.env.AWS_SNS_ARN_POKER_GAME,
+      TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
       Subject: process.env.SNS_SUBJECT || "Game Complete",
     };
 
