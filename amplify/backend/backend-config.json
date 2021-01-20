@@ -81,7 +81,16 @@
     "EmailReminderService": {
       "build": true,
       "providerPlugin": "awscloudformation",
-      "service": "Lambda"
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "restApi",
+          "attributes": [
+            "Arn"
+          ]
+        }
+      ]
     },
     "EmailReminderCron": {
       "build": true,

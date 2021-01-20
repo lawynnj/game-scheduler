@@ -7,9 +7,9 @@ exports.handler = async function (event) {
   console.log("## EVENT: " + rest.serialize(event));
 
   try {
-    await Promise.all(event.Records.map(sendEmail));
-
-    return rest.formatSuccess();
+    const response = await Promise.all(event.Records.map(sendEmail));
+    console.log(response);
+    return rest.formatSuccess(rest.serialize(reponse));
   } catch (error) {
     return rest.formatError(error);
   }

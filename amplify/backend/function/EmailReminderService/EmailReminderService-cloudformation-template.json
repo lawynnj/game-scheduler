@@ -9,6 +9,10 @@
     },
     "env": {
       "Type": "String"
+    },
+    "functionrestApiArn": {
+      "Type": "String",
+      "Default": "functionrestApiArn"
     }
   },
   "Conditions": {
@@ -65,7 +69,11 @@
           ]
         },
         "Runtime": "nodejs12.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:restApi-dev:2"
+          }
+        ],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
