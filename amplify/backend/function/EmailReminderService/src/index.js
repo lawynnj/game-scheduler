@@ -8,7 +8,6 @@ exports.handler = async function (event, context) {
 
   try {
     const response = await Promise.all(event.Records.map(sendEmail));
-    console.log(response);
     return rest.formatResponse(rest.serialize(response));
   } catch (error) {
     return rest.formatError(error);
