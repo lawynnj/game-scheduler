@@ -75,6 +75,13 @@
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
           ]
+        },
+        {
+          "category": "function",
+          "resourceName": "restApi",
+          "attributes": [
+            "Arn"
+          ]
         }
       ]
     },
@@ -145,6 +152,13 @@
           "resourceName": "pokergame",
           "attributes": [
             "GraphQLAPIIdOutput"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "restApi",
+          "attributes": [
+            "Arn"
           ]
         }
       ]

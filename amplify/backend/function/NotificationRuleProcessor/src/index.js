@@ -9,10 +9,6 @@ const AWS = require("aws-sdk");
 const createError = require("http-errors");
 const rest = require("/opt/nodejs/rest");
 
-const GAME_TABLE = process.env.API_POKERGAME_GAMETABLE_NAME;
-const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
-const SUBJECT = process.env.SNS_SUBJECT || "Game complete";
-
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cwe = new AWS.CloudWatchEvents();
 const sns = new AWS.SNS();
@@ -32,7 +28,7 @@ exports.handler = async (event, context) => {
 async function getGame(gameId) {
   try {
     const params = {
-      TableName: GAME_TABLE,
+      TableName: process.env.API_POKERGAME_GAMETABLE_NAME,
       Key: {
         id: gameId,
       },
@@ -64,8 +60,8 @@ async function publishSnsMessage({ gameId, ruleName, targetId }) {
         body: `The poker game: ${game.Item.title} is today at ${game.Item.eventTime}`,
         recipients,
       }),
-      TopicArn: ARN,
-      Subject: SUBJECT,
+      TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
+      Subject: process.env.SNS_SUBJECT || "Game Complete",
     };
 
     console.log("Publishing message");

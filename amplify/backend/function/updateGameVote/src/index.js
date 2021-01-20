@@ -6,23 +6,26 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
-const gameTableName = process.env.API_POKERGAME_GAMETABLE_NAME;
+const rest = require("/opt/nodejs/rest");
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-exports.handler = async (event, context, callback) => {
+exports.handler = async (event, context) => {
+  console.log("## CONTEXT: " + rest.serialize(context));
+  console.log("## EVENT: " + rest.serialize(event));
+
   try {
     let res;
     if (event.typeName === "Mutation") {
       res = await updateVotes(event);
     }
-    context.succeed(res);
+    return res;
   } catch (error) {
-    context.fail(error);
+    return error;
   }
 };
 
-function generateUpdateParams(tablename, key, item) {
+function generateUpdateParams(key, item) {
   let updateExpression = "set";
   let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
@@ -36,7 +39,7 @@ function generateUpdateParams(tablename, key, item) {
   updateExpression = updateExpression.slice(0, -1);
 
   const params = {
-    TableName: tablename,
+    TableName: process.env.API_POKERGAME_GAMETABLE_NAME,
     Key: key,
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
@@ -58,7 +61,7 @@ async function updateVotes(event) {
         timeOptions,
       };
       const key = { id };
-      const params = generateUpdateParams(gameTableName, key, item);
+      const params = generateUpdateParams(key, item);
 
       const res = await docClient.update(params).promise();
 

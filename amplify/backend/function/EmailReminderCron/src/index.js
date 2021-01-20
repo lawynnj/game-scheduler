@@ -6,9 +6,6 @@ const AWS = require("aws-sdk");
 const createError = require("http-errors");
 const rest = require("/opt/nodejs/rest");
 
-const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
-const LAMBDA_TARGET_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
-
 const cwe = new AWS.CloudWatchEvents();
 
 exports.handler = async (event, context) => {
@@ -46,12 +43,12 @@ function getSchedule(datetime) {
   return schedule;
 }
 
-function getPutTargetParams(gameId, lambdaArn, ruleName) {
+function getPutTargetParams(gameId, ruleName) {
   const targetParams = {
     Rule: "poker-game-" + gameId,
     Targets: [
       {
-        Arn: lambdaArn,
+        Arn: process.env.CWE_LAMBDA_TARGET_ARN,
         Id: "Send-emails",
         Input: JSON.stringify({
           gameId,
@@ -65,11 +62,11 @@ function getPutTargetParams(gameId, lambdaArn, ruleName) {
   return targetParams;
 }
 
-function getPutRuleParams(gameId, roleArn, ruleName, schedule) {
+function getPutRuleParams(gameId, ruleName, schedule) {
   const ruleParams = {
     Name: ruleName,
     Description: "Email notification for game:" + gameId,
-    RoleArn: roleArn,
+    RoleArn: process.env.EVENT_IAM_ROLE_ARN,
     ScheduleExpression: schedule,
     State: "ENABLED",
   };
@@ -86,12 +83,12 @@ async function createRule({ newImage: game }) {
     // configure rule to run at the game's event time
     const schedule = getSchedule(game.eventTime);
     const ruleName = "poker-game-" + game.id;
-    const ruleParams = getPutRuleParams(game.id, CWE_ROLE_ARN, ruleName, schedule);
+    const ruleParams = getPutRuleParams(game.id, ruleName, schedule);
 
     await cwe.putRule(ruleParams).promise();
 
     // Set lambda fn as the rule target
-    const targetParams = getPutTargetParams(game.id, LAMBDA_TARGET_ARN, ruleName);
+    const targetParams = getPutTargetParams(game.id, ruleName);
 
     await cwe.putTargets(targetParams).promise();
   } catch (error) {
