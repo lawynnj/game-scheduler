@@ -6,6 +6,7 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
+const createError = require("http-errors");
 const rest = require("/opt/nodejs/rest");
 
 const GAME_TABLE = process.env.API_POKERGAME_GAMETABLE_NAME;
@@ -24,10 +25,15 @@ async function getGame(gameId) {
         id: gameId,
       },
     };
+
     const game = await docClient.get(params).promise();
+
+    if (!game.hasOwnProperty("Item")) {
+      throw createError.BadRequest(`Game with id: ${gameId} does not exist`);
+    }
     return game;
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
@@ -39,6 +45,7 @@ async function publishSnsMessage({ gameId, ruleName, targetId }) {
       email: player.email,
       name: player.name,
     }));
+
     const params = {
       Message: JSON.stringify({
         subject: `Poker game:${game.Item.title}`,
