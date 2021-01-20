@@ -7,16 +7,10 @@
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
 const rest = require("/opt/nodejs/rest");
-
-const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
-const USER_TABLE = process.env.AWS_DDB_USER_TABLE;
-const SUBJECT = process.env.SNS_SUBJECT || "Finalized game settings";
-const EMAIL_SUBJECT = process.env.EMAIL_SUBJECT || "Poker Game Settings";
+const createError = require("http-errors");
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const sns = new AWS.SNS();
-
-AWS.config.update({ region: process.env.AWS_REGION });
 
 exports.handler = async (event, context) => {
   console.log("## CONTEXT: " + rest.serialize(context));
@@ -34,7 +28,7 @@ exports.handler = async (event, context) => {
     console.log("Request: Publishing messages...");
     const res = await Promise.all(modifiedRecords.map(publishGameNotification));
 
-    return rest.formatSuccess(rest.serialize(res));
+    return rest.formatResponse(rest.serialize(res));
   } catch (error) {
     return rest.formatError(error);
   }
@@ -47,14 +41,15 @@ async function publishGameNotification({ oldImage, newImage }) {
       const user = await getUser(newImage.hostId);
       const params = {
         Message: JSON.stringify({
-          subject: EMAIL_SUBJECT,
+          subject: process.env.SNS_EMAIL_SUBJECT || "Poker Game Settings",
           body: `Your poker game:${newImage.title} is active!`,
           recipients: [{ email: user.Item.email, name: user.Item.username }],
         }),
-        TopicArn: ARN,
-        Subject: SUBJECT,
+        TopicArn: process.env.SNS_POKER_GAME_TOPIC_ARN,
+        Subject: process.env.SNS_SUBJECT || "Finalized game settings",
       };
-      await sns.publish(params).promise();
+      const res = await sns.publish(params).promise();
+      return res;
     } catch (error) {
       throw error;
     }
@@ -64,7 +59,7 @@ async function publishGameNotification({ oldImage, newImage }) {
 async function getUser(userId) {
   try {
     const params = {
-      TableName: USER_TABLE,
+      TableName: process.env.API_POKERGAME_USERTABLE_NAME,
       Key: {
         id: userId,
       },

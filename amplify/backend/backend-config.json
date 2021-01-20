@@ -75,6 +75,13 @@
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
           ]
+        },
+        {
+          "category": "function",
+          "resourceName": "restApi",
+          "attributes": [
+            "Arn"
+          ]
         }
       ]
     },

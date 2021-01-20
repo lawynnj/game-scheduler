@@ -17,6 +17,10 @@
     "apipokergameGraphQLAPIEndpointOutput": {
       "Type": "String",
       "Default": "apipokergameGraphQLAPIEndpointOutput"
+    },
+    "functionrestApiArn": {
+      "Type": "String",
+      "Default": "functionrestApiArn"
     }
   },
   "Conditions": {
@@ -102,11 +106,15 @@
           ]
         },
         "Runtime": "nodejs12.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:restApi-dev:2"
+          }
+        ],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/GameEventProcessor-44456b7358677078427a-build.zip"
+          "S3Key": "amplify-builds/GameEventProcessor-45363937557144634b41-build.zip"
         }
       }
     },
