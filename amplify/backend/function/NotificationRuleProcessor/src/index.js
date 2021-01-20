@@ -9,9 +9,6 @@ const AWS = require("aws-sdk");
 const createError = require("http-errors");
 const rest = require("/opt/nodejs/rest");
 
-const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
-const SUBJECT = process.env.SNS_SUBJECT || "Game complete";
-
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cwe = new AWS.CloudWatchEvents();
 const sns = new AWS.SNS();
@@ -64,7 +61,7 @@ async function publishSnsMessage({ gameId, ruleName, targetId }) {
         recipients,
       }),
       TopicArn: process.env.AWS_SNS_ARN_POKER_GAME,
-      Subject: SUBJECT,
+      Subject: process.env.SNS_SUBJECT || "Game Complete",
     };
 
     console.log("Publishing message");
