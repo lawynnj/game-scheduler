@@ -1,5 +1,11 @@
 {
-  "lambdaLayers": [],
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "restApi",
+      "version": 2
+    }
+  ],
   "permissions": {
     "storage": {
       "Game:@model(appsync)": [

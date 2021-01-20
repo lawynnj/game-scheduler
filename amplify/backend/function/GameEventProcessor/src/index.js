@@ -6,37 +6,59 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
+const rest = require("/opt/nodejs/rest");
+
 const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
 const USER_TABLE = process.env.AWS_DDB_USER_TABLE;
 const SUBJECT = process.env.SNS_SUBJECT || "Finalized game settings";
 const EMAIL_SUBJECT = process.env.EMAIL_SUBJECT || "Poker Game Settings";
 
-AWS.config.update({ region: process.env.AWS_REGION });
 const docClient = new AWS.DynamoDB.DocumentClient();
+const sns = new AWS.SNS();
 
-function initSnsEvents(modifiedRecords) {
-  const sns = new AWS.SNS();
+AWS.config.update({ region: process.env.AWS_REGION });
 
-  return modifiedRecords.map(async ({ oldImage, newImage }) => {
-    // Publish SNS message when a game becomes "active"
-    if (newImage.status === "ACTIVE" && oldImage.status !== newImage.status) {
-      try {
-        const user = await getUser(newImage.hostId);
-        const params = {
-          Message: JSON.stringify({
-            subject: EMAIL_SUBJECT,
-            body: `Your poker game:${newImage.title} is active!`,
-            recipients: [{ email: user.Item.email, name: user.Item.username }],
-          }),
-          TopicArn: ARN,
-          Subject: SUBJECT,
-        };
-        await sns.publish(params).promise();
-      } catch (error) {
-        console.log("Error", error);
-      }
+exports.handler = async (event, context) => {
+  console.log("## CONTEXT: " + rest.serialize(context));
+  console.log("## EVENT: " + rest.serialize(event));
+
+  // map DDB objects to JSON
+  try {
+    const modifiedRecords = event.Records.filter((record) => record.eventName === "MODIFY").map((record) => {
+      return {
+        newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
+        oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
+      };
+    });
+
+    console.log("Request: Publishing messages...");
+    const res = await Promise.all(modifiedRecords.map(publishGameNotification));
+
+    return rest.formatSuccess(rest.serialize(res));
+  } catch (error) {
+    return rest.formatError(error);
+  }
+};
+
+async function publishGameNotification({ oldImage, newImage }) {
+  // Publish SNS message when a game becomes "active"
+  if (newImage.status === "ACTIVE" && oldImage.status !== newImage.status) {
+    try {
+      const user = await getUser(newImage.hostId);
+      const params = {
+        Message: JSON.stringify({
+          subject: EMAIL_SUBJECT,
+          body: `Your poker game:${newImage.title} is active!`,
+          recipients: [{ email: user.Item.email, name: user.Item.username }],
+        }),
+        TopicArn: ARN,
+        Subject: SUBJECT,
+      };
+      await sns.publish(params).promise();
+    } catch (error) {
+      throw error;
     }
-  });
+  }
 }
 
 async function getUser(userId) {
@@ -48,32 +70,11 @@ async function getUser(userId) {
       },
     };
     const user = await docClient.get(params).promise();
+    if (!user.hasOwnProperty("Item")) {
+      throw createError.BadRequest(`User with id: ${userId} does not exist`);
+    }
     return user;
   } catch (error) {
-    console.log("Error", error);
-    return error;
+    throw error;
   }
 }
-
-exports.handler = async (event) => {
-  //eslint-disable-line
-  console.log("EVENT\n" + JSON.stringify(event, null, 2));
-
-  // map DDB objects to JSON
-  const modifiedRecords = event.Records.filter(
-    (record) => record.eventName === "MODIFY"
-  ).map((record) => {
-    return {
-      newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
-      oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
-    };
-  });
-
-  try {
-    console.log("Request: Publishing messages...");
-    await Promise.all(initSnsEvents(modifiedRecords));
-    console.log("Success: Messages published");
-  } catch (error) {
-    console.log("Error: Messages not published", error);
-  }
-};

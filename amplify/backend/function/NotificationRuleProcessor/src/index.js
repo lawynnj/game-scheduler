@@ -6,11 +6,28 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
+const createError = require("http-errors");
+const rest = require("/opt/nodejs/rest");
+
 const GAME_TABLE = process.env.API_POKERGAME_GAMETABLE_NAME;
 const ARN = process.env.AWS_SNS_ARN_POKER_GAME;
 const SUBJECT = process.env.SNS_SUBJECT || "Game complete";
+
 const docClient = new AWS.DynamoDB.DocumentClient();
 const cwe = new AWS.CloudWatchEvents();
+const sns = new AWS.SNS();
+
+exports.handler = async (event, context) => {
+  try {
+    console.log("## CONTEXT: " + rest.serialize(context));
+    console.log("## EVENT: " + rest.serialize(event));
+
+    await publishSnsMessage(event);
+    return rest.formatResponse("success");
+  } catch (error) {
+    return rest.formatError(error);
+  }
+};
 
 async function getGame(gameId) {
   try {
@@ -20,23 +37,27 @@ async function getGame(gameId) {
         id: gameId,
       },
     };
+
     const game = await docClient.get(params).promise();
+
+    if (!game.hasOwnProperty("Item")) {
+      throw createError.BadRequest(`Game with id: ${gameId} does not exist`);
+    }
     return game;
   } catch (error) {
-    console.log("Error", error);
-    return error;
+    throw error;
   }
 }
 
-async function initSnsEvent({ gameId, ruleName, targetId }) {
-  const sns = new AWS.SNS();
-
+async function publishSnsMessage({ gameId, ruleName, targetId }) {
   try {
     const game = await getGame(gameId);
+
     const recipients = game.Item.players.map((player) => ({
       email: player.email,
       name: player.name,
     }));
+
     const params = {
       Message: JSON.stringify({
         subject: `Poker game:${game.Item.title}`,
@@ -46,6 +67,8 @@ async function initSnsEvent({ gameId, ruleName, targetId }) {
       TopicArn: ARN,
       Subject: SUBJECT,
     };
+
+    console.log("Publishing message");
     await sns.publish(params).promise();
 
     // remove targets
@@ -65,10 +88,6 @@ async function initSnsEvent({ gameId, ruleName, targetId }) {
       })
       .promise();
   } catch (error) {
-    console.log("Error", error);
+    throw error;
   }
 }
-
-exports.handler = async (event) => {
-  await initSnsEvent(event);
-};

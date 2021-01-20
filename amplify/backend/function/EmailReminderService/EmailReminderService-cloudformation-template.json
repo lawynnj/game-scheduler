@@ -9,6 +9,10 @@
     },
     "env": {
       "Type": "String"
+    },
+    "functionrestApiArn": {
+      "Type": "String",
+      "Default": "functionrestApiArn"
     }
   },
   "Conditions": {
@@ -65,11 +69,15 @@
           ]
         },
         "Runtime": "nodejs12.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:restApi-dev:2"
+          }
+        ],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/EmailReminderService-4c7631394370554f7837-build.zip"
+          "S3Key": "amplify-builds/EmailReminderService-6f4959786c776a426542-build.zip"
         }
       }
     },

@@ -6,9 +6,21 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
-const region = process.env.REGION;
-const docClient = new AWS.DynamoDB.DocumentClient({ region });
 const gameTableName = process.env.API_POKERGAME_GAMETABLE_NAME;
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+exports.handler = async (event, context, callback) => {
+  try {
+    let res;
+    if (event.typeName === "Mutation") {
+      res = await updateVotes(event);
+    }
+    context.succeed(res);
+  } catch (error) {
+    context.fail(error);
+  }
+};
 
 function generateUpdateParams(tablename, key, item) {
   let updateExpression = "set";
@@ -62,15 +74,3 @@ async function updateVotes(event) {
     throw Error("Error: Invalid arguments");
   }
 }
-
-exports.handler = async (event, context, callback) => {
-  try {
-    let res = {};
-    if (event.typeName === "Mutation") {
-      res = await updateVotes(event, callback);
-    }
-    context.succeed(res);
-  } catch (error) {
-    context.fail(error);
-  }
-};
