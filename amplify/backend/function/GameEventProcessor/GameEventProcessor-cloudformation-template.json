@@ -106,7 +106,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/GameEventProcessor-45505968573368396d32-build.zip"
+          "S3Key": "amplify-builds/GameEventProcessor-384f4332707a39713757-build.zip"
         }
       }
     },

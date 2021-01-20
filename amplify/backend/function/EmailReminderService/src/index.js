@@ -2,14 +2,14 @@ const AWS = require("aws-sdk");
 const rest = require("/opt/nodejs/rest");
 const ses = new AWS.SES({ region: process.env.AWS_REGION });
 
-exports.handler = async function (event) {
+exports.handler = async function (event, context) {
   console.log("## CONTEXT: " + rest.serialize(context));
   console.log("## EVENT: " + rest.serialize(event));
 
   try {
     const response = await Promise.all(event.Records.map(sendEmail));
     console.log(response);
-    return rest.formatSuccess(rest.serialize(reponse));
+    return rest.formatResponse(rest.serialize(response));
   } catch (error) {
     return rest.formatError(error);
   }
