@@ -32,10 +32,9 @@ exports.handler = async (event) => {
     });
 
     console.log("Request: Publishing messages...");
+    const res = await Promise.all(modifiedRecords.map(publishGameNotification));
 
-    await Promise.all(modifiedRecords.map(publishGameNotification));
-
-    return rest.formatSuccess("success");
+    return rest.formatSuccess(rest.serialize(res));
   } catch (error) {
     return rest.formatError(error);
   }

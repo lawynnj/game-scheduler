@@ -8,6 +8,7 @@ const rest = require("/opt/nodejs/rest");
 
 const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
 const LAMBDA_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
+
 const cwe = new AWS.CloudWatchEvents();
 
 exports.handler = async (event, context) => {
