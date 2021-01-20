@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "http-errors": "^1.8.0"
+  },
+  "devDependencies": {}
+}

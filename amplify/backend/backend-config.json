@@ -95,6 +95,13 @@
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
           ]
+        },
+        {
+          "category": "function",
+          "resourceName": "restApi",
+          "attributes": [
+            "Arn"
+          ]
         }
       ]
     },
@@ -125,6 +132,11 @@
           ]
         }
       ]
+    },
+    "restApi": {
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer",
+      "build": true
     }
   }
 }

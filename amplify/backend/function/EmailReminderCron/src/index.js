@@ -1,19 +1,18 @@
 /* Amplify Params - DO NOT EDIT
-	API_POKERGAME_GRAPHQLAPIIDOUTPUT
-	API_POKERGAME_USERTABLE_ARN
-	API_POKERGAME_USERTABLE_NAME
 	ENV
 	REGION
 Amplify Params - DO NOT EDIT */
 const AWS = require("aws-sdk");
+const createError = require("http-errors");
+const rest = require("/opt/nodejs/rest");
+
 const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
-const LAMBDA_ARN = process.env.LAMBDA_ARN_POKER_GAME;
+const LAMBDA_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
 const cwe = new AWS.CloudWatchEvents();
 
 exports.handler = async (event, context) => {
-  console.log("## ENVIRONMENT VARIABLES: " + serialize(process.env));
-  console.log("## CONTEXT: " + serialize(context));
-  console.log("## EVENT: " + serialize(event));
+  console.log("## CONTEXT: " + rest.serialize(context));
+  console.log("## EVENT: " + rest.serialize(event));
 
   try {
     // map DDB objects to JSON
@@ -25,9 +24,9 @@ exports.handler = async (event, context) => {
     });
     await Promise.all(initCloudWatchEvents(modifiedRecords));
 
-    return formatResponse(serialize({ success: true }));
+    return rest.formatResponse(rest.serialize({ success: true }));
   } catch (error) {
-    return formatError(error);
+    return rest.formatError(error);
   }
 };
 
@@ -77,7 +76,7 @@ function getPutRuleParams(gameId, roleArn, ruleName, schedule) {
 async function createRule({ newImage: game }) {
   try {
     if (!game.eventTime) {
-      throw new Error("Invalid value eventTime:", game.eventTime);
+      throw createError.BadRequest("Invalid value eventTime:", game.eventTime);
     }
 
     // configure rule to run on the event time
@@ -105,34 +104,4 @@ function initCloudWatchEvents(modifiedGames) {
   const promises = modifiedGames.filter(completedGamesFilter).map(createRule);
 
   return promises;
-}
-
-function formatResponse(body) {
-  var response = {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body,
-  };
-
-  return response;
-}
-
-function formatError(error) {
-  const errorCode = error.code || "Internal Server Error";
-  var response = {
-    statusCode: error.statusCode || 500,
-    headers: {
-      "Content-Type": "text/plain",
-      "x-amzn-ErrorType": error.code,
-    },
-    body: errorCode + ": " + error.message,
-  };
-
-  return response;
-}
-
-function serialize(object) {
-  return JSON.stringify(object, null, 2);
 }
