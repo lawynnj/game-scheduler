@@ -110,7 +110,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/updateGameVote-6f772b5a424649416752-build.zip"
+          "S3Key": "amplify-builds/updateGameVote-3361356a51526765316b-build.zip"
         }
       }
     },
