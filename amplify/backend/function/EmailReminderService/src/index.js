@@ -1,11 +1,20 @@
 const AWS = require("aws-sdk");
+const rest = require("/opt/nodejs/rest");
 const ses = new AWS.SES({ region: process.env.AWS_REGION });
 
 exports.handler = async function (event) {
-  console.log("EVENT\n" + JSON.stringify(event, null, 2));
+  console.log("## CONTEXT: " + rest.serialize(context));
+  console.log("## EVENT: " + rest.serialize(event));
 
-  let recNum = 0;
-  for (const record of event.Records) {
+  const res = await sendEmails(records);
+
+  return res;
+};
+
+async function sendEmails(records) {
+  const promises = [];
+
+  for (const record of records) {
     // get recipients, subject and body for email
     const message = JSON.parse(record.Sns.Message);
     const recipients = message.recipients;
@@ -26,13 +35,13 @@ exports.handler = async function (event) {
       },
       Source: process.env.AWS_SES_POKER_APP_EMAIL,
     };
-    try {
-      console.log("Request: Processing record", recNum);
-      await ses.sendEmail(params).promise();
-      console.log("Success: Success");
-      recNum += 1;
-    } catch (error) {
-      console.log("Error", error);
-    }
+    promises.push(ses.sendEmail(params).promise());
   }
-};
+
+  try {
+    await Promise.all(promises);
+    return rest.formatSuccess();
+  } catch (error) {
+    return rest.formatError(error);
+  }
+}
