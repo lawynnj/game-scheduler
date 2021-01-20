@@ -7,7 +7,7 @@ const createError = require("http-errors");
 const rest = require("/opt/nodejs/rest");
 
 const CWE_ROLE_ARN = process.env.AWS_CWE_ARN_POKER_GAME;
-const LAMBDA_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
+const LAMBDA_TARGET_ARN = process.env.AWS_CWE_LAMBDA_TARGET_ARN;
 
 const cwe = new AWS.CloudWatchEvents();
 
@@ -16,13 +16,16 @@ exports.handler = async (event, context) => {
   console.log("## EVENT: " + rest.serialize(event));
 
   try {
-    // map DDB objects to JSON
-    const modifiedRecords = event.Records.filter((record) => record.eventName === "MODIFY").map((record) => {
-      return {
-        newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
-        oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
-      };
-    });
+    const records = event.Records;
+    const modifiedRecords = records
+      .filter((record) => record.eventName === "MODIFY")
+      .map((record) => {
+        return {
+          newImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage),
+          oldImage: AWS.DynamoDB.Converter.unmarshall(record.dynamodb.OldImage),
+        };
+      });
+
     await Promise.all(initCloudWatchEvents(modifiedRecords));
 
     return rest.formatResponse(rest.serialize({ success: true }));
@@ -77,19 +80,18 @@ function getPutRuleParams(gameId, roleArn, ruleName, schedule) {
 async function createRule({ newImage: game }) {
   try {
     if (!game.eventTime) {
-      throw createError.BadRequest("Invalid value eventTime:", game.eventTime);
+      throw createError.BadRequest("Invalid value for eventTime:", game.eventTime);
     }
 
-    // configure rule to run on the event time
-    console.log("Creating rule...");
+    // configure rule to run at the game's event time
     const schedule = getSchedule(game.eventTime);
     const ruleName = "poker-game-" + game.id;
     const ruleParams = getPutRuleParams(game.id, CWE_ROLE_ARN, ruleName, schedule);
+
     await cwe.putRule(ruleParams).promise();
 
     // Set lambda fn as the rule target
-    console.log("Setting targets...");
-    const targetParams = getPutTargetParams(game.id, LAMBDA_ARN, ruleName);
+    const targetParams = getPutTargetParams(game.id, LAMBDA_TARGET_ARN, ruleName);
 
     await cwe.putTargets(targetParams).promise();
   } catch (error) {
