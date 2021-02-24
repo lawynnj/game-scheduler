@@ -19,12 +19,13 @@ import GameListItem from "./GameListItem";
 type GamesProps = {
   games: Partial<GameType>[];
   onMakeActive: (Game: GameType) => void;
+  onClosePoll: (Game: GameType) => void;
   onDelete: (id: string) => void;
   loading: boolean;
 };
 
 const Games = (props: GamesProps): JSX.Element => {
-  const { games, onMakeActive, onDelete, loading } = props;
+  const { games, onMakeActive, onDelete, onClosePoll, loading } = props;
   const history = useHistory();
   const filterGames = (status: string) => {
     return games.filter((game) => game.status === status);
@@ -37,18 +38,19 @@ const Games = (props: GamesProps): JSX.Element => {
       return (
         <GameListItem key={game.id} date={date} title={game.title}>
           <>
-            <IconButton style={{ marginRight: 20 }} onClick={() => history.push(`/edit/${game.id}`)} size="small">
-              <EditIcon />
-            </IconButton>
             <Button
               style={{ marginRight: 20 }}
               color="primary"
               variant="contained"
-              onClick={() => onMakeActive({ ...game })}
+              onClick={() => onMakeActive(game)}
               size="small"
             >
               Publish
             </Button>
+            <IconButton style={{ marginRight: 20 }} onClick={() => history.push(`/edit/${game.id}`)} size="small">
+              <EditIcon />
+            </IconButton>
+
             <IconButton onClick={() => onDelete(game.id)} size="small">
               <TrashIcon />
             </IconButton>
@@ -67,6 +69,15 @@ const Games = (props: GamesProps): JSX.Element => {
       return (
         <GameListItem key={game.id} date={date} title={game.title}>
           <>
+            <Button
+              style={{ marginRight: 20 }}
+              color="primary"
+              variant="contained"
+              onClick={() => onClosePoll(game)}
+              size="small"
+            >
+              Close Poll
+            </Button>
             <CopyToClipboard text={`${process.env.REACT_APP_DOMAIN}/shared/${game.id}`}>
               <IconButton color="primary">
                 <CopyIcon style={{ transform: "scaleY(-1)" }} />
@@ -84,7 +95,7 @@ const Games = (props: GamesProps): JSX.Element => {
   };
 
   const renderCompletedGames = (): JSX.Element | JSX.Element[] => {
-    const items = filterGames(GameStatus.ACTIVE).map((game: GameType) => {
+    const items = filterGames(GameStatus.COMPLETED).map((game: GameType) => {
       return (
         <GameListItem key={game.id} title={game.title}>
           <Button onClick={() => history.push(`/shared/${game.id}`)} color="primary" variant="contained">

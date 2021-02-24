@@ -61,12 +61,12 @@ export default function Home(props: HomeProps): JSX.Element {
     }
   };
 
-  const handleMakeActive = async (game: GameType) => {
+  const updateGameStatus = async (id: string, status: string) => {
     try {
       const data = await gqlOp<UpdateGameMutation>(mutations.updateGame, {
         input: {
-          id: game.id,
-          status: GameStatus.ACTIVE,
+          id: id,
+          status: status,
         },
       } as UpdateGameMutationVariables);
 
@@ -79,7 +79,7 @@ export default function Home(props: HomeProps): JSX.Element {
           title: updatedGame.title,
           createdAt: updatedGame.createdAt,
         };
-        const filtered = games.filter((item) => item.id !== game.id) || [];
+        const filtered = games.filter((item) => item.id !== id) || [];
         setGames([...filtered, tmp]);
       }
     } catch (error) {
@@ -87,5 +87,21 @@ export default function Home(props: HomeProps): JSX.Element {
     }
   };
 
-  return <Games onDelete={handleDelete} onMakeActive={handleMakeActive} games={games} loading={loading} />;
+  const handleMakeActive = (game: GameType) => {
+    updateGameStatus(game.id, GameStatus.ACTIVE);
+  };
+
+  const handleClosePoll = (game: GameType) => {
+    updateGameStatus(game.id, GameStatus.COMPLETED);
+  };
+
+  return (
+    <Games
+      onDelete={handleDelete}
+      onMakeActive={handleMakeActive}
+      onClosePoll={handleClosePoll}
+      games={games}
+      loading={loading}
+    />
+  );
 }
