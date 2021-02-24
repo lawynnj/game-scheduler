@@ -52,8 +52,11 @@ function generateUpdateParams(key, item) {
 
 async function updateVotes(event) {
   if (event.arguments && event.arguments.input) {
+    // check if game exists
     try {
-      const { id, buyInOptions, hostId, dateOptions, timeOptions } = event.arguments.input;
+      // add email
+      const { id, buyInOptions, hostId, dateOptions, timeOptions, email } = event.arguments.input;
+      console.log("EMAIL", email);
       const item = {
         hostId,
         buyInOptions,

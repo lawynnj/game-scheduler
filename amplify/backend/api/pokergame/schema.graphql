@@ -110,6 +110,7 @@ input GameInput {
 input GameVote {
   id: ID!
   hostId: ID!
+  email: AWSEmail
   buyInOptions: [BuyInOptionsInput]!
   dateOptions: [DateOptionsInput]! # array of dates
   timeOptions: [TimeOptionsInput]! # array of times
