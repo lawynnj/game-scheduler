@@ -1,10 +1,10 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
+import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import TrashIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -59,7 +59,7 @@ const Games = (props: GamesProps): JSX.Element => {
       );
     });
 
-    return items.length > 0 ? items : <p>No draft games!</p>;
+    return items.length > 0 ? items : <p>None</p>;
   };
 
   const renderActiveGames = (): JSX.Element | JSX.Element[] => {
@@ -91,7 +91,7 @@ const Games = (props: GamesProps): JSX.Element => {
       );
     });
 
-    return items.length > 0 ? items : <p>No active games!</p>;
+    return items.length > 0 ? items : <p>None</p>;
   };
 
   const renderCompletedGames = (): JSX.Element | JSX.Element[] => {
@@ -105,7 +105,7 @@ const Games = (props: GamesProps): JSX.Element => {
       );
     });
 
-    return items.length > 0 ? items : <p>No completed games!</p>;
+    return items.length > 0 ? items : <p>None</p>;
   };
 
   if (loading) {
@@ -135,19 +135,25 @@ const Games = (props: GamesProps): JSX.Element => {
         </Grid>
         <Grid item xs={12}>
           <p>Drafts:</p>
-          <List>{renderDraftGames()}</List>
-          <Divider style={{ height: 1, marginTop: 10 }} />
+          <Box component={Paper} paddingLeft={2}>
+            <List>{renderDraftGames()}</List>
+          </Box>
         </Grid>
 
         <Grid item xs={12}>
           <p>Active:</p>
-          <List>{renderActiveGames()}</List>
-          <Divider style={{ height: 1, marginTop: 10 }} />
+
+          <Box component={Paper} paddingLeft={2}>
+            <List>{renderActiveGames()}</List>
+          </Box>
         </Grid>
 
         <Grid item xs={12}>
           <p>Completed:</p>
-          <List>{renderCompletedGames()}</List>
+
+          <Box component={Paper} paddingLeft={2}>
+            <List>{renderCompletedGames()}</List>
+          </Box>
         </Grid>
       </Grid>
     </Box>
