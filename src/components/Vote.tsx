@@ -10,7 +10,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import { Field, Form, FormikErrors, FormikProps, FormikTouched, withFormik } from "formik";
-import { RadioGroup } from "formik-material-ui";
+import { RadioGroup, TextField } from "formik-material-ui";
 import React from "react";
 import { GetGameQuery } from "../API";
 import * as mutations from "../graphql/mutations";
@@ -140,6 +140,10 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
               "No dates set up"
             )}
           </Box>
+          <Box mt={2}>
+            <Typography variant="subtitle2">Get notified on the day of the game!</Typography>
+            <Field name="email" label="Email (optional)" variant="outlined" component={TextField} margin="dense" />
+          </Box>
           <div style={{ textAlign: "center", marginTop: 20 }}>
             <Button color="primary" variant="contained" type="submit" disabled={isSubmitting}>
               Submit
@@ -156,6 +160,7 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
     buyIn: "",
     eventTime: "",
     eventDate: "",
+    email: "",
   }),
   validate(values: FormValues) {
     const errors: FormikErrors<FormValues> = {};
@@ -173,7 +178,7 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
     return errors;
   },
   async handleSubmit(values: FormValues, { props }) {
-    const { eventTime, eventDate, buyIn } = values;
+    const { eventTime, eventDate, buyIn, email } = values;
     const { game, onSubmit } = props;
     const settings = game.getGame;
     if (settings?.timeOptions && settings?.dateOptions && settings?.buyInOptions) {
@@ -216,6 +221,7 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
           buyInOptions: buyIns,
           dateOptions: eventDates,
           timeOptions: eventTimes,
+          email: email,
         };
         await API.graphql({
           ...graphqlOperation(mutations.updateGameVote, {
