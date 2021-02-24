@@ -37,9 +37,6 @@ const Games = (props: GamesProps): JSX.Element => {
       return (
         <GameListItem key={game.id} date={date} title={game.title}>
           <>
-            <IconButton style={{ marginRight: 20 }} onClick={() => history.push(`/edit/${game.id}`)} size="small">
-              <EditIcon />
-            </IconButton>
             <Button
               style={{ marginRight: 20 }}
               color="primary"
@@ -49,6 +46,10 @@ const Games = (props: GamesProps): JSX.Element => {
             >
               Publish
             </Button>
+            <IconButton style={{ marginRight: 20 }} onClick={() => history.push(`/edit/${game.id}`)} size="small">
+              <EditIcon />
+            </IconButton>
+
             <IconButton onClick={() => onDelete(game.id)} size="small">
               <TrashIcon />
             </IconButton>
