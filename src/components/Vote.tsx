@@ -12,6 +12,7 @@ import parse from "date-fns/parse";
 import { Field, Form, FormikErrors, FormikProps, FormikTouched, withFormik } from "formik";
 import { RadioGroup, TextField } from "formik-material-ui";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import { GetGameQuery } from "../API";
 import * as mutations from "../graphql/mutations";
 
@@ -221,8 +222,12 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
           buyInOptions: buyIns,
           dateOptions: eventDates,
           timeOptions: eventTimes,
-          email: email,
+          player: {
+            uuid: uuidv4(),
+            email: email,
+          },
         };
+
         await API.graphql({
           ...graphqlOperation(mutations.updateGameVote, {
             input,

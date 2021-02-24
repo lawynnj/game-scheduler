@@ -25,11 +25,14 @@ exports.handler = async (event, context) => {
   }
 };
 
-function generateUpdateParams(key, item) {
+function generateUpdateParams(key, item, player) {
   let updateExpression = "set";
   let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
 
+  // update email list
+  // race condition, if two people simultaneously vote it will skew the results
+  // we need to increment the date, time and buy in votes instead of updating the entire objects
   for (const property in item) {
     updateExpression += ` #${property} = :${property} ,`;
     ExpressionAttributeNames["#" + property] = property;
@@ -38,9 +41,22 @@ function generateUpdateParams(key, item) {
 
   updateExpression = updateExpression.slice(0, -1);
 
+  // append a player to the list of players
+  if (player) {
+    ExpressionAttributeNames["#players"] = "players";
+    ExpressionAttributeValues[":new_player"] = [player];
+    ExpressionAttributeValues[":empty_list"] = [];
+    // if players property is null then set it as an empty list and append new player
+    updateExpression += `, #players = list_append(if_not_exists(#players, :empty_list), :new_player) `;
+  }
+
+  // ensure record exists
+  const ConditionExpression = "attribute_exists(id)";
+
   const params = {
     TableName: process.env.API_POKERGAME_GAMETABLE_NAME,
     Key: key,
+    ConditionExpression: ConditionExpression,
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
     ExpressionAttributeValues: ExpressionAttributeValues,
@@ -52,11 +68,8 @@ function generateUpdateParams(key, item) {
 
 async function updateVotes(event) {
   if (event.arguments && event.arguments.input) {
-    // check if game exists
     try {
-      // add email
-      const { id, buyInOptions, hostId, dateOptions, timeOptions, email } = event.arguments.input;
-      console.log("EMAIL", email);
+      const { id, buyInOptions, hostId, dateOptions, timeOptions, player = null } = event.arguments.input;
       const item = {
         hostId,
         buyInOptions,
@@ -64,7 +77,8 @@ async function updateVotes(event) {
         timeOptions,
       };
       const key = { id };
-      const params = generateUpdateParams(key, item);
+
+      const params = generateUpdateParams(key, item, player);
 
       const res = await docClient.update(params).promise();
 

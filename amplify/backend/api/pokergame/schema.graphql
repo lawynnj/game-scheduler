@@ -88,7 +88,7 @@ input BuyInOptionsInput {
   uuid: ID!
 }
 input PlayerInput {
-  name: String!
+  name: String
   email: String
   uuid: ID!
 }
