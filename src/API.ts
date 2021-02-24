@@ -9,18 +9,12 @@ export type GameInput = {
   type?: string | null,
   buyIn?: number | null,
   eventTime?: string | null,
-  players?: Array< PlayerInput | null > | null,
+  players?: Array< string | null > | null,
   buyInOptions?: Array< BuyInOptionsInput | null > | null,
   dateOptions?: Array< DateOptionsInput | null > | null,
   timeOptions?: Array< TimeOptionsInput | null > | null,
   ipAddresses?: Array< string | null > | null,
   status?: GameStatus | null,
-};
-
-export type PlayerInput = {
-  name: string,
-  email?: string | null,
-  uuid: string,
 };
 
 export type BuyInOptionsInput = {
@@ -48,6 +42,15 @@ export enum GameStatus {
   CANCELLED = "CANCELLED",
 }
 
+
+export type GameVote = {
+  id: string,
+  hostId: string,
+  email?: string | null,
+  buyInOptions: Array< BuyInOptionsInput | null >,
+  dateOptions: Array< DateOptionsInput | null >,
+  timeOptions: Array< TimeOptionsInput | null >,
+};
 
 export type CreateUserInput = {
   id?: string | null,
@@ -128,7 +131,7 @@ export type CreateGameInput = {
   type?: string | null,
   buyIn?: number | null,
   eventTime?: string | null,
-  players?: Array< PlayerInput | null > | null,
+  players?: Array< string | null > | null,
   buyInOptions?: Array< BuyInOptionsInput | null > | null,
   dateOptions?: Array< DateOptionsInput | null > | null,
   timeOptions?: Array< TimeOptionsInput | null > | null,
@@ -142,6 +145,7 @@ export type ModelGameConditionInput = {
   type?: ModelStringInput | null,
   buyIn?: ModelIntInput | null,
   eventTime?: ModelStringInput | null,
+  players?: ModelStringInput | null,
   ipAddresses?: ModelStringInput | null,
   status?: ModelGameStatusInput | null,
   hostId?: ModelIDInput | null,
@@ -183,17 +187,13 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type DeleteGameInput = {
-  id?: string | null,
-};
-
 export type UpdateGameInput = {
   id: string,
   title?: string | null,
   type?: string | null,
   buyIn?: number | null,
   eventTime?: string | null,
-  players?: Array< PlayerInput | null > | null,
+  players?: Array< string | null > | null,
   buyInOptions?: Array< BuyInOptionsInput | null > | null,
   dateOptions?: Array< DateOptionsInput | null > | null,
   timeOptions?: Array< TimeOptionsInput | null > | null,
@@ -202,12 +202,8 @@ export type UpdateGameInput = {
   hostId?: string | null,
 };
 
-export type GameVote = {
-  id: string,
-  hostId: string,
-  buyInOptions: Array< BuyInOptionsInput | null >,
-  dateOptions: Array< DateOptionsInput | null >,
-  timeOptions: Array< TimeOptionsInput | null >,
+export type DeleteGameInput = {
+  id?: string | null,
 };
 
 export type ModelUserFilterInput = {
@@ -228,6 +224,7 @@ export type ModelGameFilterInput = {
   type?: ModelStringInput | null,
   buyIn?: ModelIntInput | null,
   eventTime?: ModelStringInput | null,
+  players?: ModelStringInput | null,
   ipAddresses?: ModelStringInput | null,
   status?: ModelGameStatusInput | null,
   hostId?: ModelIDInput | null,
@@ -249,12 +246,7 @@ export type UpdateGameStrictMutation = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
-      email: string | null,
-      uuid: string,
-    } | null > | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -276,6 +268,70 @@ export type UpdateGameStrictMutation = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
+      email: string | null,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
+    createdAt: string,
+    updatedAt: string,
+    owner: string | null,
+  } | null,
+};
+
+export type UpdateGameVoteMutationVariables = {
+  input?: GameVote | null,
+};
+
+export type UpdateGameVoteMutation = {
+  updateGameVote:  {
+    __typename: "Game",
+    id: string,
+    title: string,
+    type: string | null,
+    buyIn: number | null,
+    eventTime: string | null,
+    players: Array< string | null > | null,
+    buyInOptions:  Array< {
+      __typename: "BuyInOptions",
+      amount: number,
+      votes: number,
+      uuid: string,
+    } | null > | null,
+    dateOptions:  Array< {
+      __typename: "DateOptions",
+      date: string,
+      votes: number,
+      uuid: string,
+    } | null > | null,
+    timeOptions:  Array< {
+      __typename: "TimeOptions",
+      time: string,
+      votes: number,
+      uuid: string,
+    } | null > | null,
+    ipAddresses: Array< string | null > | null,
+    status: GameStatus | null,
+    hostId: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
+      email: string | null,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
     createdAt: string,
     updatedAt: string,
     owner: string | null,
@@ -367,12 +423,7 @@ export type CreateGameMutation = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
-      email: string | null,
-      uuid: string,
-    } | null > | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -394,52 +445,18 @@ export type CreateGameMutation = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
-    createdAt: string,
-    updatedAt: string,
-    owner: string | null,
-  } | null,
-};
-
-export type DeleteGameMutationVariables = {
-  input: DeleteGameInput,
-  condition?: ModelGameConditionInput | null,
-};
-
-export type DeleteGameMutation = {
-  deleteGame:  {
-    __typename: "Game",
-    id: string,
-    title: string,
-    type: string | null,
-    buyIn: number | null,
-    eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
       email: string | null,
-      uuid: string,
-    } | null > | null,
-    buyInOptions:  Array< {
-      __typename: "BuyInOptions",
-      amount: number,
-      votes: number,
-      uuid: string,
-    } | null > | null,
-    dateOptions:  Array< {
-      __typename: "DateOptions",
-      date: string,
-      votes: number,
-      uuid: string,
-    } | null > | null,
-    timeOptions:  Array< {
-      __typename: "TimeOptions",
-      time: string,
-      votes: number,
-      uuid: string,
-    } | null > | null,
-    ipAddresses: Array< string | null > | null,
-    status: GameStatus | null,
-    hostId: string,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
     createdAt: string,
     updatedAt: string,
     owner: string | null,
@@ -459,12 +476,7 @@ export type UpdateGameMutation = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
-      email: string | null,
-      uuid: string,
-    } | null > | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -486,24 +498,38 @@ export type UpdateGameMutation = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
+      email: string | null,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
     createdAt: string,
     updatedAt: string,
     owner: string | null,
   } | null,
 };
 
-export type UpdateGameVoteMutationVariables = {
-  input?: GameVote | null,
+export type DeleteGameMutationVariables = {
+  input: DeleteGameInput,
+  condition?: ModelGameConditionInput | null,
 };
 
-export type UpdateGameVoteMutation = {
-  updateGameVote:  {
+export type DeleteGameMutation = {
+  deleteGame:  {
     __typename: "Game",
     id: string,
     title: string,
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -525,9 +551,44 @@ export type UpdateGameVoteMutation = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
+      email: string | null,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
     createdAt: string,
     updatedAt: string,
     owner: string | null,
+  } | null,
+};
+
+export type GetUserQueryVariables = {
+  id: string,
+};
+
+export type GetUserQuery = {
+  getUser:  {
+    __typename: "User",
+    id: string,
+    username: string | null,
+    firstName: string | null,
+    lastName: string | null,
+    email: string | null,
+    image: string | null,
+    createdAt: string,
+    updatedAt: string,
+    owner: string | null,
+    games:  {
+      __typename: "ModelGameConnection",
+      nextToken: string | null,
+    } | null,
   } | null,
 };
 
@@ -556,29 +617,6 @@ export type ListUsersQuery = {
   } | null,
 };
 
-export type GetUserQueryVariables = {
-  id: string,
-};
-
-export type GetUserQuery = {
-  getUser:  {
-    __typename: "User",
-    id: string,
-    username: string | null,
-    firstName: string | null,
-    lastName: string | null,
-    email: string | null,
-    image: string | null,
-    createdAt: string,
-    updatedAt: string,
-    owner: string | null,
-    games:  {
-      __typename: "ModelGameConnection",
-      nextToken: string | null,
-    } | null,
-  } | null,
-};
-
 export type GetGameQueryVariables = {
   id: string,
 };
@@ -591,6 +629,7 @@ export type GetGameQuery = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -612,6 +651,18 @@ export type GetGameQuery = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
+      email: string | null,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
     createdAt: string,
     updatedAt: string,
     owner: string | null,
@@ -634,6 +685,7 @@ export type ListGamesQuery = {
       type: string | null,
       buyIn: number | null,
       eventTime: string | null,
+      players: Array< string | null > | null,
       ipAddresses: Array< string | null > | null,
       status: GameStatus | null,
       hostId: string,
@@ -722,12 +774,7 @@ export type OnCreateGameSubscription = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
-      email: string | null,
-      uuid: string,
-    } | null > | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -749,6 +796,18 @@ export type OnCreateGameSubscription = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
+    host:  {
+      __typename: "User",
+      id: string,
+      username: string | null,
+      firstName: string | null,
+      lastName: string | null,
+      email: string | null,
+      image: string | null,
+      createdAt: string,
+      updatedAt: string,
+      owner: string | null,
+    },
     createdAt: string,
     updatedAt: string,
     owner: string | null,
@@ -763,12 +822,7 @@ export type OnUpdateGameSubscription = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
-      email: string | null,
-      uuid: string,
-    } | null > | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -790,8 +844,6 @@ export type OnUpdateGameSubscription = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
-    createdAt: string,
-    updatedAt: string,
     host:  {
       __typename: "User",
       id: string,
@@ -804,6 +856,8 @@ export type OnUpdateGameSubscription = {
       updatedAt: string,
       owner: string | null,
     },
+    createdAt: string,
+    updatedAt: string,
     owner: string | null,
   } | null,
 };
@@ -816,12 +870,7 @@ export type OnDeleteGameSubscription = {
     type: string | null,
     buyIn: number | null,
     eventTime: string | null,
-    players:  Array< {
-      __typename: "Player",
-      name: string,
-      email: string | null,
-      uuid: string,
-    } | null > | null,
+    players: Array< string | null > | null,
     buyInOptions:  Array< {
       __typename: "BuyInOptions",
       amount: number,
@@ -843,8 +892,6 @@ export type OnDeleteGameSubscription = {
     ipAddresses: Array< string | null > | null,
     status: GameStatus | null,
     hostId: string,
-    createdAt: string,
-    updatedAt: string,
     host:  {
       __typename: "User",
       id: string,
@@ -857,6 +904,8 @@ export type OnDeleteGameSubscription = {
       updatedAt: string,
       owner: string | null,
     },
+    createdAt: string,
+    updatedAt: string,
     owner: string | null,
   } | null,
 };

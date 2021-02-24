@@ -28,11 +28,6 @@ type BuyInOptions {
   votes: Int!
   uuid: ID!
 }
-type Player {
-  name: String!
-  email: String
-  uuid: ID!
-}
 
 enum GameStatus {
   ACTIVE
@@ -58,7 +53,7 @@ type Game
   type: String
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
-  players: [Player] # array of players
+  players: [AWSEmail] # array of players
   buyInOptions: [BuyInOptions]
   dateOptions: [DateOptions]
   timeOptions: [TimeOptions]
@@ -87,11 +82,6 @@ input BuyInOptionsInput {
   votes: Int!
   uuid: ID!
 }
-input PlayerInput {
-  name: String
-  email: String
-  uuid: ID!
-}
 
 input GameInput {
   id: ID
@@ -100,7 +90,7 @@ input GameInput {
   type: String
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
-  players: [PlayerInput] # array of players
+  players: [AWSEmail] # array of players
   buyInOptions: [BuyInOptionsInput]
   dateOptions: [DateOptionsInput] # array of dates
   timeOptions: [TimeOptionsInput] # array of times

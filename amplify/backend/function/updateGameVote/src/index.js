@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
   }
 };
 
-function generateUpdateParams(key, item, player) {
+function generateUpdateParams(key, item, email) {
   let updateExpression = "set";
   let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
@@ -42,12 +42,12 @@ function generateUpdateParams(key, item, player) {
   updateExpression = updateExpression.slice(0, -1);
 
   // append a player to the list of players
-  if (player) {
+  if (email) {
     ExpressionAttributeNames["#players"] = "players";
-    ExpressionAttributeValues[":new_player"] = [player];
+    ExpressionAttributeValues[":new_email"] = [email];
     ExpressionAttributeValues[":empty_list"] = [];
     // if players property is null then set it as an empty list and append new player
-    updateExpression += `, #players = list_append(if_not_exists(#players, :empty_list), :new_player) `;
+    updateExpression += `, #players = list_append(if_not_exists(#players, :empty_list), :new_email) `;
   }
 
   // ensure record exists
@@ -69,7 +69,7 @@ function generateUpdateParams(key, item, player) {
 async function updateVotes(event) {
   if (event.arguments && event.arguments.input) {
     try {
-      const { id, buyInOptions, hostId, dateOptions, timeOptions, player = null } = event.arguments.input;
+      const { id, buyInOptions, hostId, dateOptions, timeOptions, email } = event.arguments.input;
       const item = {
         hostId,
         buyInOptions,
@@ -78,7 +78,7 @@ async function updateVotes(event) {
       };
       const key = { id };
 
-      const params = generateUpdateParams(key, item, player);
+      const params = generateUpdateParams(key, item, email);
 
       const res = await docClient.update(params).promise();
 

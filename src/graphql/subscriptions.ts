@@ -64,11 +64,7 @@ export const onCreateGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -101,11 +97,7 @@ export const onUpdateGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -124,8 +116,6 @@ export const onUpdateGame = /* GraphQL */ `
       ipAddresses
       status
       hostId
-      createdAt
-      updatedAt
       host {
         id
         username
@@ -137,6 +127,8 @@ export const onUpdateGame = /* GraphQL */ `
         updatedAt
         owner
       }
+      createdAt
+      updatedAt
       owner
     }
   }
@@ -149,11 +141,7 @@ export const onDeleteGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -172,8 +160,6 @@ export const onDeleteGame = /* GraphQL */ `
       ipAddresses
       status
       hostId
-      createdAt
-      updatedAt
       host {
         id
         username
@@ -185,6 +171,8 @@ export const onDeleteGame = /* GraphQL */ `
         updatedAt
         owner
       }
+      createdAt
+      updatedAt
       owner
     }
   }
