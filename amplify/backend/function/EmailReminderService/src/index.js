@@ -18,10 +18,9 @@ async function sendEmail(record) {
   try {
     // get recipients, subject and body for email
     const message = JSON.parse(record.Sns.Message);
-    const recipients = message.recipients;
+    const emails = message.recipients;
     const subject = message.subject ? message.subject : "No Subject";
     const body = message.body ? message.body : "";
-    const emails = recipients.map((recipient) => recipient.email);
 
     const params = {
       Destination: {

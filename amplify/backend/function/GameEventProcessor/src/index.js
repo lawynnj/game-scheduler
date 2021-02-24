@@ -43,7 +43,7 @@ async function publishGameNotification({ oldImage, newImage }) {
         Message: JSON.stringify({
           subject: process.env.SNS_EMAIL_SUBJECT || "Poker Game Settings",
           body: `Your poker game:${newImage.title} is active!`,
-          recipients: [{ email: user.Item.email, name: user.Item.username }],
+          recipients: [user.Item.email],
         }),
         TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
         Subject: process.env.SNS_SUBJECT || "Finalized game settings",

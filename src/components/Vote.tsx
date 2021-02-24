@@ -221,7 +221,7 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
           buyInOptions: buyIns,
           dateOptions: eventDates,
           timeOptions: eventTimes,
-          email: email,
+          email: email ? email : null,
         };
 
         await API.graphql({

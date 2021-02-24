@@ -49,16 +49,11 @@ async function publishSnsMessage({ gameId, ruleName, targetId }) {
   try {
     const game = await getGame(gameId);
 
-    const recipients = game.Item.players.map((player) => ({
-      email: player.email,
-      name: player.name,
-    }));
-
     const params = {
       Message: JSON.stringify({
         subject: `Poker game:${game.Item.title}`,
         body: `The poker game: ${game.Item.title} is today at ${game.Item.eventTime}`,
-        recipients,
+        recipients: game.Item.players,
       }),
       TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
       Subject: process.env.SNS_SUBJECT || "Game Complete",
