@@ -95,7 +95,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 disabled={isSubmitting}
                 errors={errors}
                 touched={touched}
-                title="Date"
+                title="Date *"
                 name="eventDate"
                 options={settings.dateOptions.map((date) => ({
                   value: date?.date || "",
@@ -112,7 +112,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 disabled={isSubmitting}
                 errors={errors}
                 touched={touched}
-                title="Time"
+                title="Time *"
                 name="eventTime"
                 options={settings?.timeOptions.map((time) => ({
                   value: time?.time || "",
@@ -129,7 +129,7 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 disabled={isSubmitting}
                 errors={errors}
                 touched={touched}
-                title="Buy in ($)"
+                title="Buy-in ($) *"
                 name="buyIn"
                 options={settings.buyInOptions.map((buyIn) => ({
                   value: buyIn?.amount?.toString() || "",
