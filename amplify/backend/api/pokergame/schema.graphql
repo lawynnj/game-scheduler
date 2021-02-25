@@ -53,11 +53,11 @@ type Game
   type: String
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
-  players: [AWSEmail] # array of players
-  buyInOptions: [BuyInOptions]
-  dateOptions: [DateOptions]
-  timeOptions: [TimeOptions]
-  ipAddresses: [AWSIPAddress]
+  players: [AWSEmail!] # array of players
+  buyInOptions: [BuyInOptions!]
+  dateOptions: [DateOptions!]
+  timeOptions: [TimeOptions!]
+  ipAddresses: [AWSIPAddress!]
 
   status: GameStatus
 

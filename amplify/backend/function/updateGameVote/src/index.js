@@ -10,6 +10,12 @@ const rest = require("/opt/nodejs/rest");
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+/**
+ * Processes a "vote".
+ * Updates the votes for time, date and buy-in options.
+ * @param {*} event
+ * @param {*} context
+ */
 exports.handler = async (event, context) => {
   console.log("## CONTEXT: " + rest.serialize(context));
   console.log("## EVENT: " + rest.serialize(event));
