@@ -30,6 +30,7 @@ exports.handler = async (event, context) => {
 
     return rest.formatResponse(rest.serialize(res));
   } catch (error) {
+    console.log(error);
     return rest.formatError(error);
   }
 };
@@ -37,39 +38,31 @@ exports.handler = async (event, context) => {
 async function publishGameNotification({ oldImage, newImage }) {
   // Publish SNS message when a game becomes "active"
   if (newImage.status === "ACTIVE" && oldImage.status !== newImage.status) {
-    try {
-      const user = await getUser(newImage.hostId);
-      const params = {
-        Message: JSON.stringify({
-          subject: process.env.SNS_EMAIL_SUBJECT || "Poker Game Settings",
-          body: `Your poker game:${newImage.title} is active!`,
-          recipients: [user.Item.email],
-        }),
-        TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
-        Subject: process.env.SNS_SUBJECT || "Finalized game settings",
-      };
-      const res = await sns.publish(params).promise();
-      return res;
-    } catch (error) {
-      throw error;
-    }
+    const user = await getUser(newImage.hostId);
+    const params = {
+      Message: JSON.stringify({
+        subject: process.env.SNS_EMAIL_SUBJECT || "Poker Game Settings",
+        body: `Your poker game:${newImage.title} is active!`,
+        recipients: [user.Item.email],
+      }),
+      TopicArn: process.env.SNS_POKERGAME_TOPIC_ARN,
+      Subject: process.env.SNS_SUBJECT || "Finalized game settings",
+    };
+    const res = await sns.publish(params).promise();
+    return res;
   }
 }
 
 async function getUser(userId) {
-  try {
-    const params = {
-      TableName: process.env.API_POKERGAME_USERTABLE_NAME,
-      Key: {
-        id: userId,
-      },
-    };
-    const user = await docClient.get(params).promise();
-    if (!user.hasOwnProperty("Item")) {
-      throw createError.BadRequest(`User with id: ${userId} does not exist`);
-    }
-    return user;
-  } catch (error) {
-    throw error;
+  const params = {
+    TableName: process.env.API_POKERGAME_USERTABLE_NAME,
+    Key: {
+      id: userId,
+    },
+  };
+  const user = await docClient.get(params).promise();
+  if (!user.hasOwnProperty("Item")) {
+    throw createError.BadRequest(`User with id: ${userId} does not exist`);
   }
+  return user;
 }
