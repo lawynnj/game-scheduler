@@ -23,10 +23,15 @@ exports.handler = async (event, context) => {
         };
       });
 
-    await Promise.all(initCloudWatchEvents(modifiedRecords));
+    // Create events for games that are "Completed" for the first time
+    const completedGames = modifiedRecords.filter(
+      ({ newImage, oldImage }) => newImage.status === "COMPLETED" && oldImage.status !== "COMPLETED",
+    );
+    await Promise.all(completedGames.map(createRule));
 
     return rest.formatResponse(rest.serialize({ success: true }));
   } catch (error) {
+    console.log(error);
     return rest.formatError(error);
   }
 };
@@ -75,33 +80,24 @@ function getPutRuleParams(gameId, ruleName, schedule) {
 }
 
 async function createRule({ newImage: game }) {
-  try {
-    if (!game.eventTime) {
-      throw createError.BadRequest("Invalid value for eventTime:", game.eventTime);
-    }
-
-    // configure rule to run at the game's event time
-    const schedule = getSchedule(game.eventTime);
-    const ruleName = "poker-game-" + game.id;
-    const ruleParams = getPutRuleParams(game.id, ruleName, schedule);
-
-    await cwe.putRule(ruleParams).promise();
-
-    // Set lambda fn as the rule target
-    const targetParams = getPutTargetParams(game.id, ruleName);
-
-    await cwe.putTargets(targetParams).promise();
-  } catch (error) {
-    throw error;
+  // use the date and time with the most votes as the scheduled time for the event
+  if (!game.timeOptions || !game.dateOptions) {
+    throw createError.BadRequest("Invalid value for timeOptions or dateOptions");
   }
-}
 
-function initCloudWatchEvents(modifiedGames) {
-  // filter for games that are newly completed
-  const completedGamesFilter = ({ newImage, oldImage }) =>
-    newImage.status === "COMPLETED" && oldImage.status !== newImage.status;
+  const getMaxOption = (prev, current) => (prev.votes > current.votes ? prev : current);
+  const maxVotesTimeOpt = game.timeOptions.reduce(getMaxOption);
+  const maxVotesDateOpt = game.dateOptions.reduce(getMaxOption);
 
-  const promises = modifiedGames.filter(completedGamesFilter).map(createRule);
+  const datetime = maxVotesDateOpt.date + "T" + maxVotesTimeOpt.time;
+  const schedule = getSchedule(datetime);
+  const ruleName = "poker-game-" + game.id;
+  const ruleParams = getPutRuleParams(game.id, ruleName, schedule);
 
-  return promises;
+  await cwe.putRule(ruleParams).promise();
+
+  // Set lambda fn as the rule target
+  const targetParams = getPutTargetParams(game.id, ruleName);
+
+  await cwe.putTargets(targetParams).promise();
 }
