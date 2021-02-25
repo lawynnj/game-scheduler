@@ -3,11 +3,18 @@ const createError = require("http-errors");
 const rest = require("/opt/nodejs/rest");
 const sns = new AWS.SNS();
 
-exports.handler = (event, context) => {
+/**
+ * This lambda is triggered by an update to the Game table.
+ * When a game's status is set to "completed", send email notifications to the players.
+ * @param {*} event
+ * @param {*} context
+ */
+exports.handler = async (event, context) => {
   console.log("## CONTEXT: " + rest.serialize(context));
   console.log("## EVENT: " + rest.serialize(event));
 
   try {
+    const records = event.Records;
     const modifiedRecords = records
       .filter((record) => record.eventName === "MODIFY")
       .map((record) => {
@@ -17,20 +24,20 @@ exports.handler = (event, context) => {
         };
       });
 
-    // Notify users about completed polls 
+    // Notify users about completed polls
     const completedGames = modifiedRecords.filter(
       ({ newImage, oldImage }) => newImage.status === "COMPLETED" && oldImage.status !== "COMPLETED",
     );
 
-    await Promise.all(handleCompletedGame(completedGames)) 
-
+    await Promise.all(completedGames.map(sendNotifications));
+    return rest.formatResponse(rest.serialize({ success: true }));
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return rest.formatError(error);
   }
 };
 
-async function handleCompletedGame({ newImage: game }) {
+async function sendNotifications({ newImage: game }) {
   // use the date and time with the most votes as the scheduled time for the event
   if (!game.timeOptions || !game.dateOptions) {
     throw createError.BadRequest("Invalid value for timeOptions or dateOptions");
@@ -39,10 +46,6 @@ async function handleCompletedGame({ newImage: game }) {
   const maxVotesTimeOpt = game.timeOptions.reduce(getMaxOption);
   const maxVotesDateOpt = game.dateOptions.reduce(getMaxOption);
   const datetime = maxVotesDateOpt.date + "T" + maxVotesTimeOpt.time;
-  await notifyUsers(game, datetime);
-}
-
-async function notifyUsers(game, datetime) {
   const params = {
     Message: JSON.stringify({
       subject: process.env.SNS_EMAIL_SUBJECT || "Poker Game Poll Completed",
