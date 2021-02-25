@@ -21,7 +21,11 @@ export const getUser = /* GraphQL */ `
   }
 `;
 export const listUsers = /* GraphQL */ `
-  query ListUsers($filter: ModelUserFilterInput, $limit: Int, $nextToken: String) {
+  query ListUsers(
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
@@ -46,6 +50,7 @@ export const getGame = /* GraphQL */ `
       type
       buyIn
       eventTime
+      players
       buyInOptions {
         amount
         votes
@@ -71,7 +76,11 @@ export const getGame = /* GraphQL */ `
   }
 `;
 export const listGames = /* GraphQL */ `
-  query ListGames($filter: ModelGameFilterInput, $limit: Int, $nextToken: String) {
+  query ListGames(
+    $filter: ModelGameFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
     listGames(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
@@ -79,6 +88,7 @@ export const listGames = /* GraphQL */ `
         type
         buyIn
         eventTime
+        players
         ipAddresses
         status
         hostId

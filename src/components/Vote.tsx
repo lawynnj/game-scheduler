@@ -97,8 +97,8 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 touched={touched}
                 title="Date *"
                 name="eventDate"
-                options={settings.dateOptions.map((date) => ({
-                  value: date?.date || "",
+                options={settings.dateOptions.map((date, idx) => ({
+                  value: `${idx}`,
                   label: date?.date ? format(new Date(date.date), "EEE MMM dd yyyy") : "",
                 }))}
               />
@@ -114,8 +114,8 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 touched={touched}
                 title="Time *"
                 name="eventTime"
-                options={settings?.timeOptions.map((time) => ({
-                  value: time?.time || "",
+                options={settings?.timeOptions.map((time, idx) => ({
+                  value: `${idx}`,
                   label: time?.time ? `${formatTime(time.time)}` : "",
                 }))}
               />
@@ -131,8 +131,8 @@ function InnerForm(props: OtherProps & FormikProps<FormValues>) {
                 touched={touched}
                 title="Buy-in ($) *"
                 name="buyIn"
-                options={settings.buyInOptions.map((buyIn) => ({
-                  value: buyIn?.amount?.toString() || "",
+                options={settings.buyInOptions.map((buyIn, idx) => ({
+                  value: `${idx}`,
                   label: `${buyIn?.amount || ""}`,
                 }))}
               />
@@ -182,47 +182,48 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
     const { game, onSubmit } = props;
     const settings = game.getGame;
     if (settings?.timeOptions && settings?.dateOptions && settings?.buyInOptions) {
-      const eventTimes = settings.timeOptions.map((time) => {
-        if (time?.time === eventTime) {
-          return {
-            ...time,
-            votes: time.votes + 1,
-          };
-        } else {
-          return time;
-        }
-      });
+      //   const eventTimes = settings.timeOptions.map((time) => {
+      //     if (time?.time === eventTime) {
+      //       return {
+      //         ...time,
+      //         votes: time.votes + 1,
+      //       };
+      //     } else {
+      //       return time;
+      //     }
+      //   });
 
-      const eventDates = settings.dateOptions.map((date) => {
-        if (date?.date === eventDate) {
-          return {
-            ...date,
-            votes: date?.votes + 1,
-          };
-        } else {
-          return date;
-        }
-      });
+      //   const eventDates = settings.dateOptions.map((date) => {
+      //     if (date?.date === eventDate) {
+      //       return {
+      //         ...date,
+      //         votes: date?.votes + 1,
+      //       };
+      //     } else {
+      //       return date;
+      //     }
+      //   });
 
-      const buyIns = settings.buyInOptions.map((_buyIn) => {
-        if (_buyIn?.amount === parseInt(buyIn)) {
-          return {
-            ..._buyIn,
-            votes: _buyIn?.votes + 1,
-          };
-        } else {
-          return _buyIn;
-        }
-      });
+      //   const buyIns = settings.buyInOptions.map((_buyIn) => {
+      //     if (_buyIn?.amount === parseInt(buyIn)) {
+      //       return {
+      //         ..._buyIn,
+      //         votes: _buyIn?.votes + 1,
+      //       };
+      //     } else {
+      //       return _buyIn;
+      //     }
+      //   });
       try {
         const input = {
           id: settings.id,
           hostId: settings.hostId,
-          buyInOptions: buyIns,
-          dateOptions: eventDates,
-          timeOptions: eventTimes,
+          buyInOptionIdx: parseInt(values.buyIn),
+          dateOptionIdx: parseInt(values.eventDate),
+          timeOptionIdx: parseInt(values.eventTime),
           email: email ? email : null,
         };
+        console.log("input", input);
 
         await API.graphql({
           ...graphqlOperation(mutations.updateGameVote, {

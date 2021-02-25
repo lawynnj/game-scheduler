@@ -27,6 +27,7 @@ exports.handler = async (event, context) => {
     }
     return res;
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -36,16 +37,14 @@ function generateUpdateParams(key, item, email) {
   let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
 
-  // update email list
-  // race condition, if two people simultaneously vote it will skew the results
-  // we need to increment the date, time and buy in votes instead of updating the entire objects
-  for (const property in item) {
-    updateExpression += ` #${property} = :${property} ,`;
-    ExpressionAttributeNames["#" + property] = property;
-    ExpressionAttributeValues[":" + property] = item[property];
-  }
-
-  updateExpression = updateExpression.slice(0, -1);
+  const { dateOptionIdx, timeOptionIdx, buyInOptionIdx } = item;
+  // const dateOptionIdx = 0;
+  // const timeOptionIdx = 0;
+  // const buyInOptionIdx = 0;
+  ExpressionAttributeValues[":increment"] = 1;
+  updateExpression += ` dateOptions[${dateOptionIdx}].votes = dateOptions[${dateOptionIdx}].votes + :increment ,`;
+  updateExpression += ` timeOptions[${timeOptionIdx}].votes = timeOptions[${timeOptionIdx}].votes + :increment , `;
+  updateExpression += ` buyInOptions[${buyInOptionIdx}].votes = buyInOptions[${buyInOptionIdx}].votes + :increment `;
 
   // append a player to the list of players
   if (email) {
@@ -75,12 +74,12 @@ function generateUpdateParams(key, item, email) {
 async function updateVotes(event) {
   if (event.arguments && event.arguments.input) {
     try {
-      const { id, buyInOptions, hostId, dateOptions, timeOptions, email } = event.arguments.input;
+      const { id, buyInOptionIdx, hostId, dateOptionIdx, timeOptionIdx, email } = event.arguments.input;
       const item = {
         hostId,
-        buyInOptions,
-        dateOptions,
-        timeOptions,
+        buyInOptionIdx,
+        dateOptionIdx,
+        timeOptionIdx,
       };
       const key = { id };
 
