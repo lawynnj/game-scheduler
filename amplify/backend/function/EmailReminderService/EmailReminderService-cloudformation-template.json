@@ -77,7 +77,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/EmailReminderService-4247574f6b4e52317a31-build.zip"
+          "S3Key": "amplify-builds/EmailReminderService-505637596c634d7a5632-build.zip"
         }
       }
     },

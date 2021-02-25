@@ -45,12 +45,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "GameEventProcessor",
+            "CompletedPollNotif",
             {
               "Fn::Join": [
                 "",
                 [
-                  "GameEventProcessor",
+                  "CompletedPollNotif",
                   "-",
                   {
                     "Ref": "env"
@@ -67,35 +67,6 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
-            },
-            "API_POKERGAME_USERTABLE_NAME": {
-              "Fn::ImportValue": {
-                "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-              }
-            },
-            "API_POKERGAME_USERTABLE_ARN": {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:aws:dynamodb:",
-                  {
-                    "Ref": "AWS::Region"
-                  },
-                  ":",
-                  {
-                    "Ref": "AWS::AccountId"
-                  },
-                  ":table/",
-                  {
-                    "Fn::ImportValue": {
-                      "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-                    }
-                  }
-                ]
-              ]
-            },
-            "API_POKERGAME_GRAPHQLAPIIDOUTPUT": {
-              "Ref": "apipokergameGraphQLAPIIdOutput"
             }
           }
         },
@@ -114,7 +85,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
-          "S3Key": "amplify-builds/GameEventProcessor-306f645a4161365a3239-build.zip"
+          "S3Key": "amplify-builds/CompletedPollNotif-36456a53733853574370-build.zip"
         }
       }
     },
@@ -124,12 +95,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "gameschedulerapiLambdaRole2d30f008",
+            "gameschedulerapiLambdaRoleb9ad00c6",
             {
               "Fn::Join": [
                 "",
                 [
-                  "gameschedulerapiLambdaRole2d30f008",
+                  "gameschedulerapiLambdaRoleb9ad00c6",
                   "-",
                   {
                     "Ref": "env"
@@ -273,81 +244,6 @@
           ]
         },
         "StartingPosition": "LATEST"
-      }
-    },
-    "AmplifyResourcesPolicy": {
-      "DependsOn": [
-        "LambdaExecutionRole"
-      ],
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "amplify-lambda-execution-policy",
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ],
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:Get*",
-                "dynamodb:BatchGetItem",
-                "dynamodb:List*",
-                "dynamodb:Describe*",
-                "dynamodb:Scan",
-                "dynamodb:Query"
-              ],
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:dynamodb:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":table/",
-                      {
-                        "Fn::ImportValue": {
-                          "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-                        }
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:dynamodb:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":table/",
-                      {
-                        "Fn::ImportValue": {
-                          "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-                        }
-                      },
-                      "/index/*"
-                    ]
-                  ]
-                }
-              ]
-            }
-          ]
-        }
       }
     }
   },

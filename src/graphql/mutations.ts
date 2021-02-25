@@ -10,11 +10,7 @@ export const updateGameStrict = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -39,6 +35,7 @@ export const updateGameStrict = /* GraphQL */ `
     }
   }
 `;
+
 export const createUser = /* GraphQL */ `
   mutation CreateUser($input: CreateUserInput!, $condition: ModelUserConditionInput) {
     createUser(input: $input, condition: $condition) {
@@ -101,11 +98,7 @@ export const createGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -130,6 +123,7 @@ export const createGame = /* GraphQL */ `
     }
   }
 `;
+
 export const deleteGame = /* GraphQL */ `
   mutation DeleteGame($input: DeleteGameInput!, $condition: ModelGameConditionInput) {
     deleteGame(input: $input, condition: $condition) {
@@ -138,11 +132,7 @@ export const deleteGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -175,11 +165,7 @@ export const updateGame = /* GraphQL */ `
       type
       buyIn
       eventTime
-      players {
-        name
-        email
-        uuid
-      }
+      players
       buyInOptions {
         amount
         votes
@@ -204,6 +190,7 @@ export const updateGame = /* GraphQL */ `
     }
   }
 `;
+
 export const updateGameVote = /* GraphQL */ `
   mutation UpdateGameVote($input: GameVote) {
     updateGameVote(input: $input) {
