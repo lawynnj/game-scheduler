@@ -460,18 +460,6 @@ export type UpdateGameMutation = {
     ipAddresses: Array<string> | null;
     status: GameStatus | null;
     hostId: string;
-    host: {
-      __typename: "User";
-      id: string;
-      username: string | null;
-      firstName: string | null;
-      lastName: string | null;
-      email: string | null;
-      image: string | null;
-      createdAt: string;
-      updatedAt: string;
-      owner: string | null;
-    };
     createdAt: string;
     updatedAt: string;
     owner: string | null;
@@ -513,18 +501,6 @@ export type DeleteGameMutation = {
     ipAddresses: Array<string> | null;
     status: GameStatus | null;
     hostId: string;
-    host: {
-      __typename: "User";
-      id: string;
-      username: string | null;
-      firstName: string | null;
-      lastName: string | null;
-      email: string | null;
-      image: string | null;
-      createdAt: string;
-      updatedAt: string;
-      owner: string | null;
-    };
     createdAt: string;
     updatedAt: string;
     owner: string | null;
