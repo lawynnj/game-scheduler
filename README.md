@@ -10,7 +10,7 @@ The purpose of the application is to allow a user to create a poll to schedule a
 A user can create a poll, copy a shareable link and send it to other users to vote (who can optionally provide an email for notifications). After voting is finished the creator must "close" the poll.
 
 Closing a poll will:
-  1. send an email notifications about the most voted date, time and buy in.
+  1. send email notifications to voters about the date and buy in amount of the game.
   2. create a scheduled Cloud Watch Rule that will trigger on the day of the game. The rule will trigger a Lambda function that sends email notification.
 
 
