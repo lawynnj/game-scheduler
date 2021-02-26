@@ -182,38 +182,6 @@ const VoteForm = withFormik<VoteFormProps, FormValues>({
     const { game, onSubmit } = props;
     const settings = game.getGame;
     if (settings?.timeOptions && settings?.dateOptions && settings?.buyInOptions) {
-      //   const eventTimes = settings.timeOptions.map((time) => {
-      //     if (time?.time === eventTime) {
-      //       return {
-      //         ...time,
-      //         votes: time.votes + 1,
-      //       };
-      //     } else {
-      //       return time;
-      //     }
-      //   });
-
-      //   const eventDates = settings.dateOptions.map((date) => {
-      //     if (date?.date === eventDate) {
-      //       return {
-      //         ...date,
-      //         votes: date?.votes + 1,
-      //       };
-      //     } else {
-      //       return date;
-      //     }
-      //   });
-
-      //   const buyIns = settings.buyInOptions.map((_buyIn) => {
-      //     if (_buyIn?.amount === parseInt(buyIn)) {
-      //       return {
-      //         ..._buyIn,
-      //         votes: _buyIn?.votes + 1,
-      //       };
-      //     } else {
-      //       return _buyIn;
-      //     }
-      //   });
       try {
         const input = {
           id: settings.id,
