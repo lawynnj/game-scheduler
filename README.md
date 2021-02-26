@@ -14,7 +14,7 @@ Closing a poll will:
   2. create a scheduled Cloud Watch Rule that will trigger on the day of the game. The rule will trigger a Lambda function that sends email notification.
 
 
-`Tech stack`: AWS DynamoDb, Lambda, Simple notification service, Simple email service, Cloud watch events, GraphQL, AppSync, React and Typescript. 
+`Tech stack`: AWS DynamoDb, Cognito, Lambda, Simple notification service, Simple email service, Cloud watch events, GraphQL, AppSync, React and Typescript. 
 
 # Code 
 
