@@ -52,8 +52,8 @@ type Game
   title: String!
   type: String
   buyIn: Int
-  eventTime: AWSDateTime # selected date and time
-  players: [AWSEmail!] # array of players
+  eventTime: AWSDateTime
+  players: [AWSEmail!]
   buyInOptions: [BuyInOptions!]
   dateOptions: [DateOptions!]
   timeOptions: [TimeOptions!]

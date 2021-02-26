@@ -7,7 +7,7 @@ $util.error($ctx.error.message, $ctx.error.type)
   #set($data = {})
   #foreach ($key in $ctx.result.keySet())
     #if($key != "players")
-      $util.qr($data.put($key, $ctx.result.get($key)
+      $util.qr($data.put($key, $ctx.result.get($key)))
     #end
   #end
   $util.toJson($data)
