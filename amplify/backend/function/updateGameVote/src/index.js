@@ -10,39 +10,42 @@ const rest = require("/opt/nodejs/rest");
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+/**
+ * Processes a "vote".
+ * Updates the votes for time, date and buy-in options.
+ * @param {*} event
+ * @param {*} context
+ */
 exports.handler = async (event, context) => {
   console.log("## CONTEXT: " + rest.serialize(context));
   console.log("## EVENT: " + rest.serialize(event));
 
   try {
-    let res;
-    if (event.typeName === "Mutation") {
-      res = await updateVotes(event);
+    if (event.typeName !== "Mutation") {
+      throw new Error("Invalid event type");
     }
+    const res = await updateVotes(event);
     return res;
   } catch (error) {
-    return error;
+    console.log(error);
+    return rest.formatError(error);
   }
 };
 
 function generateUpdateParams(key, item, email) {
+  const { dateOptionIdx, timeOptionIdx, buyInOptionIdx } = item;
   let updateExpression = "set";
-  let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
 
-  // update email list
-  // race condition, if two people simultaneously vote it will skew the results
-  // we need to increment the date, time and buy in votes instead of updating the entire objects
-  for (const property in item) {
-    updateExpression += ` #${property} = :${property} ,`;
-    ExpressionAttributeNames["#" + property] = property;
-    ExpressionAttributeValues[":" + property] = item[property];
-  }
-
-  updateExpression = updateExpression.slice(0, -1);
+  ExpressionAttributeValues[":increment"] = 1;
+  updateExpression += ` dateOptions[${dateOptionIdx}].votes = dateOptions[${dateOptionIdx}].votes + :increment ,`;
+  updateExpression += ` timeOptions[${timeOptionIdx}].votes = timeOptions[${timeOptionIdx}].votes + :increment , `;
+  updateExpression += ` buyInOptions[${buyInOptionIdx}].votes = buyInOptions[${buyInOptionIdx}].votes + :increment `;
 
   // append a player to the list of players
+  let ExpressionAttributeNames = null;
   if (email) {
+    ExpressionAttributeNames = {};
     ExpressionAttributeNames["#players"] = "players";
     ExpressionAttributeValues[":new_email"] = [email];
     ExpressionAttributeValues[":empty_list"] = [];
@@ -69,12 +72,12 @@ function generateUpdateParams(key, item, email) {
 async function updateVotes(event) {
   if (event.arguments && event.arguments.input) {
     try {
-      const { id, buyInOptions, hostId, dateOptions, timeOptions, email } = event.arguments.input;
+      const { id, buyInOptionIdx, hostId, dateOptionIdx, timeOptionIdx, email } = event.arguments.input;
       const item = {
         hostId,
-        buyInOptions,
-        dateOptions,
-        timeOptions,
+        buyInOptionIdx,
+        dateOptionIdx,
+        timeOptionIdx,
       };
       const key = { id };
 

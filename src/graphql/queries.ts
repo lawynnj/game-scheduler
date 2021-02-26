@@ -46,6 +46,7 @@ export const getGame = /* GraphQL */ `
       type
       buyIn
       eventTime
+      players
       buyInOptions {
         amount
         votes
@@ -79,6 +80,7 @@ export const listGames = /* GraphQL */ `
         type
         buyIn
         eventTime
+        players
         ipAddresses
         status
         hostId

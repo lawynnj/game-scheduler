@@ -43,8 +43,8 @@ interface ResultsProps {
 }
 
 interface Coords {
-  x?: string;
-  y?: number;
+  x?: unknown;
+  y?: unknown;
 }
 export default function Results({ game: game_ }: ResultsProps): JSX.Element {
   const game = game_?.getGame;

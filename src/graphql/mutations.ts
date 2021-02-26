@@ -35,7 +35,39 @@ export const updateGameStrict = /* GraphQL */ `
     }
   }
 `;
-
+export const updateGameVote = /* GraphQL */ `
+  mutation UpdateGameVote($input: GameVote) {
+    updateGameVote(input: $input) {
+      id
+      title
+      type
+      buyIn
+      eventTime
+      players
+      buyInOptions {
+        amount
+        votes
+        uuid
+      }
+      dateOptions {
+        date
+        votes
+        uuid
+      }
+      timeOptions {
+        time
+        votes
+        uuid
+      }
+      ipAddresses
+      status
+      hostId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser($input: CreateUserInput!, $condition: ModelUserConditionInput) {
     createUser(input: $input, condition: $condition) {
@@ -123,40 +155,6 @@ export const createGame = /* GraphQL */ `
     }
   }
 `;
-
-export const deleteGame = /* GraphQL */ `
-  mutation DeleteGame($input: DeleteGameInput!, $condition: ModelGameConditionInput) {
-    deleteGame(input: $input, condition: $condition) {
-      id
-      title
-      type
-      buyIn
-      eventTime
-      players
-      buyInOptions {
-        amount
-        votes
-        uuid
-      }
-      dateOptions {
-        date
-        votes
-        uuid
-      }
-      timeOptions {
-        time
-        votes
-        uuid
-      }
-      ipAddresses
-      status
-      hostId
-      createdAt
-      updatedAt
-      owner
-    }
-  }
-`;
 export const updateGame = /* GraphQL */ `
   mutation UpdateGame($input: UpdateGameInput!, $condition: ModelGameConditionInput) {
     updateGame(input: $input, condition: $condition) {
@@ -190,15 +188,15 @@ export const updateGame = /* GraphQL */ `
     }
   }
 `;
-
-export const updateGameVote = /* GraphQL */ `
-  mutation UpdateGameVote($input: GameVote) {
-    updateGameVote(input: $input) {
+export const deleteGame = /* GraphQL */ `
+  mutation DeleteGame($input: DeleteGameInput!, $condition: ModelGameConditionInput) {
+    deleteGame(input: $input, condition: $condition) {
       id
       title
       type
       buyIn
       eventTime
+      players
       buyInOptions {
         amount
         votes

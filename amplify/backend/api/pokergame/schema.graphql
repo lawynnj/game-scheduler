@@ -53,11 +53,11 @@ type Game
   type: String
   buyIn: Int
   eventTime: AWSDateTime # selected date and time
-  players: [AWSEmail] # array of players
-  buyInOptions: [BuyInOptions]
-  dateOptions: [DateOptions]
-  timeOptions: [TimeOptions]
-  ipAddresses: [AWSIPAddress]
+  players: [AWSEmail!] # array of players
+  buyInOptions: [BuyInOptions!]
+  dateOptions: [DateOptions!]
+  timeOptions: [TimeOptions!]
+  ipAddresses: [AWSIPAddress!]
 
   status: GameStatus
 
@@ -101,9 +101,9 @@ input GameVote {
   id: ID!
   hostId: ID!
   email: AWSEmail
-  buyInOptions: [BuyInOptionsInput]!
-  dateOptions: [DateOptionsInput]! # array of dates
-  timeOptions: [TimeOptionsInput]! # array of times
+  buyInOptionIdx: Int!
+  dateOptionIdx: Int!
+  timeOptionIdx: Int!
 }
 
 type Mutation {

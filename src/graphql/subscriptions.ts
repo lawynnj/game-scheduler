@@ -83,6 +83,17 @@ export const onCreateGame = /* GraphQL */ `
       ipAddresses
       status
       hostId
+      host {
+        id
+        username
+        firstName
+        lastName
+        email
+        image
+        createdAt
+        updatedAt
+        owner
+      }
       createdAt
       updatedAt
       owner
