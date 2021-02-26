@@ -21,33 +21,31 @@ exports.handler = async (event, context) => {
   console.log("## EVENT: " + rest.serialize(event));
 
   try {
-    let res;
-    if (event.typeName === "Mutation") {
-      res = await updateVotes(event);
+    if (event.typeName !== "Mutation") {
+      throw new Error("Invalid event type");
     }
+    const res = await updateVotes(event);
     return res;
   } catch (error) {
     console.log(error);
-    return error;
+    return rest.formatError(error);
   }
 };
 
 function generateUpdateParams(key, item, email) {
+  const { dateOptionIdx, timeOptionIdx, buyInOptionIdx } = item;
   let updateExpression = "set";
-  let ExpressionAttributeNames = {};
   let ExpressionAttributeValues = {};
 
-  const { dateOptionIdx, timeOptionIdx, buyInOptionIdx } = item;
-  // const dateOptionIdx = 0;
-  // const timeOptionIdx = 0;
-  // const buyInOptionIdx = 0;
   ExpressionAttributeValues[":increment"] = 1;
   updateExpression += ` dateOptions[${dateOptionIdx}].votes = dateOptions[${dateOptionIdx}].votes + :increment ,`;
   updateExpression += ` timeOptions[${timeOptionIdx}].votes = timeOptions[${timeOptionIdx}].votes + :increment , `;
   updateExpression += ` buyInOptions[${buyInOptionIdx}].votes = buyInOptions[${buyInOptionIdx}].votes + :increment `;
 
   // append a player to the list of players
+  let ExpressionAttributeNames = null;
   if (email) {
+    ExpressionAttributeNames = {};
     ExpressionAttributeNames["#players"] = "players";
     ExpressionAttributeValues[":new_email"] = [email];
     ExpressionAttributeValues[":empty_list"] = [];
