@@ -24,3 +24,6 @@ E.g. A lambda that creates a cloud watch event rule [amplify/backend/function/Em
 The front-end code is located in the `src` folder.
 
 
+# Flow
+![alt text](https://raw.githubusercontent.com/lawynnj/game-scheduler/master/Poker%20game%20settings%20-%20SD2.0%20-1.png)
+
