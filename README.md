@@ -27,3 +27,4 @@ The front-end code is located in the `src` folder.
 # Flow
 ![alt text](https://raw.githubusercontent.com/lawynnj/game-scheduler/master/Poker%20game%20settings%20-%20SD2.0%20-1.png)
 
+Status: The majority of this has been implemented except for the Simple queue service functionality
