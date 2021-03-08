@@ -16,7 +16,7 @@ Closing a poll will:
 
 `Tech stack`: AWS DynamoDb, Cognito, Lambda (functions and layers), Simple notification service, Simple email service, Cloud watch events, GraphQL, AppSync, React and Typescript. 
 
-# Code 
+# Source Code 
 
 The `back-end` code is located in the `amplify` folder. Lambda functions are in [amplify/backend/function](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function) folder. The bulk of the code for a given lambda is in `amplify/backend/function/{SOME_LAMBDA_FN}/src/index.js`. A [lambda layer](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function/restApi) also exists to share some functionality across the lambdas.
 
