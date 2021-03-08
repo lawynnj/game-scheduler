@@ -28,4 +28,4 @@ The `front-end` code is located in the [src](https://github.com/lawynnj/game-sch
 # Architecture
 ![alt text](https://raw.githubusercontent.com/lawynnj/game-scheduler/master/architecture.png)
 
-Status: The majority of the functionality been implemented except for the Simple queue service functionality.
+Status: All of functionality except for the Simple queue services has been implemented.
