@@ -191,7 +191,10 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                         ))}
                         <AddButton
                           disabled={isSubmitting}
-                          onClick={() => arrayHelpers.push({ date: 0, votes: 0, uuid: uuidv4() })}
+                          onClick={() => {
+                            const d = new Date();
+                            arrayHelpers.push({ date: d.toISOString(), votes: 0, uuid: uuidv4() });
+                          }}
                         />
                       </div>
                     )}
