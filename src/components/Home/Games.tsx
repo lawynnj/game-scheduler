@@ -47,11 +47,12 @@ const Games = (props: GamesProps): JSX.Element => {
             >
               Publish
             </Button>
-            <IconButton style={{ marginRight: 20 }} onClick={() => history.push(`/edit/${game.id}`)} size="small">
+
+            <IconButton onClick={() => history.push(`/edit/${game.id}`)}>
               <EditIcon />
             </IconButton>
 
-            <IconButton onClick={() => onDelete(game.id)} size="small">
+            <IconButton onClick={() => onDelete(game.id)}>
               <TrashIcon />
             </IconButton>
           </>
@@ -98,9 +99,14 @@ const Games = (props: GamesProps): JSX.Element => {
     const items = filterGames(GameStatus.COMPLETED).map((game: GameType) => {
       return (
         <GameListItem key={game.id} title={game.title}>
-          <Button onClick={() => history.push(`/shared/${game.id}`)} color="primary" variant="contained">
-            View
-          </Button>
+          <>
+            <Button onClick={() => history.push(`/shared/${game.id}`)} color="primary" variant="contained" size="small">
+              View
+            </Button>
+            <IconButton onClick={() => onDelete(game.id)}>
+              <TrashIcon />
+            </IconButton>
+          </>
         </GameListItem>
       );
     });
