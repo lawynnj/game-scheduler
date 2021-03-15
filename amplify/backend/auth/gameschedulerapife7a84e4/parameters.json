@@ -46,7 +46,7 @@
         ]
     },
     "useDefault": "manual",
-    "triggers": "{\n  \"PostAuthentication\": [\n    \"custom\"\n  ]\n}",
+    "triggers": "{\n  \"PostConfirmation\": [\n    \"custom\"\n  ]\n}",
     "userPoolGroupList": [
         "admin"
     ],
@@ -58,7 +58,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "gameschedulerapife7a84e4PostAuthentication",
+            "resourceName": "gameschedulerapife7a84e4PostConfirmation",
             "triggerProvider": "Cognito",
             "attributes": [
                 "Arn",

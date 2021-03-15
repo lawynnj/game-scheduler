@@ -11,13 +11,13 @@ Parameters:
   
   
   
-  functiongameschedulerapife7a84e4PostAuthenticationArn: 
+  functiongameschedulerapife7a84e4PostConfirmationArn: 
     Type: String
-    Default: functiongameschedulerapife7a84e4PostAuthenticationArn
+    Default: functiongameschedulerapife7a84e4PostConfirmationArn
   
-  functiongameschedulerapife7a84e4PostAuthenticationName: 
+  functiongameschedulerapife7a84e4PostConfirmationName: 
     Type: String
-    Default: functiongameschedulerapife7a84e4PostAuthenticationName
+    Default: functiongameschedulerapife7a84e4PostConfirmationName
   
   
   
@@ -224,8 +224,8 @@ Resources:
         
         
         
-          PostAuthentication: !Ref functiongameschedulerapife7a84e4PostAuthenticationArn
         
+          PostConfirmation: !Ref functiongameschedulerapife7a84e4PostConfirmationArn
         
         
         
@@ -257,16 +257,16 @@ Resources:
     
     
   
+    
   
-  UserPoolPostAuthenticationLambdaInvokePermission: 
+  UserPoolPostConfirmationLambdaInvokePermission: 
     Type: "AWS::Lambda::Permission"
     DependsOn: UserPool
     Properties: 
       Action: "lambda:invokeFunction"
       Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functiongameschedulerapife7a84e4PostAuthenticationName
+      FunctionName: !Ref functiongameschedulerapife7a84e4PostConfirmationName
       SourceArn: !GetAtt UserPool.Arn
-    
     
   
   
