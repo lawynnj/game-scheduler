@@ -10,6 +10,7 @@ import Games from "../components/Home/Games";
 import { GameType } from "../graphql/APITypes";
 import * as mutations from "../graphql/mutations";
 import * as queries from "../graphql/queries";
+import useNotification from "../hooks/useNotification";
 import { mapListGames } from "../models/game";
 import { gqlOp } from "../utils/gqlOp";
 
@@ -22,7 +23,7 @@ export default function Home(props: HomeProps): JSX.Element {
   const { user } = props;
   const [games, setGames] = useState<Partial<GameType>[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { addNotification } = useNotification();
   useEffect(() => {
     async function fetchGames() {
       try {
@@ -54,7 +55,7 @@ export default function Home(props: HomeProps): JSX.Element {
         });
         const filtered: Partial<GameType>[] = games.filter((game) => game.id !== id);
         setGames(filtered);
-        alert("Deleted");
+        addNotification("Deleted");
       } catch (error) {
         alert("Something went wrong!");
       }
