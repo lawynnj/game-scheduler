@@ -65,7 +65,6 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
   });
   const [initialValues, setInitialValues] = useState<PokerFormVals>({
     title: "",
-    type: "",
     status: "PENDING",
     dateOptions: [],
     timeOptions: [],
@@ -112,7 +111,6 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
 
       const values: PokerFormVals = {
         title: game?.title || "",
-        type: game?.type || "",
         status: game?.status || "",
         dateOptions: dateOptions,
         timeOptions: timeOptions,
@@ -150,6 +148,8 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
           },
         }),
       );
+
+      history.push("/");
     } catch (error) {
       console.log("Error", error);
     }
@@ -175,7 +175,7 @@ const AddEditPokerSettings = (props: AddEditPokerSettingsProps): JSX.Element => 
 
   return (
     <>
-      <Prompt when={showPrompt} message="Are you sure you want to leave?" />
+      <Prompt when={showPrompt} message="You have unsaved changes. Are you sure you want to leave? " />
 
       <PokerSettingsForm
         onCancel={() => history.push(isAddMode ? "." : "..")}

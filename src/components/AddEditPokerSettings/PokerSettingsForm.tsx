@@ -20,7 +20,6 @@ import AddButton from "./AddButton";
 
 export interface PokerFormVals {
   title: string;
-  type: string;
   status: string;
   dateOptions: DateOptions[];
   timeOptions: TimeOptions[];
@@ -29,7 +28,6 @@ export interface PokerFormVals {
 
 const validationSchema: Yup.SchemaOf<PokerFormVals> = Yup.object({
   title: Yup.string().defined(),
-  type: Yup.string().defined(),
   status: Yup.string().defined(),
   dateOptions: Yup.array()
     .of(
@@ -125,20 +123,6 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                     }}
                     variant="outlined"
                   />
-                  <Field
-                    component={TextField}
-                    label="Type"
-                    name="type"
-                    margin="dense"
-                    className={classes.input}
-                    inputProps={{
-                      onFocus: onFormFocus,
-                    }}
-                    variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
 
                   <Typography variant="subtitle2" style={{ color: "rgba(0, 0, 0, 0.54)", marginTop: 10 }}>
                     Buy ins
@@ -156,13 +140,23 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                             }}
                             variant="outlined"
                             margin="dense"
-                            onDelete={() => arrayHelpers.remove(index)}
+                            onDelete={() => {
+                              onFormFocus();
+                              arrayHelpers.remove(index);
+                            }}
                           />
                         ))}
 
                         <AddButton
                           disabled={isSubmitting}
-                          onClick={() => arrayHelpers.push({ amount: 0, votes: 0, uuid: uuidv4() })}
+                          onClick={() => {
+                            onFormFocus();
+                            arrayHelpers.push({
+                              amount: 0,
+                              votes: 0,
+                              uuid: uuidv4(),
+                            });
+                          }}
                         />
                       </div>
                     )}
@@ -177,21 +171,22 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                       <div>
                         {values?.dateOptions?.map((date: DateOptions, index: number) => (
                           <ArrayDateField
-                            onDelete={() => arrayHelpers.remove(index)}
+                            onDelete={() => {
+                              onFormFocus();
+                              arrayHelpers.remove(index);
+                            }}
                             key={date?.uuid}
                             deleteBtnProps={{ disabled: isSubmitting }}
                             name={`dateOptions[${index}].date`}
                             variant="dialog"
                             format="MM/dd/yyyy"
                             type="text"
-                            inputProps={{
-                              onFocus: onFormFocus,
-                            }}
                           />
                         ))}
                         <AddButton
                           disabled={isSubmitting}
                           onClick={() => {
+                            onFormFocus();
                             const d = new Date();
                             arrayHelpers.push({ date: d.toISOString(), votes: 0, uuid: uuidv4() });
                           }}
@@ -209,7 +204,10 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                       <div>
                         {values?.timeOptions?.map((time: TimeOptions, index: number) => (
                           <ArrayTimeField
-                            onDelete={() => arrayHelpers.remove(index)}
+                            onDelete={() => {
+                              onFormFocus();
+                              arrayHelpers.remove(index);
+                            }}
                             key={time.uuid}
                             deleteBtnProps={{ disabled: isSubmitting }}
                             name={`timeOptions[${index}].time`}
@@ -223,13 +221,14 @@ export default function PokerSettingsForm(props: PokerSettingsFormProps): JSX.El
                         ))}
                         <AddButton
                           disabled={isSubmitting}
-                          onClick={() =>
+                          onClick={() => {
+                            onFormFocus();
                             arrayHelpers.push({
                               time: new Date(),
                               votes: 0,
                               uuid: uuidv4(),
-                            })
-                          }
+                            });
+                          }}
                         />
                       </div>
                     )}
