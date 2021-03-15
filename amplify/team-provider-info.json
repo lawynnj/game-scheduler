@@ -47,5 +47,54 @@
         }
       }
     }
+  },
+  "sampledev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-gameschedulerapi-sampledev-11904-authRole",
+      "UnauthRoleArn": "arn:aws:iam::764317614706:role/amplify-gameschedulerapi-sampledev-11904-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::764317614706:role/amplify-gameschedulerapi-sampledev-11904-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-gameschedulerapi-sampledev-11904-deployment",
+      "UnauthRoleName": "amplify-gameschedulerapi-sampledev-11904-unauthRole",
+      "StackName": "amplify-gameschedulerapi-sampledev-11904",
+      "StackId": "arn:aws:cloudformation:us-east-1:764317614706:stack/amplify-gameschedulerapi-sampledev-11904/f6be3a50-854d-11eb-9160-0acd55d80e95",
+      "AmplifyAppId": "d37mxs4q5dz1g5"
+    },
+    "categories": {
+      "auth": {
+        "gameschedulerapife7a84e4": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "createUser": {},
+        "GameEventProcessor": {},
+        "EmailReminderService": {},
+        "EmailReminderCron": {},
+        "NotificationRuleProcessor": {},
+        "updateGameVote": {},
+        "CompletedPollNotif": {},
+        "restApi": {
+          "deploymentBucketName": "amplify-gameschedulerapi-sampledev-11904-deployment",
+          "s3Key": "amplify-builds/restApi-build.zip"
+        },
+        "gameschedulerapife7a84e4PostConfirmation": {}
+      }
+    },
+    "nonCFNdata": {
+      "function": {
+        "restApi": {
+          "layerVersionMap": {
+            "1": {
+              "permissions": [
+                {
+                  "type": "private"
+                }
+              ],
+              "hash": "G7Jqyu/OLyX4NnG4AowXOz+5jzgzGepUzOyM7muh+vM="
+            }
+          }
+        }
+      }
+    }
   }
 }

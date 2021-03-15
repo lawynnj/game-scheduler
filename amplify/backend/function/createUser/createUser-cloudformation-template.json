@@ -101,7 +101,7 @@
         "Layers": [],
         "Timeout": "25",
         "Code": {
-          "S3Bucket": "amplify-gameschedulerapi-dev-152734-deployment",
+          "S3Bucket": "amplify-gameschedulerapi-sampledev-11904-deployment",
           "S3Key": "amplify-builds/createUser-654268584b6c4a58756b-build.zip"
         }
       }

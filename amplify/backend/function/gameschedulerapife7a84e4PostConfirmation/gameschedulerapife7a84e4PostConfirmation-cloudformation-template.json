@@ -1,26 +1,42 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Lambda Function resource stack creation using Amplify CLI",
+  "Description": "Lambda resource stack creation using Amplify CLI",
   "Parameters": {
-    "CloudWatchRule": {
+    "GROUP": {
       "Type": "String",
-      "Default": "NONE",
-      "Description": " Schedule Expression"
+      "Default": ""
+    },
+    "modules": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Comma-delimmited list of modules to be executed by a lambda trigger. Sent to resource as an env variable."
+    },
+    "resourceName": {
+      "Type": "String",
+      "Default": ""
+    },
+    "trigger": {
+      "Type": "String",
+      "Default": "true"
+    },
+    "functionName": {
+      "Type": "String",
+      "Default": ""
+    },
+    "roleName": {
+      "Type": "String",
+      "Default": ""
+    },
+    "parentResource": {
+      "Type": "String",
+      "Default": ""
+    },
+    "parentStack": {
+      "Type": "String",
+      "Default": ""
     },
     "env": {
       "Type": "String"
-    },
-    "apipokergameGraphQLAPIIdOutput": {
-      "Type": "String",
-      "Default": "apipokergameGraphQLAPIIdOutput"
-    },
-    "apipokergameGraphQLAPIEndpointOutput": {
-      "Type": "String",
-      "Default": "apipokergameGraphQLAPIEndpointOutput"
-    },
-    "functionrestApiArn": {
-      "Type": "String",
-      "Default": "functionrestApiArn"
     }
   },
   "Conditions": {
@@ -45,12 +61,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "EmailReminderCron",
+            "gameschedulerapife7a84e4PostConfirmation",
             {
               "Fn::Join": [
                 "",
                 [
-                  "EmailReminderCron",
+                  "gameschedulerapife7a84e4PostConfirmation",
                   "-",
                   {
                     "Ref": "env"
@@ -65,8 +81,14 @@
             "ENV": {
               "Ref": "env"
             },
+            "MODULES": {
+              "Ref": "modules"
+            },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "GROUP": {
+              "Ref": "GROUP"
             }
           }
         },
@@ -76,16 +98,11 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs12.x",
-        "Layers": [
-          {
-            "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:restApi-dev:2"
-          }
-        ],
+        "Runtime": "nodejs10.x",
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-gameschedulerapi-sampledev-11904-deployment",
-          "S3Key": "amplify-builds/EmailReminderCron-6d2b4a47334c6e374c78-build.zip"
+          "S3Key": "amplify-builds/gameschedulerapife7a84e4PostConfirmation-3962784552624f753365-build.zip"
         }
       }
     },
@@ -95,12 +112,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "gameschedulerapiLambdaRole0411b8cc",
+            "gameschedulerapife7a84e4PostConfirmation",
             {
               "Fn::Join": [
                 "",
                 [
-                  "gameschedulerapiLambdaRole0411b8cc",
+                  "gameschedulerapife7a84e4PostConfirmation",
                   "-",
                   {
                     "Ref": "env"
@@ -168,75 +185,30 @@
               }
             },
             {
-              "Sid": "CloudWatchEventsFullAccess",
               "Effect": "Allow",
-              "Action": "events:*",
-              "Resource": "*"
-            },
-            {
-              "Sid": "IAMPassRoleForCloudWatchEvents",
-              "Effect": "Allow",
-              "Action": "iam:PassRole",
-              "Resource": "*"
-            }
-          ]
-        }
-      }
-    },
-    "LambdaTriggerPolicyGame": {
-      "DependsOn": [
-        "LambdaExecutionRole"
-      ],
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "amplify-lambda-execution-policy-Game",
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ],
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:DescribeStream",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:ListStreams"
-              ],
+              "Action": "lambda:InvokeFunction",
               "Resource": {
-                "Fn::ImportValue": {
-                  "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:StreamArn"
-                }
+                "Fn::Sub": [
+                  "arn:aws:lambda:${region}:${account}:function:createUser-${env}",
+                  {
+                    "region": {
+                      "Ref": "AWS::Region"
+                    },
+                    "account": {
+                      "Ref": "AWS::AccountId"
+                    },
+                    "lambda": {
+                      "Ref": "LambdaFunction"
+                    },
+                    "env": {
+                      "Ref": "env"
+                    }
+                  }
+                ]
               }
             }
           ]
         }
-      }
-    },
-    "LambdaEventSourceMappingGame": {
-      "Type": "AWS::Lambda::EventSourceMapping",
-      "DependsOn": [
-        "LambdaTriggerPolicyGame",
-        "LambdaExecutionRole"
-      ],
-      "Properties": {
-        "BatchSize": 100,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::ImportValue": {
-            "Fn::Sub": "${apipokergameGraphQLAPIIdOutput}:GetAtt:GameTable:StreamArn"
-          }
-        },
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "LambdaFunction",
-            "Arn"
-          ]
-        },
-        "StartingPosition": "LATEST"
       }
     }
   },
@@ -254,14 +226,14 @@
         ]
       }
     },
-    "Region": {
-      "Value": {
-        "Ref": "AWS::Region"
-      }
-    },
     "LambdaExecutionRole": {
       "Value": {
         "Ref": "LambdaExecutionRole"
+      }
+    },
+    "Region": {
+      "Value": {
+        "Ref": "AWS::Region"
       }
     }
   }

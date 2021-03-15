@@ -9,6 +9,18 @@ Parameters:
     Type: String
   
   
+  
+  
+  functiongameschedulerapife7a84e4PostConfirmationArn: 
+    Type: String
+    Default: functiongameschedulerapife7a84e4PostConfirmationArn
+  
+  functiongameschedulerapife7a84e4PostConfirmationName: 
+    Type: String
+    Default: functiongameschedulerapife7a84e4PostConfirmationName
+  
+  
+  
 
     
   identityPoolName:
@@ -121,7 +133,6 @@ Parameters:
   userPoolGroupList:
     Type: CommaDelimitedList
       
-            
   serviceName:
     Type: String
   
@@ -138,6 +149,23 @@ Parameters:
   dependsOn:
     Type: CommaDelimitedList
       
+  
+  thirdPartyAuth:
+    Type: String
+            
+  
+  userPoolGroups:
+    Type: String
+            
+  
+  adminQueries:
+    Type: String
+            
+  
+  hostedUI:
+    Type: String
+            
+            
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
 
@@ -191,6 +219,19 @@ Resources:
         
       
       
+      LambdaConfig:
+        
+        
+        
+        
+        
+          PostConfirmation: !Ref functiongameschedulerapife7a84e4PostConfirmationArn
+        
+        
+        
+        
+        
+      
       
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
       
@@ -217,6 +258,15 @@ Resources:
     
   
     
+  
+  UserPoolPostConfirmationLambdaInvokePermission: 
+    Type: "AWS::Lambda::Permission"
+    DependsOn: UserPool
+    Properties: 
+      Action: "lambda:invokeFunction"
+      Principal: "cognito-idp.amazonaws.com"
+      FunctionName: !Ref functiongameschedulerapife7a84e4PostConfirmationName
+      SourceArn: !GetAtt UserPool.Arn
     
   
   
