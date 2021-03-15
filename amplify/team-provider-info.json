@@ -76,7 +76,8 @@
         "restApi": {
           "deploymentBucketName": "amplify-gameschedulerapi-sampledev-11904-deployment",
           "s3Key": "amplify-builds/restApi-build.zip"
-        }
+        },
+        "gameschedulerapife7a84e4PostAuthentication": {}
       }
     },
     "nonCFNdata": {

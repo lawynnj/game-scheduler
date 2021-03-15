@@ -9,6 +9,18 @@ Parameters:
     Type: String
   
   
+  
+  
+  functiongameschedulerapife7a84e4PostAuthenticationArn: 
+    Type: String
+    Default: functiongameschedulerapife7a84e4PostAuthenticationArn
+  
+  functiongameschedulerapife7a84e4PostAuthenticationName: 
+    Type: String
+    Default: functiongameschedulerapife7a84e4PostAuthenticationName
+  
+  
+  
 
     
   identityPoolName:
@@ -121,7 +133,6 @@ Parameters:
   userPoolGroupList:
     Type: CommaDelimitedList
       
-            
   serviceName:
     Type: String
   
@@ -138,6 +149,23 @@ Parameters:
   dependsOn:
     Type: CommaDelimitedList
       
+  
+  thirdPartyAuth:
+    Type: String
+            
+  
+  userPoolGroups:
+    Type: String
+            
+  
+  adminQueries:
+    Type: String
+            
+  
+  hostedUI:
+    Type: String
+            
+            
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
 
@@ -191,6 +219,19 @@ Resources:
         
       
       
+      LambdaConfig:
+        
+        
+        
+        
+          PostAuthentication: !Ref functiongameschedulerapife7a84e4PostAuthenticationArn
+        
+        
+        
+        
+        
+        
+      
       
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
       
@@ -216,6 +257,15 @@ Resources:
     
     
   
+  
+  UserPoolPostAuthenticationLambdaInvokePermission: 
+    Type: "AWS::Lambda::Permission"
+    DependsOn: UserPool
+    Properties: 
+      Action: "lambda:invokeFunction"
+      Principal: "cognito-idp.amazonaws.com"
+      FunctionName: !Ref functiongameschedulerapife7a84e4PostAuthenticationName
+      SourceArn: !GetAtt UserPool.Arn
     
     
   

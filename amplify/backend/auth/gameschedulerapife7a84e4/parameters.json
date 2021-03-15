@@ -45,13 +45,29 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
-    "triggers": "{}",
-    "userPoolGroupList": [],
+    "useDefault": "manual",
+    "triggers": "{\n  \"PostAuthentication\": [\n    \"custom\"\n  ]\n}",
+    "userPoolGroupList": [
+        "admin"
+    ],
     "serviceName": "Cognito",
     "parentStack": {
         "Ref": "AWS::StackId"
     },
     "permissions": [],
-    "dependsOn": []
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "gameschedulerapife7a84e4PostAuthentication",
+            "triggerProvider": "Cognito",
+            "attributes": [
+                "Arn",
+                "Name"
+            ]
+        }
+    ],
+    "thirdPartyAuth": false,
+    "userPoolGroups": true,
+    "adminQueries": false,
+    "hostedUI": false
 }
