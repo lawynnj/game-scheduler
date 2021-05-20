@@ -18,7 +18,7 @@ Closing a poll will:
 
 # Source Code 
 
-The code for the `back-end` services is located in the `amplify` folder. Lambda functions are in the [amplify/backend/function](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function) folder. The bulk of the code for a given lambda is in `amplify/backend/function/{SOME_LAMBDA_FN}/src/index.js`. A [lambda layer](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function/restApi) also exists to share some functionality across the lambdas.
+The code for the `back-end` services is located in the `amplify` folder. Lambda functions are in the [amplify/backend/function](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function) folder. The bulk of the code for a given lambda is in `amplify/backend/function/{SOME_LAMBDA_FN}/src/index.js`. A [lambda layer](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function/restApi) exists to share code across the lambdas.
 
 Example: A lambda that is triggered by a DynamoDB stream and creates a cloud watch event rule [amplify/backend/function/EmailReminderCron/src/index.js](https://github.com/lawynnj/game-scheduler/blob/master/amplify/backend/function/EmailReminderCron/src/index.js)
 
