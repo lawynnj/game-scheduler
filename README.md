@@ -28,4 +28,4 @@ The `front-end` code is located in the [src](https://github.com/lawynnj/game-sch
 # Architecture
 ![alt text](https://raw.githubusercontent.com/lawynnj/game-scheduler/master/architecture.png)
 
-Development Status: All of functionality (aside from SQS and the SQS lambda processor) has been developed. 
+Development Status: Aside from SQS and the SQS lambda processor, everything has been developed. 
