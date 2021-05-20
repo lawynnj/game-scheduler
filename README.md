@@ -1,6 +1,6 @@
 # Intro
 
-Game Scheduler is a full-stack web application bootstrapped with [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html) and [AWS Amplify](https://aws.amazon.com/amplify). I took up this project to familiarize myself with AWS technologies such as dynamodb, lambda, simple notification service, simple email service, event bridge, cloud watch events, graphQL, etc.
+Game Scheduler is a full-stack web application bootstrapped with [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html) and [AWS Amplify](https://aws.amazon.com/amplify). I took up this project to familiarize myself with `distributed systems` and `AWS technologies` such as dynamodb, lambda, simple notification service, simple email service, event bridge, cloud watch events, graphQL, etc.
 
 
 # Core Functionality
@@ -18,7 +18,7 @@ Closing a poll will:
 
 # Source Code 
 
-The `back-end` code is located in the `amplify` folder. Lambda functions are in [amplify/backend/function](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function) folder. The bulk of the code for a given lambda is in `amplify/backend/function/{SOME_LAMBDA_FN}/src/index.js`. A [lambda layer](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function/restApi) also exists to share some functionality across the lambdas.
+The code for the `back-end` services is located in the `amplify` folder. Lambda functions are in the [amplify/backend/function](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function) folder. The bulk of the code for a given lambda is in `amplify/backend/function/{SOME_LAMBDA_FN}/src/index.js`. A [lambda layer](https://github.com/lawynnj/game-scheduler/tree/master/amplify/backend/function/restApi) exists to share code across the lambdas.
 
 Example: A lambda that is triggered by a DynamoDB stream and creates a cloud watch event rule [amplify/backend/function/EmailReminderCron/src/index.js](https://github.com/lawynnj/game-scheduler/blob/master/amplify/backend/function/EmailReminderCron/src/index.js)
 
@@ -28,4 +28,4 @@ The `front-end` code is located in the [src](https://github.com/lawynnj/game-sch
 # Architecture
 ![alt text](https://raw.githubusercontent.com/lawynnj/game-scheduler/master/architecture.png)
 
-Status: All of functionality except for the Simple queue services has been implemented.
+Development Status: Aside from SQS and the SQS lambda processor, everything has been developed. 
