@@ -1,6 +1,6 @@
 # Intro
 
-Game Scheduler is a full-stack web application bootstrapped with [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html) and [AWS Amplify](https://aws.amazon.com/amplify). I took up this project to familiarize myself with AWS technologies such as dynamodb, lambda, simple notification service, simple email service, event bridge, cloud watch events, graphQL, etc.
+Game Scheduler is a full-stack web application bootstrapped with [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html) and [AWS Amplify](https://aws.amazon.com/amplify). I took up this project to familiarize myself with `distributed systems` and `AWS technologies` such as dynamodb, lambda, simple notification service, simple email service, event bridge, cloud watch events, graphQL, etc.
 
 
 # Core Functionality
